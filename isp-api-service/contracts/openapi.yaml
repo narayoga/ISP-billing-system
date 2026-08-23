@@ -1,0 +1,703 @@
+openapi: 3.1.0
+info:
+  title: ISP Management System API
+  version: 1.0.0
+  description: |
+    Kontrak API untuk Sistem Manajemen Terintegrasi ISP (MVP).
+    Source of truth untuk komunikasi antara FE (portal pelanggan + dashboard admin)
+    dan BE (isp-api-service :8080, isp-billing-service :8081).
+    Endpoint pada path /billing/*, /internal/*, /webhook/*, /customers/status
+    dilayani oleh isp-billing-service (:8081); sisanya oleh isp-api-service (:8080).
+
+servers:
+  - url: http://localhost:8080
+    description: isp-api-service (dev)
+  - url: http://localhost:8081
+    description: isp-billing-service (dev)
+
+tags:
+  - name: meta
+    description: Endpoint operasional (health, version)
+  - name: auth
+  - name: customers
+  - name: packages
+  - name: invoices
+  - name: payments
+  - name: network
+
+paths:
+  /healthz:
+    get:
+      tags: [meta]
+      summary: Health check
+      responses:
+        '200':
+          description: Service alive
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service]
+                properties:
+                  status: { type: string, enum: [ok] }
+                  service: { type: string }
+
+  /packages:
+    get:
+      tags: [packages]
+      summary: List paket (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: all
+          in: query
+          schema: { type: boolean }
+          description: Sertakan paket nonaktif
+      responses:
+        '200':
+          description: Daftar paket
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Package' }
+    post:
+      tags: [packages]
+      summary: Buat paket (admin)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PackageInput' }
+      responses:
+        '201':
+          description: Paket dibuat
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Package' }
+  /packages/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, format: int64 }
+    get:
+      tags: [packages]
+      summary: Detail paket (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Paket
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Package' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [packages]
+      summary: Update paket (admin)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PackageInput' }
+      responses:
+        '200':
+          description: Paket diperbarui
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Package' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [packages]
+      summary: Nonaktifkan paket (soft delete, admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /customers:
+    get:
+      tags: [customers]
+      summary: List pelanggan (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Daftar pelanggan
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Customer' }
+    post:
+      tags: [customers]
+      summary: Buat pelanggan + kirim magic link onboarding (admin)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerInput' }
+      responses:
+        '201':
+          description: Pelanggan dibuat
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /customers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, format: int64 }
+    get:
+      tags: [customers]
+      summary: Detail pelanggan (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Pelanggan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [customers]
+      summary: Update pelanggan (admin)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerInput' }
+      responses:
+        '200':
+          description: Pelanggan diperbarui
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /customers/{id}/deactivate:
+    post:
+      tags: [customers]
+      summary: Nonaktifkan pelanggan (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /customers/{id}/reactivate:
+    post:
+      tags: [customers]
+      summary: Aktifkan kembali pelanggan (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /invoices:
+    get:
+      tags: [invoices]
+      summary: List tagihan (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [unpaid, awaiting_verification, paid, overdue] }
+        - name: customer_id
+          in: query
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Daftar tagihan
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Invoice' }
+  /invoices/{id}:
+    get:
+      tags: [invoices]
+      summary: Detail tagihan (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Tagihan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Invoice' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /billing/generate:
+    post:
+      tags: [invoices]
+      summary: Generate tagihan massal (superadmin) — isp-billing-service (:8081)
+      description: >
+        Trigger manual. Cron otomatis berjalan tanggal 1 pukul 00:00.
+        Idempoten per (customer, period); invoice yang sudah ada di-skip.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                period: { type: string, description: "YYYY-MM (default: bulan berjalan)" }
+      responses:
+        '200':
+          description: Ringkasan hasil generate
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [period, created, skipped]
+                properties:
+                  period: { type: string }
+                  created: { type: integer }
+                  skipped: { type: integer }
+
+  /me/profile:
+    get:
+      tags: [customers]
+      summary: Profil + info layanan pelanggan yang login
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Profil pelanggan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Profile' }
+  /me/invoices:
+    get:
+      tags: [invoices]
+      summary: Tagihan pelanggan yang login (terbaru dulu)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Daftar tagihan milik pelanggan
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Invoice' }
+  /me/invoices/{id}/proof:
+    post:
+      tags: [payments]
+      summary: Upload bukti transfer (pelanggan)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [proof]
+              properties:
+                proof:
+                  type: string
+                  format: binary
+                  description: File .jpg / .png / .pdf, maksimal 2MB
+      responses:
+        '201':
+          description: Bukti tersimpan, invoice → awaiting_verification
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Payment' }
+        '400': { description: File tidak valid / tipe tidak didukung }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: Invoice sudah lunas }
+        '413': { description: File terlalu besar (maks 2MB) }
+
+  /payments:
+    get:
+      tags: [payments]
+      summary: Antrian verifikasi — pembayaran pending (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Daftar pembayaran pending
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Payment' }
+  /payments/{id}/proof:
+    get:
+      tags: [payments]
+      summary: File bukti transfer (admin viewer)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: File bukti
+          content:
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            application/pdf: { schema: { type: string, format: binary } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /payments/{id}/approve:
+    post:
+      tags: [payments]
+      summary: Approve pembayaran → invoice paid + buka isolir bila lunas (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: Pembayaran sudah diproses }
+  /payments/{id}/reject:
+    post:
+      tags: [payments]
+      summary: Reject pembayaran → invoice unpaid + notifikasi (admin)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, maxLength: 500 }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: Pembayaran sudah diproses }
+
+  /audit-log:
+    get:
+      tags: [meta]
+      summary: Audit log (superadmin, read-only)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 200, maximum: 1000 }
+      responses:
+        '200':
+          description: Daftar entri audit
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AuditEntry' }
+
+  /billing/customers/{id}/isolate:
+    post:
+      tags: [network]
+      summary: Isolir manual — disable PPPoE (superadmin) — isp-billing-service (:8081)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Hasil isolir
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  isolated: { type: boolean }
+  /billing/customers/{id}/reactivate:
+    post:
+      tags: [network]
+      summary: Buka isolir manual — enable PPPoE (superadmin) — isp-billing-service (:8081)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Hasil buka isolir
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  reactivated: { type: boolean }
+  /internal/customers/{id}/reactivate:
+    post:
+      tags: [network]
+      summary: Buka isolir otomatis (dipanggil isp-api-service saat approve) — isp-billing-service (:8081)
+      description: Diamankan header X-Internal-Secret (shared secret antar service), bukan JWT.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Hasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  reactivated: { type: boolean }
+        '401': { description: Secret tidak valid }
+
+  /webhook/network-status:
+    post:
+      tags: [network]
+      summary: Webhook status koneksi dari Mikrotik — isp-billing-service (:8081)
+      description: Diamankan header X-Webhook-Secret. Status alive→online, rto→offline.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                identifier: { type: string, description: "PPPoE / IP / MAC (atau pakai field spesifik di bawah)" }
+                pppoe_username: { type: string }
+                ip: { type: string }
+                mac: { type: string }
+                status: { type: string, enum: [alive, rto] }
+      responses:
+        '200':
+          description: Status tercatat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  customer_id: { type: integer, format: int64 }
+                  state: { type: string, enum: [online, offline] }
+        '400': { description: Payload tidak valid }
+        '401': { description: Secret tidak valid }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /customers/status:
+    get:
+      tags: [network]
+      summary: Snapshot status koneksi semua pelanggan (admin, polling 5s) — isp-billing-service (:8081)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Map customerId → state. customer tanpa entri dianggap unknown.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: { type: string, enum: [online, offline] }
+
+  /stats:
+    get:
+      tags: [meta]
+      summary: Ringkasan dashboard (admin)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Statistik operasional
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_customers: { type: integer }
+                  isolated_customers: { type: integer }
+                  unpaid_invoices: { type: integer }
+                  pending_payments: { type: integer }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Ok:
+      description: Operasi berhasil
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok: { type: boolean }
+    NotFound:
+      description: Tidak ditemukan
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: Konflik (mis. email / pppoe_username sudah dipakai)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Customer:
+      type: object
+      required: [id, name, email, address, package_id, pppoe_username, status]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        email: { type: string, format: email }
+        address: { type: string }
+        package_id: { type: integer, format: int64 }
+        pppoe_username: { type: string }
+        ip_address: { type: string, nullable: true }
+        mac_address: { type: string, nullable: true }
+        status:
+          type: string
+          enum: [pending_provisioning, active, overdue, isolated, inactive]
+        created_at: { type: string, format: date-time }
+
+    Package:
+      type: object
+      required: [id, name, price, speed_mbps]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        price: { type: integer, description: "Harga bulanan (IDR)" }
+        speed_mbps: { type: integer }
+        quota_gb: { type: integer, nullable: true }
+        fup_mbps: { type: integer, nullable: true }
+
+    Invoice:
+      type: object
+      required: [id, customer_id, period, amount, due_date, status]
+      properties:
+        id: { type: integer, format: int64 }
+        customer_id: { type: integer, format: int64 }
+        period: { type: string, description: "YYYY-MM" }
+        amount: { type: integer }
+        due_date: { type: string, format: date }
+        status:
+          type: string
+          enum: [unpaid, awaiting_verification, paid, overdue]
+        created_at: { type: string, format: date-time }
+
+    Payment:
+      type: object
+      required: [id, invoice_id, status, uploaded_at]
+      properties:
+        id: { type: integer, format: int64 }
+        invoice_id: { type: integer, format: int64 }
+        proof_path: { type: string }
+        uploaded_at: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        verified_by: { type: integer, format: int64, nullable: true }
+        verified_at: { type: string, format: date-time, nullable: true }
+
+    NetworkStatus:
+      type: object
+      required: [customer_id, state, observed_at]
+      properties:
+        customer_id: { type: integer, format: int64 }
+        state:
+          type: string
+          enum: [online, offline, unknown]
+        observed_at: { type: string, format: date-time }
+
+    Profile:
+      type: object
+      required: [id, name, email, address, status, pppoe_username, package]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        email: { type: string, format: email }
+        address: { type: string }
+        status:
+          type: string
+          enum: [pending_provisioning, active, overdue, isolated, inactive]
+        pppoe_username: { type: string }
+        package:
+          type: object
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+            speed_mbps: { type: integer }
+            quota_gb: { type: integer, nullable: true }
+            fup_mbps: { type: integer, nullable: true }
+            price: { type: integer }
+
+    PackageInput:
+      type: object
+      required: [name, price, speed_mbps]
+      properties:
+        name: { type: string, maxLength: 100 }
+        price: { type: integer, minimum: 0 }
+        speed_mbps: { type: integer, minimum: 1 }
+        quota_gb: { type: integer, minimum: 1, nullable: true }
+        fup_mbps: { type: integer, minimum: 1, nullable: true }
+        is_active: { type: boolean }
+
+    CustomerInput:
+      type: object
+      required: [name, email, address, package_id, pppoe_username]
+      properties:
+        name: { type: string, maxLength: 150 }
+        email: { type: string, format: email }
+        address: { type: string }
+        package_id: { type: integer, format: int64 }
+        pppoe_username: { type: string, maxLength: 100 }
+        ip_address: { type: string, nullable: true }
+        mac_address: { type: string, nullable: true }
+
+    AuditEntry:
+      type: object
+      required: [id, action, created_at]
+      properties:
+        id: { type: integer, format: int64 }
+        admin_id: { type: integer, format: int64, nullable: true }
+        admin_email: { type: string, nullable: true }
+        action: { type: string }
+        entity_type: { type: string, nullable: true }
+        entity_id: { type: integer, format: int64, nullable: true }
+        payload: { type: object, nullable: true, additionalProperties: true }
+        created_at: { type: string, format: date-time }
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        message: { type: string }

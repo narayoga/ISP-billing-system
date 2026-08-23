@@ -1,0 +1,66 @@
+# Infrastruktur pendukung untuk development.
+#
+# Ketiga service aplikasi (isp-api-service, isp-billing-service, isp-frontend)
+# tetap dijalankan native (npm run dev / go run) — hanya infrastruktur yang
+# di-container agar setup seragam di semua mesin.
+#
+#   docker compose up -d              # Redis + MailHog
+#   docker compose down              # hentikan
+#   docker compose --profile with-postgres up -d   # + Postgres (lihat catatan)
+#
+# CATATAN Postgres: mesin ini sudah menjalankan PostgreSQL 18 native di :5432,
+# jadi service postgres di bawah TIDAK ikut jalan secara default (profile
+# "with-postgres") dan dipetakan ke host port 5433 supaya tidak bentrok.
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: isp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: isp-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP  → dipakai service (SMTP_HOST=localhost, SMTP_PORT=1025)
+      - "8025:8025" # Web UI → buka http://localhost:8025 untuk lihat email
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: isp-postgres
+    profiles: ["with-postgres"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: isp_billing
+    ports:
+      - "5433:5432" # host 5433 agar tidak bentrok Postgres native di 5432
+    volumes:
+      # Postgres 18+ : volume di /var/lib/postgresql (bukan .../data)
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  redis-data:
+  postgres-data:
+  # Penyimpanan bukti transfer (PRD US-02 AC3 / §5: /var/lib/isp/uploads).
+  # Dipakai saat isp-api-service dijalankan sebagai container (lapis deploy):
+  #   volumes: ["uploads-data:/var/lib/isp/uploads"]  + UPLOAD_DIR=/var/lib/isp/uploads
+  # Volume terpisah dari container agar bukti tidak hilang saat container di-recreate.
+  uploads-data:

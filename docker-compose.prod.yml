@@ -1,0 +1,128 @@
+# =====================================================================
+# Full stack produksi — semua komponen berjalan sebagai container.
+#
+#   cp .env.prod.example .env.prod   # lalu isi semua secret
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml build
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing migrate up
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing seed-admin
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+#
+# CATATAN: URL API di frontend di-bake saat build (Vite). Jika domain berubah,
+# frontend WAJIB di-build ulang, bukan sekadar restart.
+# =====================================================================
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: ${TZ:-Asia/Jakarta}
+    volumes:
+      # Postgres 18+ menyimpan data di subdirektori per-versi, jadi volume
+      # dipasang di /var/lib/postgresql (bukan .../data seperti versi lama).
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./isp-api-service
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      PORT: 8080
+      TZ: ${TZ:-Asia/Jakarta}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-12h}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      PORTAL_BASE_URL: ${PORTAL_BASE_URL}
+      BILLING_BASE_URL: http://billing:8081
+      INTERNAL_SECRET: ${INTERNAL_SECRET}
+      UPLOAD_DIR: /var/lib/isp/uploads
+      UPLOAD_MAX_BYTES: ${UPLOAD_MAX_BYTES:-2097152}
+      EMAIL_FROM: ${EMAIL_FROM}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      TRUST_PROXY: ${TRUST_PROXY:-1}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      NODE_ENV: production
+    volumes:
+      - uploads-data:/var/lib/isp/uploads
+    ports:
+      - "${API_PORT:-8080}:8080"
+
+  billing:
+    build:
+      context: ./isp-billing-service
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      PORT: 8081
+      TZ: ${TZ:-Asia/Jakarta}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      REDIS_URL: redis://redis:6379
+      INTERNAL_SECRET: ${INTERNAL_SECRET}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+      MIKROTIK_HOST: ${MIKROTIK_HOST}
+      MIKROTIK_PORT: ${MIKROTIK_PORT:-8728}
+      MIKROTIK_USER: ${MIKROTIK_USER}
+      MIKROTIK_PASSWORD: ${MIKROTIK_PASSWORD}
+      MIKROTIK_MOCK: ${MIKROTIK_MOCK:-false}
+      EMAIL_FROM: ${EMAIL_FROM}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      ALERT_EMAIL: ${ALERT_EMAIL}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
+      SEED_ADMIN_NAME: ${SEED_ADMIN_NAME:-Super Admin}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${BILLING_PORT:-8081}:8081"
+
+  frontend:
+    build:
+      context: ./isp-frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_BILLING_BASE_URL: ${VITE_BILLING_BASE_URL}
+        VITE_BANK_NAME: ${VITE_BANK_NAME}
+        VITE_BANK_ACCOUNT: ${VITE_BANK_ACCOUNT}
+        VITE_BANK_HOLDER: ${VITE_BANK_HOLDER}
+    restart: unless-stopped
+    depends_on: [api, billing]
+    ports:
+      - "${FRONTEND_PORT:-8090}:80"
+
+volumes:
+  postgres-data:
+  redis-data:
+  uploads-data:

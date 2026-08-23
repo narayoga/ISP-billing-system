@@ -1,0 +1,26 @@
+# ── Secret: JANGAN pernah di-commit ──────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.prod.example
+
+# ── Dependencies & hasil build ───────────────────────────────────
+# (tiap service juga punya .gitignore sendiri; ini lapis pengaman)
+node_modules/
+dist/
+
+# ── Data runtime ─────────────────────────────────────────────────
+# bukti transfer yang diunggah pelanggan
+var/
+
+# ── Log ──────────────────────────────────────────────────────────
+*.log
+
+# ── Editor / OS ──────────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ── Claude Code (pengaturan lokal per-mesin) ─────────────────────
+.claude/settings.local.json
