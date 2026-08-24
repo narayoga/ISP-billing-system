@@ -39,7 +39,7 @@ export default function CustomerDetail() {
     <div className="max-w-2xl">
       <PageHeader
         title={c.name}
-        subtitle={c.email}
+        subtitle={c.email ?? undefined}
         action={
           <Link to={`/admin/customers/${c.id}/edit`}>
             <Button variant="secondary">Edit</Button>
@@ -53,6 +53,8 @@ export default function CustomerDetail() {
         <Row label="Status">
           <Badge color={st.color}>{st.label}</Badge>
         </Row>
+        <Row label="WhatsApp">{c.phone}</Row>
+        <Row label="Email">{c.email ?? "—"}</Row>
         <Row label="Paket">{c.package_name ?? '—'}</Row>
         <Row label="Alamat">{c.address}</Row>
         <Row label="PPPoE">{c.pppoe_username}</Row>
@@ -63,20 +65,6 @@ export default function CustomerDetail() {
       </Card>
 
       <div className="flex flex-wrap gap-2 mt-4">
-        {isSuper && (
-          <Button
-            variant="secondary"
-            disabled={busy}
-            onClick={() =>
-              doAction(
-                () => api(`/auth/admin/customers/${c.id}/resend-magic-link`, { method: 'POST' }),
-                'Magic link dikirim ulang.',
-              )
-            }
-          >
-            Kirim Ulang Magic Link
-          </Button>
-        )}
         {c.status !== 'inactive' ? (
           <Button
             variant="danger"

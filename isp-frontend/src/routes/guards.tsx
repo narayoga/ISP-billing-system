@@ -19,13 +19,3 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
   }
   return <>{children}</>
 }
-
-export function RequireCustomer({ children }: { children: ReactNode }) {
-  const { auth, ready } = useAuth()
-  const location = useLocation()
-  if (!ready) return <Loading />
-  if (!auth || auth.type !== 'customer') {
-    return <Navigate to="/portal/login" replace state={{ from: location.pathname }} />
-  }
-  return <>{children}</>
-}

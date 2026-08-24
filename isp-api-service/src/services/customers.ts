@@ -1,8 +1,6 @@
 import { pool } from '../db/pool.js'
 import { HttpError } from '../middleware/error.js'
 import { writeAudit } from '../lib/audit.js'
-import { issueMagicLink, magicLinkUrl } from './magicLink.js'
-import { sendMagicLink } from '../lib/mailer.js'
 
 export type CustomerStatus =
   | 'pending_provisioning'
@@ -14,7 +12,10 @@ export type CustomerStatus =
 export type Customer = {
   id: number
   name: string
-  email: string
+  /** Nomor WhatsApp, format internasional (mis. 628123456789) — kanal utama. */
+  phone: string
+  /** Opsional sejak PRD v3.0: kanal pendamping, bukan identitas login. */
+  email: string | null
   address: string
   package_id: number
   pppoe_username: string
@@ -28,7 +29,8 @@ export type CustomerListItem = Customer & { package_name: string | null }
 
 export type CustomerInput = {
   name: string
-  email: string
+  phone: string
+  email: string | null
   address: string
   package_id: number
   pppoe_username: string
@@ -36,12 +38,12 @@ export type CustomerInput = {
   mac_address: string | null
 }
 
-const COLS = `id, name, email, address, package_id, pppoe_username,
+const COLS = `id, name, phone, email, address, package_id, pppoe_username,
               ip_address, mac_address, status, created_at`
 
 export async function listCustomers(): Promise<CustomerListItem[]> {
   const { rows } = await pool.query<CustomerListItem>(
-    `SELECT c.id, c.name, c.email, c.address, c.package_id, c.pppoe_username,
+    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.pppoe_username,
             c.ip_address, c.mac_address, c.status, c.created_at,
             p.name AS package_name
      FROM customers c
@@ -53,7 +55,7 @@ export async function listCustomers(): Promise<CustomerListItem[]> {
 
 export async function getCustomer(id: number): Promise<CustomerListItem | null> {
   const { rows } = await pool.query<CustomerListItem>(
-    `SELECT c.id, c.name, c.email, c.address, c.package_id, c.pppoe_username,
+    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.pppoe_username,
             c.ip_address, c.mac_address, c.status, c.created_at,
             p.name AS package_name
      FROM customers c
@@ -65,8 +67,10 @@ export async function getCustomer(id: number): Promise<CustomerListItem | null> 
 }
 
 /**
- * Buat customer baru (US-08) lalu terbitkan magic link onboarding (US-09).
- * Insert + token dalam satu transaksi; email dikirim setelah commit.
+ * Buat customer baru (US-08).
+ *
+ * PRD v3.0: tidak ada onboarding magic link — pelanggan tidak punya akun.
+ * Nomor WhatsApp wajib karena menjadi kanal notifikasi utama.
  */
 export async function createCustomer(input: CustomerInput): Promise<Customer> {
   const client = await pool.connect()
@@ -77,11 +81,12 @@ export async function createCustomer(input: CustomerInput): Promise<Customer> {
     if (pkg.rowCount === 0) throw new HttpError(400, 'package_not_found')
 
     const { rows } = await client.query<Customer>(
-      `INSERT INTO customers (name, email, address, package_id, pppoe_username, ip_address, mac_address)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO customers (name, phone, email, address, package_id, pppoe_username, ip_address, mac_address)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING ${COLS}`,
       [
         input.name,
+        input.phone,
         input.email,
         input.address,
         input.package_id,
@@ -91,11 +96,11 @@ export async function createCustomer(input: CustomerInput): Promise<Customer> {
       ],
     )
     const customer = rows[0]!
-    const { token } = await issueMagicLink(client, customer.id)
     await client.query('COMMIT')
 
-    // Kirim email di luar transaksi (US-08 AC4 / US-09 AC1)
-    await sendMagicLink(customer.email, magicLinkUrl(token))
+    // PRD v3.0: pelanggan tidak punya akun, jadi tidak ada magic link onboarding.
+    // Tautan tagihan diterbitkan per invoice dan dikirim saat tagihan terbit
+    // (US-09), atau lewat "kirim ulang tautan" oleh admin (US-10).
     return customer
   } catch (e) {
     await client.query('ROLLBACK').catch(() => {})
@@ -126,13 +131,14 @@ export async function updateCustomer(
 
     const { rows } = await client.query<Customer>(
       `UPDATE customers
-       SET name = $2, email = $3, address = $4, package_id = $5, pppoe_username = $6,
-           ip_address = $7, mac_address = $8, updated_at = NOW()
+       SET name = $2, phone = $3, email = $4, address = $5, package_id = $6,
+           pppoe_username = $7, ip_address = $8, mac_address = $9, updated_at = NOW()
        WHERE id = $1
        RETURNING ${COLS}`,
       [
         id,
         input.name,
+        input.phone,
         input.email,
         input.address,
         input.package_id,

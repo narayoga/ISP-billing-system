@@ -25,9 +25,28 @@ const optionalMac = z.preprocess(
   z.string().regex(macRe, 'invalid_mac').nullable(),
 )
 
+/**
+ * Nomor WhatsApp dinormalkan ke format internasional tanpa '+':
+ *   0812-3456-789 → 628123456789
+ *   +62 812 3456 789 → 628123456789
+ * Admin tetap bisa mengetik dengan gaya lokal yang biasa.
+ */
+const phoneField = z.preprocess((v) => {
+  if (typeof v !== 'string') return v
+  const digits = v.replace(/\D/g, '')
+  return digits.startsWith('0') ? '62' + digits.slice(1) : digits
+}, z.string().regex(/^[1-9][0-9]{7,19}$/, 'invalid_phone'))
+
+// Email opsional sejak PRD v3.0 (kanal pendamping, bukan identitas login).
+const optionalEmail = z.preprocess(
+  (v) => (v === '' || v == null ? null : v),
+  z.string().email().max(255).nullable(),
+)
+
 const customerSchema = z.object({
   name: z.string().min(1).max(150),
-  email: z.string().email().max(255),
+  phone: phoneField,
+  email: optionalEmail,
   address: z.string().min(1),
   package_id: z.number().int().positive(),
   pppoe_username: z.string().min(1).max(100),

@@ -50,7 +50,7 @@ func main() {
 	sched := scheduler.New(loc,
 		scheduler.Job{Name: "generate-monthly", DayOfMonth: 1, Hour: 0, Minute: 0, Run: func() {
 			period := billing.CurrentPeriod(time.Now().In(loc))
-			res, err := billing.GenerateMonthly(context.Background(), pool, period, notifier)
+			res, err := billing.GenerateMonthly(context.Background(), pool, period, notifier, cfg.PublicBaseURL)
 			if err != nil {
 				log.Printf("[cron] generate %s: %v", period, err)
 				return
@@ -70,7 +70,7 @@ func main() {
 			}
 		}},
 		scheduler.Job{Name: "isolate-overdue", DayOfMonth: 24, Hour: 0, Minute: 1, Run: func() {
-			n, err := billing.IsolateOverdue(context.Background(), pool, net, notifier)
+			n, err := billing.IsolateOverdue(context.Background(), pool, net, notifier, cfg.PublicBaseURL)
 			if err != nil {
 				log.Printf("[cron] isolir: %v", err)
 				return
@@ -80,7 +80,7 @@ func main() {
 		scheduler.Job{Name: "reminder-h3", DayOfMonth: 17, Hour: 8, Minute: 0, Run: func() {
 			period := billing.CurrentPeriod(time.Now().In(loc))
 			n, err := billing.RemindDue(context.Background(), pool, notifier, period,
-				"Tagihan jatuh tempo dalam 3 hari", "Pengingat:")
+				"Tagihan jatuh tempo dalam 3 hari", "Pengingat:", cfg.PublicBaseURL)
 			if err != nil {
 				log.Printf("[cron] reminder-h3: %v", err)
 				return
@@ -90,7 +90,7 @@ func main() {
 		scheduler.Job{Name: "reminder-due", DayOfMonth: 20, Hour: 8, Minute: 0, Run: func() {
 			period := billing.CurrentPeriod(time.Now().In(loc))
 			n, err := billing.RemindDue(context.Background(), pool, notifier, period,
-				"Tagihan jatuh tempo hari ini", "Pengingat final:")
+				"Tagihan jatuh tempo hari ini", "Pengingat final:", cfg.PublicBaseURL)
 			if err != nil {
 				log.Printf("[cron] reminder-due: %v", err)
 				return
@@ -141,7 +141,7 @@ func main() {
 			if period == "" {
 				period = billing.CurrentPeriod(time.Now().In(loc))
 			}
-			res, err := billing.GenerateMonthly(r.Context(), pool, period, notifier)
+			res, err := billing.GenerateMonthly(r.Context(), pool, period, notifier, cfg.PublicBaseURL)
 			if err != nil {
 				httpx.Error(w, http.StatusBadRequest, err.Error())
 				return
@@ -182,7 +182,7 @@ func main() {
 				return
 			}
 			changed, err := billing.IsolateOne(r.Context(), pool, net, notifier, id,
-				auth.FromContext(r.Context()).Sub)
+				auth.FromContext(r.Context()).Sub, cfg.PublicBaseURL)
 			if err != nil {
 				httpx.Error(w, http.StatusInternalServerError, "isolate_failed")
 				return

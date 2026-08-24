@@ -14,13 +14,7 @@ export type AdminClaims = {
   role: 'superadmin' | 'cs'
 }
 
-export type CustomerClaims = {
-  type: 'customer'
-  sub: number
-  email: string
-}
-
-export type Claims = AdminClaims | CustomerClaims
+export type Claims = AdminClaims
 
 export function sign(claims: Claims): string {
   return jwt.sign(claims, SECRET, { expiresIn: EXPIRES_IN })

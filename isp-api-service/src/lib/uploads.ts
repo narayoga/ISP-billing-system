@@ -21,7 +21,10 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const ext = ALLOWED.get(file.mimetype) ?? 'bin'
     const rand = Math.round(Math.random() * 1e6)
-    cb(null, `inv${req.params.id}-${Date.now()}-${rand}.${ext}`)
+    // invoiceAccess diisi middleware invoiceTokenRequired yang berjalan
+    // sebelum multer, sehingga id invoice sudah diketahui di sini.
+    const invoiceId = req.invoiceAccess?.invoiceId ?? 'x'
+    cb(null, `inv${invoiceId}-${Date.now()}-${rand}.${ext}`)
   },
 })
 

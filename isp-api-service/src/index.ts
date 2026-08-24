@@ -9,7 +9,7 @@ import { authRouter } from './routes/auth.js'
 import { packagesRouter } from './routes/packages.js'
 import { customersRouter } from './routes/customers.js'
 import { invoicesRouter } from './routes/invoices.js'
-import { meRouter } from './routes/me.js'
+import { publicRouter } from './routes/public.js'
 import { paymentsRouter } from './routes/payments.js'
 import { auditRouter } from './routes/audit.js'
 import { statsRouter } from './routes/stats.js'
@@ -48,7 +48,7 @@ app.use('/auth', authRouter)
 app.use('/packages', packagesRouter)
 app.use('/customers', customersRouter)
 app.use('/invoices', invoicesRouter)
-app.use('/me', meRouter)
+app.use('/public', publicRouter)
 app.use('/payments', paymentsRouter)
 app.use('/audit-log', auditRouter)
 app.use('/stats', statsRouter)

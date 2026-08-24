@@ -1,16 +1,21 @@
 openapi: 3.1.0
 info:
   title: ISP Management System API
-  version: 1.0.0
+  version: 3.0.0
   description: |
-    Kontrak API untuk Sistem Manajemen Terintegrasi ISP (MVP).
-    Source of truth untuk komunikasi antara FE (portal pelanggan + dashboard admin)
-    dan BE (isp-api-service :8080, isp-billing-service :8081).
+    Kontrak API untuk Sistem Manajemen Terintegrasi ISP — mengikuti PRD v3.0.
+    Source of truth untuk komunikasi antara FE (dashboard admin + halaman tagihan
+    publik) dan BE (isp-api-service :8090, isp-billing-service :8081).
+
+    Perubahan utama dari v1.0.0 (PRD v2.0): pelanggan TIDAK lagi punya akun.
+    Endpoint login/set-password pelanggan dan /me/* dihapus, digantikan
+    /public/invoice/{token} yang diakses lewat tautan bertoken per invoice.
+
     Endpoint pada path /billing/*, /internal/*, /webhook/*, /customers/status
-    dilayani oleh isp-billing-service (:8081); sisanya oleh isp-api-service (:8080).
+    dilayani oleh isp-billing-service (:8081); sisanya oleh isp-api-service (:8090).
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8090
     description: isp-api-service (dev)
   - url: http://localhost:8081
     description: isp-billing-service (dev)
@@ -131,7 +136,7 @@ paths:
                 items: { $ref: '#/components/schemas/Customer' }
     post:
       tags: [customers]
-      summary: Buat pelanggan + kirim magic link onboarding (admin)
+      summary: Buat pelanggan (admin) — tanpa magic link onboarding (PRD v3.0)
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -273,40 +278,40 @@ paths:
                   created: { type: integer }
                   skipped: { type: integer }
 
-  /me/profile:
-    get:
-      tags: [customers]
-      summary: Profil + info layanan pelanggan yang login
-      security: [{ bearerAuth: [] }]
-      responses:
-        '200':
-          description: Profil pelanggan
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Profile' }
-  /me/invoices:
+  /public/invoice/{token}:
     get:
       tags: [invoices]
-      summary: Tagihan pelanggan yang login (terbaru dulu)
-      security: [{ bearerAuth: [] }]
-      responses:
-        '200':
-          description: Daftar tagihan milik pelanggan
-          content:
-            application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/Invoice' }
-  /me/invoices/{id}/proof:
-    post:
-      tags: [payments]
-      summary: Upload bukti transfer (pelanggan)
-      security: [{ bearerAuth: [] }]
+      summary: Halaman tagihan publik — TANPA login (PRD v3.0 US-01)
+      description: >
+        Diakses lewat tautan bertoken yang dikirim via WhatsApp/email.
+        Tidak memerlukan autentikasi: kepemilikan token pada URL yang memberi akses,
+        dan satu token hanya membuka SATU invoice.
+        Data pribadi dibatasi seminimal mungkin (hanya nama pelanggan).
+        Dilindungi rate limit.
       parameters:
-        - name: id
+        - name: token
           in: path
           required: true
-          schema: { type: integer, format: int64 }
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Detail tagihan + info layanan + riwayat 3 periode
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicInvoiceView' }
+        '404': { description: Token tidak ditemukan }
+        '410': { description: Token kedaluwarsa atau sudah dicabut }
+        '429': { description: Terlalu banyak permintaan }
+  /public/invoice/{token}/proof:
+    post:
+      tags: [payments]
+      summary: Upload bukti transfer via tautan bertoken (PRD v3.0 US-02)
+      description: Endpoint publik tanpa autentikasi; dibatasi rate limit yang lebih ketat.
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       requestBody:
         required: true
         content:
@@ -326,10 +331,37 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Payment' }
         '400': { description: File tidak valid / tipe tidak didukung }
-        '404': { $ref: '#/components/responses/NotFound' }
+        '404': { description: Token tidak ditemukan }
         '409': { description: Invoice sudah lunas }
+        '410': { description: Token kedaluwarsa atau sudah dicabut }
         '413': { description: File terlalu besar (maks 2MB) }
+        '429': { description: Terlalu banyak percobaan unggah }
 
+  /invoices/{id}/resend-link:
+    post:
+      tags: [invoices]
+      summary: Kirim ulang tautan tagihan (admin) — PRD v3.0 US-10
+      description: >
+        Menggantikan "kirim ulang magic link" pada PRD v2.0.
+        Token yang sudah ada DIPERPANJANG (bukan diganti), sehingga tautan pada
+        pesan lama tetap berfungsi.
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Tautan dikirim ulang
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  link: { type: string, format: uri }
+        '404': { $ref: '#/components/responses/NotFound' }
   /payments:
     get:
       tags: [payments]
@@ -573,11 +605,18 @@ components:
   schemas:
     Customer:
       type: object
-      required: [id, name, email, address, package_id, pppoe_username, status]
+      required: [id, name, phone, address, package_id, pppoe_username, status]
       properties:
         id: { type: integer, format: int64 }
         name: { type: string }
-        email: { type: string, format: email }
+        phone:
+          type: string
+          description: "Nomor WhatsApp, format internasional tanpa '+' (mis. 628123456789)"
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Opsional sejak PRD v3.0 — kanal pendamping, bukan identitas login
         address: { type: string }
         package_id: { type: integer, format: int64 }
         pppoe_username: { type: string }
@@ -637,27 +676,49 @@ components:
           enum: [online, offline, unknown]
         observed_at: { type: string, format: date-time }
 
-    Profile:
+    PublicInvoiceView:
       type: object
-      required: [id, name, email, address, status, pppoe_username, package]
+      description: >
+        Data halaman tagihan publik. Sengaja minim data pribadi karena halaman
+        ini dapat dibuka siapa pun yang memegang tautan — hanya nama pelanggan
+        yang ditampilkan sebagai penanda identitas; alamat, email, dan nomor
+        telepon TIDAK disertakan.
+      required: [invoice, customer, package, history]
       properties:
-        id: { type: integer, format: int64 }
-        name: { type: string }
-        email: { type: string, format: email }
-        address: { type: string }
-        status:
-          type: string
-          enum: [pending_provisioning, active, overdue, isolated, inactive]
-        pppoe_username: { type: string }
+        invoice:
+          type: object
+          required: [id, period, amount, due_date, status]
+          properties:
+            id: { type: integer, format: int64 }
+            period: { type: string, description: "YYYY-MM" }
+            amount: { type: integer }
+            due_date: { type: string, format: date }
+            status:
+              type: string
+              enum: [unpaid, awaiting_verification, paid, overdue]
+        customer:
+          type: object
+          required: [name]
+          properties:
+            name: { type: string }
         package:
           type: object
           properties:
-            id: { type: integer, format: int64 }
             name: { type: string }
             speed_mbps: { type: integer }
             quota_gb: { type: integer, nullable: true }
             fup_mbps: { type: integer, nullable: true }
-            price: { type: integer }
+        history:
+          type: array
+          description: Hingga 3 periode sebelumnya (US-01 AC2)
+          items:
+            type: object
+            properties:
+              period: { type: string }
+              amount: { type: integer }
+              status:
+                type: string
+                enum: [unpaid, awaiting_verification, paid, overdue]
 
     PackageInput:
       type: object
@@ -672,10 +733,19 @@ components:
 
     CustomerInput:
       type: object
-      required: [name, email, address, package_id, pppoe_username]
+      required: [name, phone, address, package_id, pppoe_username]
       properties:
         name: { type: string, maxLength: 150 }
-        email: { type: string, format: email }
+        phone:
+          type: string
+          description: >
+            Nomor WhatsApp. Boleh dikirim dalam format lokal (08xx) — server
+            menormalkannya ke format internasional (628xx) sebelum disimpan.
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Opsional sejak PRD v3.0
         address: { type: string }
         package_id: { type: integer, format: int64 }
         pppoe_username: { type: string, maxLength: 100 }

@@ -22,3 +22,25 @@ export const emailLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
 })
+
+/**
+ * Limit untuk halaman tagihan publik (PRD v3.0 US-02 AC5).
+ * Endpoint ini tanpa autentikasi, jadi rate limit adalah pertahanan utama
+ * terhadap penebakan token maupun penyalahgunaan.
+ */
+export const publicLimiter = rateLimit({
+  windowMs: Number(process.env.PUBLIC_RATE_WINDOW_MS ?? 15 * 60 * 1000),
+  limit: Number(process.env.PUBLIC_RATE_MAX ?? 100),
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+})
+
+/** Limit khusus unggah bukti — lebih ketat karena menulis file ke disk. */
+export const uploadLimiter = rateLimit({
+  windowMs: Number(process.env.UPLOAD_RATE_WINDOW_MS ?? 60 * 60 * 1000),
+  limit: Number(process.env.UPLOAD_RATE_MAX ?? 10),
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'too_many_uploads' },
+})

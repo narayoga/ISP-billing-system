@@ -1,0 +1,3 @@
+ALTER TABLE customers ALTER COLUMN email SET NOT NULL;
+ALTER TABLE customers DROP COLUMN IF EXISTS phone;
+DROP TABLE IF EXISTS invoice_access_tokens;

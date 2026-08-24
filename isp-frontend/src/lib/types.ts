@@ -18,7 +18,10 @@ export type CustomerStatus =
 export type Customer = {
   id: number
   name: string
-  email: string
+  /** Nomor WhatsApp format internasional (mis. 628123456789) — wajib sejak PRD v3.0. */
+  phone: string
+  /** Opsional sejak PRD v3.0 (kanal pendamping). */
+  email: string | null
   address: string
   package_id: number
   pppoe_username: string
@@ -27,6 +30,25 @@ export type Customer = {
   status: CustomerStatus
   created_at: string
   package_name?: string | null
+}
+
+/** Data halaman tagihan publik (PRD v3.0) — sengaja minim data pribadi. */
+export type PublicInvoiceView = {
+  invoice: {
+    id: number
+    period: string
+    amount: number
+    due_date: string
+    status: InvoiceStatus
+  }
+  customer: { name: string }
+  package: {
+    name: string
+    speed_mbps: number
+    quota_gb: number | null
+    fup_mbps: number | null
+  }
+  history: { period: string; amount: number; status: InvoiceStatus }[]
 }
 
 export type Profile = {

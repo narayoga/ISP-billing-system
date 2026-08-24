@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { billingApi, ApiError } from '../../../lib/api'
+import { api, billingApi, ApiError } from '../../../lib/api'
 import { useFetch } from '../../../lib/useFetch'
 import { useAuth } from '../../../lib/auth'
 import type { Invoice } from '../../../lib/types'
@@ -14,6 +14,21 @@ export default function InvoicesList() {
   const { data, error, loading, reload } = useFetch<Invoice[]>(path)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
+
+  // US-10: kirim ulang tautan tagihan. Token yang ada diperpanjang, bukan diganti,
+  // sehingga tautan pada pesan lama tetap berfungsi.
+  async function resendLink(invoiceId: number) {
+    setBusy(true)
+    setMsg(null)
+    try {
+      await api(`/invoices/${invoiceId}/resend-link`, { method: 'POST' })
+      setMsg('Tautan tagihan dikirim ulang ke pelanggan.')
+    } catch (e) {
+      setMsg(e instanceof ApiError ? `Gagal kirim ulang (${e.message}).` : 'Gagal kirim ulang.')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   async function generate() {
     setBusy(true)
@@ -72,12 +87,13 @@ export default function InvoicesList() {
                 <th className="px-4 py-3 font-medium">Nominal</th>
                 <th className="px-4 py-3 font-medium">Jatuh Tempo</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
               {data.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
+                  <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
                     Belum ada tagihan.
                   </td>
                 </tr>
@@ -94,6 +110,15 @@ export default function InvoicesList() {
                     <td className="px-4 py-3 text-slate-600">{formatDate(inv.due_date)}</td>
                     <td className="px-4 py-3">
                       <Badge color={st.color}>{st.label}</Badge>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button
+                        variant="secondary"
+                        disabled={busy}
+                        onClick={() => resendLink(inv.id)}
+                      >
+                        Kirim Ulang Tautan
+                      </Button>
                     </td>
                   </tr>
                 )

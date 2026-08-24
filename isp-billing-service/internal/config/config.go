@@ -4,11 +4,12 @@ import "os"
 
 // Config menampung seluruh env var yang dipakai service.
 type Config struct {
-	Port        string
-	DatabaseURL string
-	JWTSecret   string // dibagi dengan isp-api-service untuk verifikasi JWT admin
-	CORSOrigins string
-	RedisURL    string
+	Port          string
+	DatabaseURL   string
+	JWTSecret     string // dibagi dengan isp-api-service untuk verifikasi JWT admin
+	CORSOrigins   string
+	PublicBaseURL string // dasar URL tautan tagihan publik (PRD v3.0)
+	RedisURL      string
 
 	SMTPHost   string
 	SMTPPort   string
@@ -29,16 +30,17 @@ type Config struct {
 
 func Load() Config {
 	return Config{
-		Port:        env("PORT", "8081"),
-		DatabaseURL: os.Getenv("DATABASE_URL"),
-		JWTSecret:   os.Getenv("JWT_SECRET"),
-		CORSOrigins: env("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174"),
-		RedisURL:    os.Getenv("REDIS_URL"),
+		Port:          env("PORT", "8081"),
+		DatabaseURL:   os.Getenv("DATABASE_URL"),
+		JWTSecret:     os.Getenv("JWT_SECRET"),
+		CORSOrigins:   env("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174"),
+		PublicBaseURL: env("PUBLIC_BASE_URL", "http://localhost:5173"),
+		RedisURL:      os.Getenv("REDIS_URL"),
 
-		SMTPHost:  os.Getenv("SMTP_HOST"),
-		SMTPPort:  env("SMTP_PORT", "2525"),
-		SMTPUser:  os.Getenv("SMTP_USER"),
-		SMTPPass:  os.Getenv("SMTP_PASS"),
+		SMTPHost:   os.Getenv("SMTP_HOST"),
+		SMTPPort:   env("SMTP_PORT", "2525"),
+		SMTPUser:   os.Getenv("SMTP_USER"),
+		SMTPPass:   os.Getenv("SMTP_PASS"),
 		EmailFrom:  env("EMAIL_FROM", "ISP <no-reply@isp.local>"),
 		AlertEmail: os.Getenv("ALERT_EMAIL"),
 

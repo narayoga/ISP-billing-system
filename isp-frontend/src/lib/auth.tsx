@@ -15,14 +15,13 @@ export type AdminAuth = {
   email: string
   role: 'superadmin' | 'cs'
 }
-export type CustomerAuth = { type: 'customer'; sub: number; email: string }
-export type Auth = AdminAuth | CustomerAuth
+// PRD v3.0: hanya admin yang memiliki akun & sesi login.
+export type Auth = AdminAuth
 
 type Ctx = {
   auth: Auth | null
   ready: boolean
   loginAdmin: (email: string, password: string) => Promise<void>
-  loginCustomer: (email: string, password: string) => Promise<void>
   logout: () => void
 }
 
@@ -74,26 +73,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const loginCustomer = useCallback(async (email: string, password: string) => {
-    const res = await api<{
-      token: string
-      user: { id: number; email: string }
-    }>('/auth/customer/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    })
-    setToken(res.token)
-    setAuth({ type: 'customer', sub: res.user.id, email: res.user.email })
-  }, [])
-
   const logout = useCallback(() => {
     setToken(null)
     setAuth(null)
   }, [])
 
   const value = useMemo<Ctx>(
-    () => ({ auth, ready, loginAdmin, loginCustomer, logout }),
-    [auth, ready, loginAdmin, loginCustomer, logout],
+    () => ({ auth, ready, loginAdmin, logout }),
+    [auth, ready, loginAdmin, logout],
   )
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>

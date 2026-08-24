@@ -51,6 +51,17 @@ export async function apiUpload<T = unknown>(path: string, form: FormData): Prom
   return handle<T>(res)
 }
 
+/**
+ * Unggah multipart ke endpoint PUBLIK (halaman tagihan bertoken).
+ *
+ * Sengaja TIDAK melampirkan token admin: akses ditentukan token pada URL, dan
+ * kredensial admin tidak boleh bocor ke rute publik.
+ */
+export async function publicUpload<T = unknown>(path: string, form: FormData): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, { method: 'POST', body: form })
+  return handle<T>(res)
+}
+
 /** Ambil file (mis. bukti transfer) sebagai object URL — untuk ditampilkan di viewer. */
 export async function apiBlob(path: string): Promise<{ url: string; type: string }> {
   const headers = new Headers()

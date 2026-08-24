@@ -11,7 +11,8 @@ const ACTION_LABEL: Record<string, string> = {
   isolate_customer: 'Isolir pelanggan',
   reactivate_customer: 'Buka isolir',
   change_package: 'Perubahan paket',
-  resend_magic_link: 'Kirim ulang magic link',
+  resend_magic_link: 'Kirim ulang magic link (lama)',
+  resend_invoice_link: 'Kirim ulang tautan tagihan',
 }
 
 export default function AuditLog() {

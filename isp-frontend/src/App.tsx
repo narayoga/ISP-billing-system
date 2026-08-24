@@ -2,9 +2,11 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './lib/auth'
 
-const Landing = lazy(() => import('./routes/Landing'))
-const CustomerRoutes = lazy(() => import('./routes/customer'))
+// PRD v3.0: aplikasi terdiri dari dashboard admin (terlindungi JWT) dan
+// halaman tagihan publik bertoken. Tidak ada lagi portal pelanggan berbasis
+// login, sehingga halaman landing pemilih portal juga dihapus.
 const AdminRoutes = lazy(() => import('./routes/admin'))
+const PublicInvoice = lazy(() => import('./routes/invoice/PublicInvoice'))
 
 function Loading() {
   return (
@@ -20,10 +22,14 @@ function App() {
       <BrowserRouter>
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/portal/*" element={<CustomerRoutes />} />
+            {/* Halaman tagihan pelanggan — publik, dibuka dari tautan WhatsApp/email */}
+            <Route path="/tagihan/:token" element={<PublicInvoice />} />
+
             <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+
+            {/* Tidak ada halaman publik lain: arahkan ke dashboard admin */}
+            <Route path="/" element={<Navigate to="/admin" replace />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

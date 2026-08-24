@@ -16,6 +16,7 @@ import {
 
 const empty = {
   name: '',
+  phone: '',
   email: '',
   address: '',
   package_id: '',
@@ -43,7 +44,8 @@ export default function CustomerForm() {
           const c = await api<Customer>(`/customers/${id}`)
           setForm({
             name: c.name,
-            email: c.email,
+            phone: c.phone,
+            email: c.email ?? '',
             address: c.address,
             package_id: String(c.package_id),
             pppoe_username: c.pppoe_username,
@@ -66,7 +68,8 @@ export default function CustomerForm() {
     setSubmitting(true)
     const payload = {
       name: form.name,
-      email: form.email,
+      phone: form.phone,
+      email: form.email || null,
       address: form.address,
       package_id: Number(form.package_id),
       pppoe_username: form.pppoe_username,
@@ -87,7 +90,9 @@ export default function CustomerForm() {
     } catch (err) {
       const m =
         err instanceof ApiError
-          ? err.message === 'email_taken'
+          ? err.message === 'validation_failed'
+            ? 'Periksa isian: nomor WhatsApp atau email tidak valid.'
+            : err.message === 'email_taken'
             ? 'Email sudah dipakai pelanggan lain.'
             : err.message === 'pppoe_taken'
               ? 'PPPoE username sudah dipakai.'
@@ -107,7 +112,7 @@ export default function CustomerForm() {
     <div className="max-w-xl">
       <PageHeader
         title={editing ? 'Edit Pelanggan' : 'Pelanggan Baru'}
-        subtitle={editing ? undefined : 'Magic link onboarding dikirim otomatis setelah dibuat.'}
+        subtitle={editing ? undefined : 'Tautan tagihan dikirim otomatis saat tagihan terbit.'}
       />
       <Card className="p-6">
         <form onSubmit={onSubmit} className="space-y-4">
@@ -119,10 +124,20 @@ export default function CustomerForm() {
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </Field>
-          <Field label="Email">
+          <Field
+            label="Nomor WhatsApp"
+            hint="Kanal notifikasi utama. Boleh ditulis 08xx — otomatis diubah ke 62xx."
+          >
+            <TextInput
+              required
+              placeholder="0812-3456-789"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
+          </Field>
+          <Field label="Email" hint="Opsional — kanal pendamping.">
             <TextInput
               type="email"
-              required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />

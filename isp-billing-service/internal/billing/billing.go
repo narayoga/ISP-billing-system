@@ -2,10 +2,12 @@ package billing
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/all-over/isp-billing-service/internal/notify"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -34,6 +36,7 @@ func GenerateMonthly(
 	pool *pgxpool.Pool,
 	period string,
 	n notify.Notifier,
+	publicBaseURL string,
 ) (GenerateResult, error) {
 	due, err := dueDate(period)
 	if err != nil {
@@ -41,8 +44,10 @@ func GenerateMonthly(
 	}
 	dueStr := due.Format("2006-01-02")
 
+	// COALESCE: sejak PRD v3.0 kolom email boleh NULL (kanal pendamping,
+	// bukan identitas login lagi) — tanpa ini Scan akan gagal.
 	rows, err := pool.Query(ctx, `
-		SELECT c.id, c.email, c.name, p.price
+		SELECT c.id, COALESCE(c.email, ''), c.name, p.price
 		FROM customers c
 		JOIN packages p ON p.id = c.package_id
 		WHERE c.status IN ('active','overdue','isolated')
@@ -66,21 +71,31 @@ func GenerateMonthly(
 
 	res := GenerateResult{Period: period}
 	for _, bc := range custs {
-		tag, err := pool.Exec(ctx, `
+		// RETURNING id diperlukan untuk menerbitkan token akses (PRD v3.0 US-04 AC5).
+		// Saat konflik (invoice periode ini sudah ada), ON CONFLICT DO NOTHING tidak
+		// mengembalikan baris → pgx.ErrNoRows. Itulah penanda "dilewati", menggantikan
+		// pengecekan RowsAffected sebelumnya.
+		var invoiceID int64
+		err := pool.QueryRow(ctx, `
 			INSERT INTO invoices (customer_id, period, amount, due_date, status)
 			VALUES ($1, $2, $3, $4, 'unpaid')
-			ON CONFLICT (customer_id, period) DO NOTHING`,
-			bc.id, period, bc.amount, dueStr)
+			ON CONFLICT (customer_id, period) DO NOTHING
+			RETURNING id`,
+			bc.id, period, bc.amount, dueStr).Scan(&invoiceID)
+		if errors.Is(err, pgx.ErrNoRows) {
+			res.Skipped++
+			continue
+		}
 		if err != nil {
 			return res, err
 		}
-		if tag.RowsAffected() == 1 {
-			res.Created++
+		res.Created++
+
+		link := invoiceLink(ctx, pool, publicBaseURL, invoiceID)
+		if bc.email != "" {
 			n.Email(bc.email, "Tagihan bulan ini telah terbit",
-				fmt.Sprintf("Halo %s, tagihan periode %s sebesar Rp%d telah terbit. Jatuh tempo %s.",
-					bc.name, period, bc.amount, dueStr))
-		} else {
-			res.Skipped++
+				fmt.Sprintf("Halo %s, tagihan periode %s sebesar %s telah terbit. Jatuh tempo %s.%s",
+					bc.name, period, formatRupiah(bc.amount), dueStr, ajakanBayar(link)))
 		}
 	}
 	return res, nil

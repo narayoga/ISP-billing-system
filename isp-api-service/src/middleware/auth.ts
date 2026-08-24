@@ -33,10 +33,3 @@ export function requireSuperadmin(req: Request, res: Response, next: NextFunctio
   }
   next()
 }
-
-export function requireCustomer(req: Request, res: Response, next: NextFunction) {
-  if (req.auth?.type !== 'customer') {
-    return res.status(403).json({ error: 'forbidden' })
-  }
-  next()
-}

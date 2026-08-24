@@ -26,6 +26,7 @@ func isolateCustomer(
 	t isolTarget,
 	adminID *int64,
 	trigger string,
+	publicBaseURL string,
 ) error {
 	if err := mikrotik.WithRetry(ctx, func() error { return net.DisablePPPoE(ctx, t.pppoe) }); err != nil {
 		return err
@@ -38,11 +39,17 @@ func isolateCustomer(
 		map[string]any{"pppoe": t.pppoe, "trigger": trigger})
 
 	// Notifikasi isolir (PRD §8: "Mulai terisolir → Email Ya").
+	// Isolir berbasis pelanggan, bukan invoice tertentu — jadi tautan diambil
+	// dari tagihan belum lunas terbaru miliknya.
 	if n != nil && t.email != "" {
+		link := ""
+		if invoiceID, ok := latestOutstandingInvoice(ctx, pool, t.id); ok {
+			link = invoiceLink(ctx, pool, publicBaseURL, invoiceID)
+		}
 		n.Email(t.email, "Layanan internet Anda dinonaktifkan sementara",
-			"Halo "+t.name+", layanan internet Anda kami nonaktifkan sementara karena tagihan "+
-				"belum dibayar. Silakan lakukan pembayaran dan unggah bukti transfer di portal "+
-				"pelanggan agar layanan segera diaktifkan kembali.")
+			"Halo "+t.name+", layanan internet Anda kami nonaktifkan sementara karena "+
+				"tagihan belum dibayar. Layanan akan aktif kembali setelah pembayaran "+
+				"diverifikasi."+ajakanBayar(link))
 	}
 	return nil
 }
@@ -54,9 +61,10 @@ func IsolateOverdue(
 	pool *pgxpool.Pool,
 	net mikrotik.Provider,
 	n notify.Notifier,
+	publicBaseURL string,
 ) (int, error) {
 	rows, err := pool.Query(ctx, `
-		SELECT DISTINCT c.id, c.pppoe_username, c.email, c.name
+		SELECT DISTINCT c.id, c.pppoe_username, COALESCE(c.email, ''), c.name
 		FROM customers c
 		JOIN invoices i ON i.customer_id = c.id
 		WHERE i.status IN ('unpaid','overdue')
@@ -80,7 +88,7 @@ func IsolateOverdue(
 
 	isolated := 0
 	for _, t := range targets {
-		if err := isolateCustomer(ctx, pool, net, n, t, nil, "cron"); err != nil {
+		if err := isolateCustomer(ctx, pool, net, n, t, nil, "cron", publicBaseURL); err != nil {
 			log.Printf("[isolir] gagal isolir customer %d (%s): %v", t.id, t.pppoe, err)
 			// Antrikan untuk dicoba ulang + alert admin (PRD §10).
 			if qErr := EnqueueJob(ctx, pool, t.id, "isolate", err.Error()); qErr != nil {
@@ -100,18 +108,19 @@ func IsolateOne(
 	net mikrotik.Provider,
 	n notify.Notifier,
 	customerID, adminID int64,
+	publicBaseURL string,
 ) (bool, error) {
 	t := isolTarget{id: customerID}
 	var status string
 	if err := pool.QueryRow(ctx,
-		`SELECT pppoe_username, status, email, name FROM customers WHERE id = $1`, customerID).
+		`SELECT pppoe_username, status, COALESCE(email, ''), name FROM customers WHERE id = $1`, customerID).
 		Scan(&t.pppoe, &status, &t.email, &t.name); err != nil {
 		return false, err
 	}
 	if status == "isolated" || status == "inactive" {
 		return false, nil
 	}
-	if err := isolateCustomer(ctx, pool, net, n, t, &adminID, "manual"); err != nil {
+	if err := isolateCustomer(ctx, pool, net, n, t, &adminID, "manual", publicBaseURL); err != nil {
 		if qErr := EnqueueJob(ctx, pool, customerID, "isolate", err.Error()); qErr != nil {
 			log.Printf("[isolir] gagal enqueue job customer %d: %v", customerID, qErr)
 		}

@@ -17,13 +17,13 @@ import (
 // Usage:
 //   go run ./cmd/migrate up         # apply semua migrasi pending
 //   go run ./cmd/migrate down       # rollback semua migrasi
-//   go run ./cmd/migrate steps -n=1 # rollback 1 step
+//   go run ./cmd/migrate -n=-1 steps  # rollback 1 step (flag WAJIB sebelum perintah)
 //   go run ./cmd/migrate version    # tampilkan versi saat ini
 func main() {
 	dir := flag.String("dir", "migrations", "folder migrasi")
 	n := flag.Int("n", 0, "jumlah step (untuk perintah steps)")
 	flag.Usage = func() {
-		log.Println("usage: migrate <up|down|steps|version|force> [-dir=...] [-n=...]")
+		log.Println("usage: migrate [-dir=...] [-n=...] <up|down|steps|version|force>  (flag harus mendahului perintah)")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
