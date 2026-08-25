@@ -14,6 +14,7 @@ type isolTarget struct {
 	id    int64
 	pppoe string
 	email string
+	phone string
 	name  string
 }
 
@@ -38,15 +39,16 @@ func isolateCustomer(
 	_ = audit.Write(ctx, pool, adminID, "isolate_customer", "customer", &t.id,
 		map[string]any{"pppoe": t.pppoe, "trigger": trigger})
 
-	// Notifikasi isolir (PRD §8: "Mulai terisolir → Email Ya").
+	// Notifikasi isolir via WhatsApp + email (PRD v3.0 §8).
 	// Isolir berbasis pelanggan, bukan invoice tertentu — jadi tautan diambil
 	// dari tagihan belum lunas terbaru miliknya.
-	if n != nil && t.email != "" {
+	if n != nil {
 		link := ""
 		if invoiceID, ok := latestOutstandingInvoice(ctx, pool, t.id); ok {
 			link = invoiceLink(ctx, pool, publicBaseURL, invoiceID)
 		}
-		n.Email(t.email, "Layanan internet Anda dinonaktifkan sementara",
+		n.Notify(notify.Recipient{Email: t.email, Phone: t.phone},
+			"Layanan internet Anda dinonaktifkan sementara",
 			"Halo "+t.name+", layanan internet Anda kami nonaktifkan sementara karena "+
 				"tagihan belum dibayar. Layanan akan aktif kembali setelah pembayaran "+
 				"diverifikasi."+ajakanBayar(link))
@@ -64,7 +66,7 @@ func IsolateOverdue(
 	publicBaseURL string,
 ) (int, error) {
 	rows, err := pool.Query(ctx, `
-		SELECT DISTINCT c.id, c.pppoe_username, COALESCE(c.email, ''), c.name
+		SELECT DISTINCT c.id, c.pppoe_username, COALESCE(c.email, ''), c.phone, c.name
 		FROM customers c
 		JOIN invoices i ON i.customer_id = c.id
 		WHERE i.status IN ('unpaid','overdue')
@@ -75,7 +77,7 @@ func IsolateOverdue(
 	var targets []isolTarget
 	for rows.Next() {
 		var t isolTarget
-		if err := rows.Scan(&t.id, &t.pppoe, &t.email, &t.name); err != nil {
+		if err := rows.Scan(&t.id, &t.pppoe, &t.email, &t.phone, &t.name); err != nil {
 			rows.Close()
 			return 0, err
 		}
@@ -113,8 +115,8 @@ func IsolateOne(
 	t := isolTarget{id: customerID}
 	var status string
 	if err := pool.QueryRow(ctx,
-		`SELECT pppoe_username, status, COALESCE(email, ''), name FROM customers WHERE id = $1`, customerID).
-		Scan(&t.pppoe, &status, &t.email, &t.name); err != nil {
+		`SELECT pppoe_username, status, COALESCE(email, ''), phone, name FROM customers WHERE id = $1`, customerID).
+		Scan(&t.pppoe, &status, &t.email, &t.phone, &t.name); err != nil {
 		return false, err
 	}
 	if status == "isolated" || status == "inactive" {

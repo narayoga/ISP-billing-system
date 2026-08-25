@@ -20,7 +20,7 @@ func RemindDue(
 	// i.id diperlukan untuk menerbitkan/memperpanjang token tautan tagihan.
 	// COALESCE email: sejak PRD v3.0 kolom itu boleh NULL.
 	rows, err := pool.Query(ctx, `
-		SELECT i.id, COALESCE(c.email, ''), c.name, i.amount, i.due_date::text
+		SELECT i.id, COALESCE(c.email, ''), c.phone, c.name, i.amount, i.due_date::text
 		FROM invoices i
 		JOIN customers c ON c.id = i.customer_id
 		WHERE i.period = $1 AND i.status IN ('unpaid','overdue')`, period)
@@ -28,14 +28,14 @@ func RemindDue(
 		return 0, err
 	}
 	type target struct {
-		invoiceID        int64
-		email, name, due string
-		amount           int64
+		invoiceID               int64
+		email, phone, name, due string
+		amount                  int64
 	}
 	var targets []target
 	for rows.Next() {
 		var t target
-		if err := rows.Scan(&t.invoiceID, &t.email, &t.name, &t.amount, &t.due); err != nil {
+		if err := rows.Scan(&t.invoiceID, &t.email, &t.phone, &t.name, &t.amount, &t.due); err != nil {
 			rows.Close()
 			return 0, err
 		}
@@ -48,10 +48,7 @@ func RemindDue(
 
 	for _, t := range targets {
 		link := invoiceLink(ctx, pool, publicBaseURL, t.invoiceID)
-		if t.email == "" {
-			continue
-		}
-		n.Email(t.email, subject,
+		n.Notify(notify.Recipient{Email: t.email, Phone: t.phone}, subject,
 			fmt.Sprintf("%s Halo %s, tagihan periode %s sebesar %s jatuh tempo %s.%s",
 				prefix, t.name, period, formatRupiah(t.amount), t.due, ajakanBayar(link)))
 	}

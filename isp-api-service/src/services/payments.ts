@@ -90,7 +90,8 @@ export async function getProofPath(id: number): Promise<string | null> {
 export type ApproveResult = {
   customerId: number
   fullyPaid: boolean
-  customerEmail: string
+  customerEmail: string | null
+  customerPhone: string
   customerName: string
   period: string
   amount: number
@@ -105,13 +106,14 @@ export async function approve(paymentId: number, adminId: number): Promise<Appro
       status: string
       invoice_id: number
       customer_id: number
-      email: string
+      email: string | null
+      phone: string
       name: string
       period: string
       amount: number
     }>(
       `SELECT p.status, p.invoice_id, i.customer_id, i.period, i.amount,
-              c.email, c.name
+              c.email, c.phone, c.name
        FROM payments p
        JOIN invoices i ON i.id = p.invoice_id
        JOIN customers c ON c.id = i.customer_id
@@ -119,7 +121,7 @@ export async function approve(paymentId: number, adminId: number): Promise<Appro
       [paymentId],
     )
     if (row.rowCount === 0) throw new HttpError(404, 'payment_not_found')
-    const { status, invoice_id, customer_id, email, name, period, amount } = row.rows[0]!
+    const { status, invoice_id, customer_id, email, phone, name, period, amount } = row.rows[0]!
     if (status !== 'pending') throw new HttpError(409, 'already_processed')
 
     await client.query(
@@ -158,6 +160,7 @@ export async function approve(paymentId: number, adminId: number): Promise<Appro
       customerId: customer_id,
       fullyPaid,
       customerEmail: email,
+      customerPhone: phone,
       customerName: name,
       period,
       amount,
@@ -170,7 +173,7 @@ export async function approve(paymentId: number, adminId: number): Promise<Appro
   }
 }
 
-export type RejectResult = { customerEmail: string }
+export type RejectResult = { invoiceId: number; customerEmail: string | null; customerPhone: string }
 
 /** Reject (US-05 AC3): payment→rejected, invoice→unpaid, audit. */
 export async function reject(
@@ -181,8 +184,8 @@ export async function reject(
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const row = await client.query<{ status: string; invoice_id: number; email: string }>(
-      `SELECT p.status, p.invoice_id, c.email
+    const row = await client.query<{ status: string; invoice_id: number; email: string | null; phone: string }>(
+      `SELECT p.status, p.invoice_id, c.email, c.phone
        FROM payments p
        JOIN invoices i ON i.id = p.invoice_id
        JOIN customers c ON c.id = i.customer_id
@@ -190,7 +193,7 @@ export async function reject(
       [paymentId],
     )
     if (row.rowCount === 0) throw new HttpError(404, 'payment_not_found')
-    const { status, invoice_id, email } = row.rows[0]!
+    const { status, invoice_id, email, phone } = row.rows[0]!
     if (status !== 'pending') throw new HttpError(409, 'already_processed')
 
     await client.query(
@@ -206,7 +209,7 @@ export async function reject(
       reason,
     })
     await client.query('COMMIT')
-    return { customerEmail: email }
+    return { invoiceId: invoice_id, customerEmail: email, customerPhone: phone }
   } catch (e) {
     await client.query('ROLLBACK').catch(() => {})
     throw e

@@ -92,6 +92,49 @@ Catatan penting:
   agar tidak hilang saat container di-recreate.
 - Image: frontend ±74MB (nginx), billing ±58MB (Go static), api ±354MB (Node).
 
+## Notifikasi WhatsApp (Wablas)
+
+Kanal notifikasi utama sejak PRD v3.0; email menjadi pendamping.
+
+**Konfigurasi** (di `.env` kedua backend):
+
+```
+WABLAS_BASE_URL=https://smg.wablas.com
+WABLAS_TOKEN=<token dari dashboard Wablas>
+WABLAS_SECRET=<secret key>
+```
+
+Kosongkan `WABLAS_TOKEN` untuk menonaktifkan kanal WhatsApp (email tetap jalan).
+
+**Kontrak API** (terverifikasi terhadap `smg.wablas.com`):
+
+```
+POST {base}/api/send-message
+Header : Authorization: {token}.{secret}
+Body   : application/x-www-form-urlencoded — phone, message
+```
+
+Wablas selalu membalas HTTP 200; diterima/ditolak ditentukan field `status` pada body.
+
+> **`status: true` ≠ pesan sudah sampai.** Balasannya berbunyi
+> `"Message is pending and waiting to be processed"` — pesan baru masuk
+> **antrian**. Wablas memprosesnya dengan jeda sesuai setelan `delay_message`
+> pada perangkat (mis. 20 detik/pesan), jadi pengiriman nyata tertunda beberapa
+> detik hingga menit bila antrian panjang. Log aplikasi sengaja berbunyi
+> *"diterima antrian gateway"*, bukan *"terkirim"*, agar tidak menimbulkan rasa
+> aman palsu. Status pengiriman sesungguhnya dilihat di dashboard Wablas
+> (API tidak menyediakan endpoint laporan — sudah dicek).
+
+> **Perangkat harus tersambung.** Bila dashboard Wablas menunjukkan device
+> terputus, API membalas
+> `{"status":false,"message":"device disconnected, need to scan qr code again"}`
+> dan pesan tidak terkirim. Scan ulang QR di dashboard Wablas untuk
+> menyambungkan nomor pengirim.
+
+Nomor pelanggan disimpan dalam format internasional tanpa `+` (mis.
+`628123456789`). Form admin menerima format lokal (`08xx`) dan menormalkannya
+otomatis.
+
 ## Setup pertama kali
 
 1. **Salin `.env`** di tiap service dari `.env.example`, lalu isi password DB di

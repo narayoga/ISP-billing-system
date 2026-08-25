@@ -16,18 +16,21 @@ func NewSMTP(host, port, username, password, from string) SMTPNotifier {
 	return SMTPNotifier{host: host, port: port, username: username, password: password, from: from}
 }
 
-func (s SMTPNotifier) Email(to, subject, body string) {
+func (s SMTPNotifier) Notify(to Recipient, subject, body string) {
+	if to.Email == "" {
+		return
+	}
 	addr := s.host + ":" + s.port
 	var auth smtp.Auth
 	if s.username != "" {
 		auth = smtp.PlainAuth("", s.username, s.password, s.host)
 	}
-	msg := buildMessage(s.from, to, subject, body)
-	if err := smtp.SendMail(addr, auth, extractAddr(s.from), []string{to}, msg); err != nil {
-		log.Printf("[smtp] gagal kirim ke %s: %v", to, err)
+	msg := buildMessage(s.from, to.Email, subject, body)
+	if err := smtp.SendMail(addr, auth, extractAddr(s.from), []string{to.Email}, msg); err != nil {
+		log.Printf("[smtp] gagal kirim ke %s: %v", to.Email, err)
 		return
 	}
-	log.Printf("[smtp] email terkirim ke %s (%q)", to, subject)
+	log.Printf("[smtp] email terkirim ke %s (%q)", to.Email, subject)
 }
 
 func buildMessage(from, to, subject, body string) []byte {

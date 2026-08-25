@@ -3,7 +3,7 @@ import { authRequired, requireAdmin } from '../middleware/auth.js'
 import { emailLimiter } from '../middleware/rateLimit.js'
 import { HttpError } from '../middleware/error.js'
 import { writeAudit } from '../lib/audit.js'
-import { sendNotification } from '../lib/mailer.js'
+import { notifyCustomer } from '../lib/notify.js'
 import { pool } from '../db/pool.js'
 import { issueToken, invoiceUrl } from '../services/invoiceTokens.js'
 import * as invoices from '../services/invoices.js'
@@ -52,8 +52,9 @@ invoicesRouter.post('/:id/resend-link', emailLimiter, async (req, res, next) => 
       due_date: string
       name: string
       email: string | null
+      phone: string
     }>(
-      `SELECT i.period, i.amount, i.due_date, c.name, c.email
+      `SELECT i.period, i.amount, i.due_date, c.name, c.email, c.phone
        FROM invoices i JOIN customers c ON c.id = i.customer_id
        WHERE i.id = $1`,
       [id],
@@ -64,17 +65,16 @@ invoicesRouter.post('/:id/resend-link', emailLimiter, async (req, res, next) => 
     const token = await issueToken(id)
     const link = invoiceUrl(token)
 
-    if (inv.email) {
-      await sendNotification(
-        inv.email,
-        `Tagihan periode ${inv.period}`,
-        `Halo ${inv.name}, berikut tautan tagihan periode ${inv.period} sebesar ` +
-          `Rp${inv.amount.toLocaleString('id-ID')} (jatuh tempo ${inv.due_date}). ` +
-          `Lihat tagihan dan unggah bukti transfer di: ${link}`,
-      )
-    }
+    await notifyCustomer(
+      { phone: inv.phone, email: inv.email },
+      `Tagihan periode ${inv.period}`,
+      `Halo ${inv.name}, berikut tautan tagihan periode ${inv.period} sebesar ` +
+        `Rp${inv.amount.toLocaleString('id-ID')} (jatuh tempo ${inv.due_date}). ` +
+        `Lihat tagihan dan unggah bukti transfer di: ${link}`,
+    )
     await writeAudit(pool, req.auth!.sub, 'resend_invoice_link', 'invoice', id, {
       period: inv.period,
+      sent_wa: Boolean(inv.phone),
       sent_email: Boolean(inv.email),
     })
     res.json({ ok: true, link })

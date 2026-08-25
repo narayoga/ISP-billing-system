@@ -5,7 +5,8 @@ import { z } from 'zod'
 import { authRequired, requireAdmin } from '../middleware/auth.js'
 import { HttpError } from '../middleware/error.js'
 import { uploadDirAbs } from '../lib/uploads.js'
-import { sendNotification } from '../lib/mailer.js'
+import { notifyCustomer } from '../lib/notify.js'
+import { issueToken, invoiceUrl } from '../services/invoiceTokens.js'
 import { reactivateCustomer } from '../lib/billingClient.js'
 import * as payments from '../services/payments.js'
 
@@ -52,9 +53,9 @@ paymentsRouter.post('/:id/approve', async (req, res, next) => {
     if (result.fullyPaid) {
       void reactivateCustomer(result.customerId)
     }
-    // Notifikasi pembayaran disetujui (PRD §8).
-    await sendNotification(
-      result.customerEmail,
+    // Notifikasi pembayaran disetujui via WhatsApp + email (PRD v3.0 §8).
+    await notifyCustomer(
+      { phone: result.customerPhone, email: result.customerEmail },
       'Pembayaran Anda telah disetujui',
       `Halo ${result.customerName}, pembayaran tagihan periode ${result.period} sebesar ` +
         `Rp${result.amount.toLocaleString('id-ID')} telah kami verifikasi. Tagihan berstatus LUNAS.` +
@@ -71,11 +72,18 @@ const rejectSchema = z.object({ reason: z.string().min(1).max(500) })
 paymentsRouter.post('/:id/reject', async (req, res, next) => {
   try {
     const { reason } = rejectSchema.parse(req.body)
-    const { customerEmail } = await payments.reject(parseId(req.params.id), req.auth!.sub, reason)
-    await sendNotification(
-      customerEmail,
+    const paymentId = parseId(req.params.id)
+    const { invoiceId, customerEmail, customerPhone } = await payments.reject(
+      paymentId,
+      req.auth!.sub,
+      reason,
+    )
+    // Sertakan tautan agar pelanggan bisa langsung unggah ulang (US-05 AC3).
+    const link = invoiceUrl(await issueToken(invoiceId))
+    await notifyCustomer(
+      { phone: customerPhone, email: customerEmail },
       'Bukti pembayaran ditolak',
-      `Bukti pembayaran Anda ditolak: ${reason}. Mohon unggah ulang bukti yang valid.`,
+      `Bukti pembayaran Anda ditolak: ${reason}. Mohon unggah ulang bukti yang valid di: ${link}`,
     )
     res.json({ ok: true })
   } catch (e) {

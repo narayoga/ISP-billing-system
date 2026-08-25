@@ -21,6 +21,7 @@ type GenerateResult struct {
 type billableCustomer struct {
 	id     int64
 	email  string
+	phone  string
 	name   string
 	amount int64
 }
@@ -47,7 +48,7 @@ func GenerateMonthly(
 	// COALESCE: sejak PRD v3.0 kolom email boleh NULL (kanal pendamping,
 	// bukan identitas login lagi) — tanpa ini Scan akan gagal.
 	rows, err := pool.Query(ctx, `
-		SELECT c.id, COALESCE(c.email, ''), c.name, p.price
+		SELECT c.id, COALESCE(c.email, ''), c.phone, c.name, p.price
 		FROM customers c
 		JOIN packages p ON p.id = c.package_id
 		WHERE c.status IN ('active','overdue','isolated')
@@ -58,7 +59,7 @@ func GenerateMonthly(
 	var custs []billableCustomer
 	for rows.Next() {
 		var bc billableCustomer
-		if err := rows.Scan(&bc.id, &bc.email, &bc.name, &bc.amount); err != nil {
+		if err := rows.Scan(&bc.id, &bc.email, &bc.phone, &bc.name, &bc.amount); err != nil {
 			rows.Close()
 			return GenerateResult{}, err
 		}
@@ -92,11 +93,10 @@ func GenerateMonthly(
 		res.Created++
 
 		link := invoiceLink(ctx, pool, publicBaseURL, invoiceID)
-		if bc.email != "" {
-			n.Email(bc.email, "Tagihan bulan ini telah terbit",
-				fmt.Sprintf("Halo %s, tagihan periode %s sebesar %s telah terbit. Jatuh tempo %s.%s",
-					bc.name, period, formatRupiah(bc.amount), dueStr, ajakanBayar(link)))
-		}
+		n.Notify(notify.Recipient{Email: bc.email, Phone: bc.phone},
+			"Tagihan bulan ini telah terbit",
+			fmt.Sprintf("Halo %s, tagihan periode %s sebesar %s telah terbit. Jatuh tempo %s.%s",
+				bc.name, period, formatRupiah(bc.amount), dueStr, ajakanBayar(link)))
 	}
 	return res, nil
 }

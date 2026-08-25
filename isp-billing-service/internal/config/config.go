@@ -18,6 +18,11 @@ type Config struct {
 	EmailFrom  string
 	AlertEmail string // tujuan alert operasional (mis. Mikrotik unreachable)
 
+	// WhatsApp (Wablas) — kanal notifikasi utama PRD v3.0
+	WablasBaseURL string
+	WablasToken   string
+	WablasSecret  string
+
 	WebhookSecret  string // untuk endpoint /webhook/network-status (Fase 7)
 	InternalSecret string // untuk endpoint internal dipanggil isp-api-service (Fase 6)
 
@@ -43,6 +48,10 @@ func Load() Config {
 		SMTPPass:   os.Getenv("SMTP_PASS"),
 		EmailFrom:  env("EMAIL_FROM", "ISP <no-reply@isp.local>"),
 		AlertEmail: os.Getenv("ALERT_EMAIL"),
+
+		WablasBaseURL: env("WABLAS_BASE_URL", "https://smg.wablas.com"),
+		WablasToken:   os.Getenv("WABLAS_TOKEN"),
+		WablasSecret:  os.Getenv("WABLAS_SECRET"),
 
 		WebhookSecret:  os.Getenv("WEBHOOK_SECRET"),
 		InternalSecret: os.Getenv("INTERNAL_SECRET"),

@@ -160,7 +160,10 @@ func alertAdmin(
 	log.Printf("[ALERT] %s", msg)
 	_ = audit.Write(ctx, pool, nil, "network_job_failed", "customer", &j.customerID,
 		map[string]any{"action": j.action, "attempts": attempts, "error": opErr.Error()})
+	// Alert operasional ditujukan ke admin, jadi cukup lewat email —
+	// kanal WhatsApp disediakan untuk pelanggan.
 	if n != nil && adminEmail != "" {
-		n.Email(adminEmail, "[ALERT] Operasi jaringan gagal — perlu tindakan manual", msg)
+		n.Notify(notify.Recipient{Email: adminEmail},
+			"[ALERT] Operasi jaringan gagal — perlu tindakan manual", msg)
 	}
 }
