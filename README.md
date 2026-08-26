@@ -92,6 +92,16 @@ Catatan penting:
   agar tidak hilang saat container di-recreate.
 - Image: frontend ±74MB (nginx), billing ±58MB (Go static), api ±354MB (Node).
 
+## Penyambungan Mikrotik
+
+Isolir otomatis dan indikator status koneksi memerlukan router Mikrotik.
+Panduan pemasangan untuk teknisi jaringan ada di
+**[`docs/mikrotik/README.md`](docs/mikrotik/README.md)**, beserta template
+konfigurasi siap tempel `docs/mikrotik/setup.rsc.example`.
+
+Selama router belum tersedia, set `MIKROTIK_MOCK=true` — seluruh alur billing
+tetap berjalan, hanya isolir yang dicatat ke log tanpa menyentuh perangkat.
+
 ## Notifikasi WhatsApp (Wablas)
 
 Kanal notifikasi utama sejak PRD v3.0; email menjadi pendamping.

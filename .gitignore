@@ -24,3 +24,7 @@ Thumbs.db
 
 # ── Claude Code (pengaturan lokal per-mesin) ─────────────────────
 .claude/settings.local.json
+
+# ── Konfigurasi RouterOS versi terisi (berisi secret) ────────────
+# Templatenya (setup.rsc.example) tetap ter-commit.
+docs/mikrotik/setup.rsc

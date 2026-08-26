@@ -1,0 +1,150 @@
+# =====================================================================
+#  Konfigurasi Mikrotik untuk ISP Billing System
+#  Template — SALIN ke setup.rsc lalu ganti seluruh placeholder <...>
+#
+#  BELUM DIUJI pada perangkat sungguhan. Jalankan per-bagian dan
+#  verifikasi tiap langkah (lihat README.md), jangan diimpor sekaligus
+#  pada router produksi.
+#
+#  Cara pakai setelah diisi:
+#    1. Upload setup.rsc ke router (Files)
+#    2. /import file-name=setup.rsc
+#  Atau salin-tempel per bagian ke terminal.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# PLACEHOLDER yang harus diganti:
+#
+#   <IP_VPS>          IP server tempat isp-billing-service berjalan.
+#                     Pakai IP di dalam VPN bila memakai tunnel.
+#                     Contoh: 10.10.0.1
+#
+#   <PASSWORD_API>    Password user API yang akan dibuat. Bukan password
+#                     admin router. Gunakan yang panjang & acak.
+#
+#   <URL_BILLING>     URL publik isp-billing-service, tanpa garis miring
+#                     di akhir. Contoh: https://billdesk-net.actcomp.online
+#
+#   <WEBHOOK_SECRET>  Harus SAMA PERSIS dengan WEBHOOK_SECRET pada
+#                     .env isp-billing-service.
+#
+#   <NAMA_PROFILE>    Nama PPP profile yang dipakai pelanggan.
+#                     Contoh: paket-20mbps
+# ---------------------------------------------------------------------
+
+
+# =====================================================================
+# BAGIAN 1 — Akses API untuk aplikasi
+# =====================================================================
+# Aplikasi memakai RouterOS API (port 8728) untuk menonaktifkan dan
+# mengaktifkan kembali PPP secret pelanggan.
+
+/ip service enable api
+/ip service set api port=8728
+
+# Batasi API hanya untuk server aplikasi. Tanpa baris ini, port API
+# terbuka bagi siapa pun yang bisa menjangkau router.
+/ip service set api address=<IP_VPS>/32
+
+
+# =====================================================================
+# BAGIAN 2 — User khusus untuk aplikasi
+# =====================================================================
+# Jangan pakai user "admin". Bila kredensial ini bocor, cakupannya
+# terbatas pada operasi PPP saja.
+#
+# policy yang dibutuhkan:
+#   api   → boleh memakai RouterOS API
+#   read  → membaca /ppp/secret dan /ppp/active
+#   write → mengubah disabled=yes/no, memutus sesi aktif
+#   test  → dipakai /tool fetch (pelaporan status)
+
+/user group add name=billing policy=api,read,write,test
+/user add name=billing-api group=billing password=<PASSWORD_API> \
+    comment="Dipakai isp-billing-service untuk isolir/buka isolir"
+
+
+# =====================================================================
+# BAGIAN 3 — Skrip pelaporan status koneksi
+# =====================================================================
+# Router memberi tahu aplikasi siapa yang online/offline. Tanpa ini,
+# indikator koneksi di dashboard admin selalu abu-abu (Unknown).
+#
+# Nama pengguna dikirim lewat variabel global agar skrip on-up/on-down
+# tetap mudah dibaca (menghindari escape tanda kutip bertingkat).
+
+/system script add name=lapor-online policy=read,write,test source={
+    :global ppUser
+    /tool fetch url="<URL_BILLING>/webhook/network-status" \
+        http-method=post \
+        http-header-field="X-Webhook-Secret: <WEBHOOK_SECRET>,Content-Type: application/json" \
+        http-data="{\"pppoe_username\":\"$ppUser\",\"status\":\"alive\"}" \
+        output=none
+}
+
+/system script add name=lapor-offline policy=read,write,test source={
+    :global ppUser
+    /tool fetch url="<URL_BILLING>/webhook/network-status" \
+        http-method=post \
+        http-header-field="X-Webhook-Secret: <WEBHOOK_SECRET>,Content-Type: application/json" \
+        http-data="{\"pppoe_username\":\"$ppUser\",\"status\":\"rto\"}" \
+        output=none
+}
+
+
+# =====================================================================
+# BAGIAN 4 — Panggil skrip saat pelanggan connect / disconnect
+# =====================================================================
+# Ganti <NAMA_PROFILE> dengan profile yang dipakai pelanggan.
+# Bila memakai beberapa profile, ulangi untuk masing-masing.
+
+/ppp profile set [find name="<NAMA_PROFILE>"] \
+    on-up=":global ppUser \$user; /system script run lapor-online" \
+    on-down=":global ppUser \$user; /system script run lapor-offline"
+
+
+# =====================================================================
+# BAGIAN 5 — Heartbeat berkala  (WAJIB, jangan dilewati)
+# =====================================================================
+# Aplikasi menyimpan status koneksi di Redis dengan masa berlaku
+# 60 DETIK. Bila router hanya melapor saat connect/disconnect, maka
+# 60 detik setelah pelanggan connect statusnya berubah menjadi
+# "Unknown" — padahal dia masih online.
+#
+# Skrip ini melaporkan ulang seluruh sesi aktif setiap 30 detik.
+#
+# CATATAN SKALA: satu pelanggan = satu request HTTP. Untuk 100 pelanggan
+# berarti 100 request tiap 30 detik, yang berat bagi router kecil.
+# Bila jumlah pelanggan bertambah banyak, minta pengembang menyediakan
+# endpoint batch, atau perpanjang masa berlaku status di aplikasi.
+
+/system script add name=lapor-semua-aktif policy=read,write,test source={
+    :foreach i in=[/ppp/active/find] do={
+        :local u [/ppp/active/get $i name]
+        /tool fetch url="<URL_BILLING>/webhook/network-status" \
+            http-method=post \
+            http-header-field="X-Webhook-Secret: <WEBHOOK_SECRET>,Content-Type: application/json" \
+            http-data="{\"pppoe_username\":\"$u\",\"status\":\"alive\"}" \
+            output=none
+        :delay 200ms
+    }
+}
+
+/system scheduler add name=heartbeat-status interval=30s \
+    on-event="/system script run lapor-semua-aktif" \
+    comment="Menjaga status koneksi tetap segar (TTL aplikasi 60 detik)"
+
+
+# =====================================================================
+# BAGIAN 6 — Contoh secret pelanggan (rujukan saja, jangan diimpor)
+# =====================================================================
+# PENTING: nilai "name" di bawah harus SAMA PERSIS dengan kolom
+# pppoe_username pada data pelanggan di aplikasi. Beda satu huruf saja
+# membuat isolir gagal.
+#
+# /ppp secret add name=budi01 password=xxxxx service=pppoe profile=<NAMA_PROFILE>
+
+
+# =====================================================================
+# SELESAI — lanjutkan ke urutan verifikasi pada README.md
+# =====================================================================
