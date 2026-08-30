@@ -1,14 +1,27 @@
 # =====================================================================
-# Full stack produksi — semua komponen berjalan sebagai container.
+# Backend produksi untuk VPS.
 #
-#   cp .env.prod.example .env.prod   # lalu isi semua secret
+# Topologi:
+#
+#   Cloudflare (frontend React)  ─── HTTPS ──▶  nginx di VPS
+#                                                  ├─▶ api     :8080  (Node)
+#                                                  └─▶ billing :8081  (Go)
+#                                               jaringan privat Docker:
+#                                                  Postgres · Redis · volume bukti
+#
+# Frontend TIDAK termasuk di sini — di-host Cloudflare (lihat catatan di
+# bawah service `frontend`).
+#
+# Urutan penggunaan:
+#   cp .env.prod.example .env.prod     # lalu isi semua secret
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml build
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing migrate up
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing seed-admin
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
 #
-# CATATAN: URL API di frontend di-bake saat build (Vite). Jika domain berubah,
-# frontend WAJIB di-build ulang, bukan sekadar restart.
+# Port api & billing sengaja terikat ke 127.0.0.1 — hanya dapat dijangkau
+# nginx di host, tidak dari internet. Postgres dan Redis tidak diekspos
+# sama sekali; keduanya hanya hidup di jaringan privat Docker.
 # =====================================================================
 
 services:
@@ -55,7 +68,11 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-12h}
       CORS_ORIGINS: ${CORS_ORIGINS}
-      PORTAL_BASE_URL: ${PORTAL_BASE_URL}
+      # Dasar URL tautan tagihan yang dikirim ke pelanggan (PRD v3.0).
+      # WAJIB diisi domain publik — bila kosong, kode jatuh ke
+      # http://localhost:5173 dan setiap tautan di WhatsApp/email tidak
+      # bisa dibuka pelanggan.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
       BILLING_BASE_URL: http://billing:8081
       INTERNAL_SECRET: ${INTERNAL_SECRET}
       UPLOAD_DIR: /var/lib/isp/uploads
@@ -66,13 +83,21 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-false}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      # WhatsApp (Wablas) — kanal notifikasi utama. Bila WABLAS_TOKEN kosong,
+      # kanal ini mati diam-diam dan notifikasi hanya lewat email.
+      WABLAS_BASE_URL: ${WABLAS_BASE_URL:-https://smg.wablas.com}
+      WABLAS_TOKEN: ${WABLAS_TOKEN}
+      WABLAS_SECRET: ${WABLAS_SECRET}
       TRUST_PROXY: ${TRUST_PROXY:-1}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       NODE_ENV: production
     volumes:
       - uploads-data:/var/lib/isp/uploads
+    # Terikat ke 127.0.0.1 saja: hanya nginx di host yang boleh menjangkau.
+    # Tanpa awalan ini, port terbuka ke seluruh internet dan pengunjung bisa
+    # melewati reverse proxy beserta TLS-nya.
     ports:
-      - "${API_PORT:-8080}:8080"
+      - "127.0.0.1:${API_PORT:-8080}:8080"
 
   billing:
     build:
@@ -87,6 +112,9 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       JWT_SECRET: ${JWT_SECRET}
       CORS_ORIGINS: ${CORS_ORIGINS}
+      # Dipakai menyusun tautan tagihan pada notifikasi cron (terbit,
+      # reminder H-3, jatuh tempo, isolir). Sama nilainya dengan service api.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
       REDIS_URL: redis://redis:6379
       INTERNAL_SECRET: ${INTERNAL_SECRET}
       WEBHOOK_SECRET: ${WEBHOOK_SECRET}
@@ -100,15 +128,35 @@ services:
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      WABLAS_BASE_URL: ${WABLAS_BASE_URL:-https://smg.wablas.com}
+      WABLAS_TOKEN: ${WABLAS_TOKEN}
+      WABLAS_SECRET: ${WABLAS_SECRET}
       ALERT_EMAIL: ${ALERT_EMAIL}
       SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
       SEED_ADMIN_NAME: ${SEED_ADMIN_NAME:-Super Admin}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+    # Sama seperti api: hanya nginx di host yang boleh menjangkau.
+    # Webhook dari Mikrotik pun masuk lewat nginx (HTTPS), bukan langsung
+    # ke port ini.
     ports:
-      - "${BILLING_PORT:-8081}:8081"
+      - "127.0.0.1:${BILLING_PORT:-8081}:8081"
 
+  # ---------------------------------------------------------------------
+  # Frontend TIDAK dijalankan di sini.
+  #
+  # Aplikasi React di-host di Cloudflare (build otomatis dari repo), sehingga
+  # VPS hanya melayani backend. Ini menghemat sumber daya server sekaligus
+  # memanfaatkan CDN Cloudflare untuk aset statis.
+  #
+  # Bila suatu saat ingin menjalankannya sendiri di VPS (mis. Cloudflare
+  # bermasalah), Dockerfile dan nginx.conf di isp-frontend/ masih tersedia dan
+  # sudah teruji build — jalankan dengan profile:
+  #
+  #   docker compose --profile with-frontend ... up -d
+  # ---------------------------------------------------------------------
   frontend:
+    profiles: ["with-frontend"]
     build:
       context: ./isp-frontend
       args:

@@ -28,3 +28,7 @@ Thumbs.db
 # ── Konfigurasi RouterOS versi terisi (berisi secret) ────────────
 # Templatenya (setup.rsc.example) tetap ter-commit.
 docs/mikrotik/setup.rsc
+
+# ── Keluaran generate-secrets (jangan pernah ter-commit) ─────────
+secrets*.txt
+*-secrets.txt

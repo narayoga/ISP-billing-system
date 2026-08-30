@@ -1,0 +1,9 @@
+# SPA fallback untuk Cloudflare Pages.
+#
+# Aplikasi memakai BrowserRouter (react-router). Tanpa baris ini, membuka
+# tautan dalam seperti /tagihan/<token> langsung dari WhatsApp menghasilkan
+# 404 — Cloudflare mencari berkas /tagihan/<token> yang memang tidak ada.
+#
+# Aturan: layani index.html untuk semua path, biarkan router di browser yang
+# menentukan halaman. Status 200 (bukan 301) agar URL asli tetap utuh.
+/*    /index.html   200

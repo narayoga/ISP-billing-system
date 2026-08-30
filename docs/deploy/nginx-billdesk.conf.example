@@ -1,0 +1,129 @@
+# =====================================================================
+#  nginx reverse proxy untuk ISP Billing System (VPS)
+#  Template — SALIN ke /etc/nginx/sites-available/billdesk lalu ganti <...>
+#
+#  Melayani dua subdomain:
+#    <DOMAIN_API>  → isp-api-service  (127.0.0.1:8080)
+#    <DOMAIN_NET>  → isp-billing-svc  (127.0.0.1:8081)
+#
+#  Frontend TIDAK di sini — di-host Cloudflare.
+#
+#  Pemasangan:
+#    sudo cp billdesk.conf /etc/nginx/sites-available/billdesk
+#    sudo ln -s /etc/nginx/sites-available/billdesk /etc/nginx/sites-enabled/
+#    sudo nginx -t            # wajib lolos sebelum reload
+#    sudo systemctl reload nginx
+#
+#  Sertifikat TLS (jalankan SETELAH DNS mengarah ke VPS):
+#    sudo certbot --nginx -d <DOMAIN_API> -d <DOMAIN_NET>
+#  Certbot akan menambahkan blok listen 443 beserta path sertifikat
+#  secara otomatis.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# PLACEHOLDER:
+#   <DOMAIN_API>       mis. billdesk-api.actcomp.online
+#   <DOMAIN_NET>       mis. billdesk-net.actcomp.online
+#   <ORIGIN_FRONTEND>  mis. https://billdesk.actcomp.online
+# ---------------------------------------------------------------------
+
+
+# =====================================================================
+# isp-api-service — dipakai dashboard admin & halaman tagihan publik
+# =====================================================================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name <DOMAIN_API>;
+
+    # Certbot mengganti blok ini menjadi HTTPS. Sebelum itu, biarkan HTTP
+    # agar verifikasi domain bisa berjalan.
+
+    # Unggah bukti transfer dibatasi 2MB di aplikasi. Beri sedikit kelonggaran
+    # untuk overhead multipart; nginx yang menolak lebih dulu bila kelewat besar.
+    client_max_body_size 4m;
+
+    # Sembunyikan versi nginx dari header respons.
+    server_tokens off;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+
+        # WAJIB: aplikasi memakai rate limit berbasis IP. Tanpa header ini
+        # semua permintaan terlihat berasal dari nginx, sehingga satu
+        # pengunjung nakal bisa memblokir seluruh pelanggan.
+        # Pasangannya: TRUST_PROXY=1 pada .env.prod
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host              $host;
+
+        proxy_connect_timeout 10s;
+        proxy_read_timeout    60s;
+    }
+}
+
+
+# =====================================================================
+# isp-billing-service — generate tagihan, isolir, webhook Mikrotik
+# =====================================================================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name <DOMAIN_NET>;
+
+    client_max_body_size 1m;
+    server_tokens off;
+
+    location / {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host              $host;
+
+        proxy_connect_timeout 10s;
+        proxy_read_timeout    60s;
+    }
+
+    # -----------------------------------------------------------------
+    # Endpoint internal TIDAK boleh dijangkau dari luar.
+    #
+    # /internal/* dipakai isp-api-service untuk meminta pembukaan isolir.
+    # Di dalam Docker, panggilan itu memakai nama service (http://billing:8081)
+    # sehingga tidak pernah melewati nginx — aman untuk diblokir di sini.
+    # -----------------------------------------------------------------
+    location /internal/ {
+        deny all;
+        return 403;
+    }
+}
+
+
+# =====================================================================
+# CATATAN PENTING
+# =====================================================================
+#
+# 1. WEBHOOK MIKROTIK
+#    Router mengirim POST ke <DOMAIN_NET>/webhook/network-status.
+#    Bila subdomain ini diproksi Cloudflare (awan oranye), RouterOS versi
+#    lama kadang gagal memverifikasi sertifikat. Setel subdomain ini
+#    sebagai DNS-only (awan abu-abu) bila webhook bermasalah.
+#
+# 2. CORS
+#    Header CORS diatur oleh aplikasi (variabel CORS_ORIGINS), BUKAN di
+#    nginx. Jangan menambahkan add_header Access-Control-* di sini —
+#    header ganda justru membuat browser menolak permintaan.
+#    Pastikan CORS_ORIGINS berisi <ORIGIN_FRONTEND>.
+#
+# 3. TRUST_PROXY
+#    Setelah nginx terpasang, .env.prod WAJIB memuat TRUST_PROXY=1 agar
+#    rate limit membaca IP asli pengunjung dari X-Forwarded-For.
+#
+# 4. HTTPS WAJIB
+#    Frontend di Cloudflare selalu HTTPS. Bila backend masih HTTP, browser
+#    memblokir seluruh permintaan (mixed content) dan aplikasi tidak dapat
+#    dipakai sama sekali. Jalankan certbot sebelum uji coba.
