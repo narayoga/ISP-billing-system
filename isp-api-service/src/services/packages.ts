@@ -8,6 +8,8 @@ export type Package = {
   quota_gb: number | null
   fup_mbps: number | null
   is_active: boolean
+  /** Paket bertarif negosiasi: nominal diambil dari customers.custom_price. */
+  is_custom_price: boolean
 }
 
 export type PackageInput = {
@@ -17,9 +19,10 @@ export type PackageInput = {
   quota_gb: number | null
   fup_mbps: number | null
   is_active?: boolean
+  is_custom_price?: boolean
 }
 
-const COLS = `id, name, price, speed_mbps, quota_gb, fup_mbps, is_active`
+const COLS = `id, name, price, speed_mbps, quota_gb, fup_mbps, is_active, is_custom_price`
 
 export async function listPackages(includeInactive = false): Promise<Package[]> {
   const { rows } = await pool.query<Package>(
@@ -40,10 +43,18 @@ export async function getPackage(id: number): Promise<Package | null> {
 
 export async function createPackage(input: PackageInput): Promise<Package> {
   const { rows } = await pool.query<Package>(
-    `INSERT INTO packages (name, price, speed_mbps, quota_gb, fup_mbps, is_active)
-     VALUES ($1, $2, $3, $4, $5, COALESCE($6, TRUE))
+    `INSERT INTO packages (name, price, speed_mbps, quota_gb, fup_mbps, is_active, is_custom_price)
+     VALUES ($1, $2, $3, $4, $5, COALESCE($6, TRUE), COALESCE($7, FALSE))
      RETURNING ${COLS}`,
-    [input.name, input.price, input.speed_mbps, input.quota_gb, input.fup_mbps, input.is_active ?? null],
+    [
+      input.name,
+      input.price,
+      input.speed_mbps,
+      input.quota_gb,
+      input.fup_mbps,
+      input.is_active ?? null,
+      input.is_custom_price ?? null,
+    ],
   )
   return rows[0]!
 }
@@ -52,10 +63,20 @@ export async function updatePackage(id: number, input: PackageInput): Promise<Pa
   const { rows } = await pool.query<Package>(
     `UPDATE packages
      SET name = $2, price = $3, speed_mbps = $4, quota_gb = $5, fup_mbps = $6,
-         is_active = COALESCE($7, is_active), updated_at = NOW()
+         is_active = COALESCE($7, is_active),
+         is_custom_price = COALESCE($8, is_custom_price), updated_at = NOW()
      WHERE id = $1
      RETURNING ${COLS}`,
-    [id, input.name, input.price, input.speed_mbps, input.quota_gb, input.fup_mbps, input.is_active ?? null],
+    [
+      id,
+      input.name,
+      input.price,
+      input.speed_mbps,
+      input.quota_gb,
+      input.fup_mbps,
+      input.is_active ?? null,
+      input.is_custom_price ?? null,
+    ],
   )
   return rows[0] ?? null
 }

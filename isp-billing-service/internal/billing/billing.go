@@ -45,10 +45,15 @@ func GenerateMonthly(
 	}
 	dueStr := due.Format("2006-01-02")
 
-	// COALESCE: sejak PRD v3.0 kolom email boleh NULL (kanal pendamping,
+	// COALESCE email: sejak PRD v3.0 kolom email boleh NULL (kanal pendamping,
 	// bukan identitas login lagi) — tanpa ini Scan akan gagal.
+	//
+	// COALESCE harga: paket bertarif negosiasi (packages.is_custom_price) tidak
+	// punya harga tetap — nominalnya diambil dari customers.custom_price yang
+	// disepakati per pelanggan. Paket biasa tetap memakai packages.price.
 	rows, err := pool.Query(ctx, `
-		SELECT c.id, COALESCE(c.email, ''), c.phone, c.name, p.price
+		SELECT c.id, COALESCE(c.email, ''), c.phone, c.name,
+		       COALESCE(c.custom_price, p.price)
 		FROM customers c
 		JOIN packages p ON p.id = c.package_id
 		WHERE c.status IN ('active','overdue','isolated')

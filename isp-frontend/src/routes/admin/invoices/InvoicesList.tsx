@@ -4,7 +4,17 @@ import { useFetch } from '../../../lib/useFetch'
 import { useAuth } from '../../../lib/auth'
 import type { Invoice } from '../../../lib/types'
 import { INVOICE_STATUS, formatDate, formatIDR } from '../../../lib/format'
-import { Badge, Button, Card, ErrorBox, Loading, PageHeader, Select } from '../../../components/ui'
+import {
+  Badge,
+  Button,
+  Card,
+  ErrorBox,
+  Loading,
+  Notice,
+  PageHeader,
+  Select,
+  type Tone,
+} from '../../../components/ui'
 
 export default function InvoicesList() {
   const { auth } = useAuth()
@@ -13,7 +23,7 @@ export default function InvoicesList() {
   const path = status ? `/invoices?status=${status}` : '/invoices'
   const { data, error, loading, reload } = useFetch<Invoice[]>(path)
   const [busy, setBusy] = useState(false)
-  const [msg, setMsg] = useState<string | null>(null)
+  const [msg, setMsg] = useState<{ tone: Tone; text: string } | null>(null)
 
   // US-10: kirim ulang tautan tagihan. Token yang ada diperpanjang, bukan diganti,
   // sehingga tautan pada pesan lama tetap berfungsi.
@@ -22,9 +32,12 @@ export default function InvoicesList() {
     setMsg(null)
     try {
       await api(`/invoices/${invoiceId}/resend-link`, { method: 'POST' })
-      setMsg('Tautan tagihan dikirim ulang ke pelanggan.')
+      setMsg({ tone: 'success', text: 'Tautan tagihan dikirim ulang ke pelanggan.' })
     } catch (e) {
-      setMsg(e instanceof ApiError ? `Gagal kirim ulang (${e.message}).` : 'Gagal kirim ulang.')
+      setMsg({
+        tone: 'error',
+        text: e instanceof ApiError ? `Gagal kirim ulang (${e.message}).` : 'Gagal kirim ulang.',
+      })
     } finally {
       setBusy(false)
     }
@@ -38,10 +51,18 @@ export default function InvoicesList() {
         '/billing/generate',
         { method: 'POST', body: JSON.stringify({}) },
       )
-      setMsg(`Generate ${res.period}: ${res.created} tagihan baru, ${res.skipped} dilewati.`)
+      // 0 tagihan baru bukan kegagalan, tapi juga bukan hasil yang diharapkan
+      // admin saat menekan tombol — beri warna kuning supaya tidak terlewat.
+      setMsg({
+        tone: res.created > 0 ? 'success' : 'warning',
+        text: `Generate ${res.period}: ${res.created} tagihan baru, ${res.skipped} dilewati.`,
+      })
       reload()
     } catch (e) {
-      setMsg(e instanceof ApiError ? `Gagal generate (${e.message}).` : 'Gagal generate.')
+      setMsg({
+        tone: 'error',
+        text: e instanceof ApiError ? `Gagal generate (${e.message}).` : 'Gagal generate.',
+      })
     } finally {
       setBusy(false)
     }
@@ -61,7 +82,9 @@ export default function InvoicesList() {
         }
       />
       {msg && (
-        <div className="mb-4 text-sm text-slate-700 bg-slate-100 px-3 py-2 rounded-lg">{msg}</div>
+        <Notice tone={msg.tone} className="mb-4">
+          {msg.text}
+        </Notice>
       )}
       <div className="mb-4 flex items-center gap-2">
         <span className="text-sm text-slate-500">Filter status:</span>

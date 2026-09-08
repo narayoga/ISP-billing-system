@@ -6,6 +6,8 @@ export type Package = {
   quota_gb: number | null
   fup_mbps: number | null
   is_active: boolean
+  /** Paket bertarif negosiasi: harganya diisi per pelanggan, bukan di paket. */
+  is_custom_price: boolean
 }
 
 export type CustomerStatus =
@@ -24,12 +26,16 @@ export type Customer = {
   email: string | null
   address: string
   package_id: number
+  /** Harga khusus pelanggan — hanya untuk paket bertarif negosiasi. */
+  custom_price: number | null
   pppoe_username: string
   ip_address: string | null
   mac_address: string | null
   status: CustomerStatus
   created_at: string
   package_name?: string | null
+  package_price?: number | null
+  package_is_custom_price?: boolean | null
 }
 
 /** Data halaman tagihan publik (PRD v3.0) — sengaja minim data pribadi. */

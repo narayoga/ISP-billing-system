@@ -44,7 +44,13 @@ export default function PackagesList() {
               {data.map((p) => (
                 <tr key={p.id} className="border-t border-slate-100">
                   <td className="px-4 py-3 font-medium text-slate-800">{p.name}</td>
-                  <td className="px-4 py-3">{formatIDR(p.price)}</td>
+                  <td className="px-4 py-3">
+                    {p.is_custom_price ? (
+                      <Badge color="blue">Custom per pelanggan</Badge>
+                    ) : (
+                      formatIDR(p.price)
+                    )}
+                  </td>
                   <td className="px-4 py-3">{p.speed_mbps} Mbps</td>
                   <td className="px-4 py-3 text-slate-600">
                     {p.quota_gb ? `${p.quota_gb} GB` : 'Unlimited'}

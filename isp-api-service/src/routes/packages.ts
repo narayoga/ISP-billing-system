@@ -19,6 +19,9 @@ const packageSchema = z.object({
   quota_gb: z.number().int().positive().nullable().default(null),
   fup_mbps: z.number().int().positive().nullable().default(null),
   is_active: z.boolean().optional(),
+  // Paket bertarif negosiasi (mis. korporat): harga diisi per pelanggan,
+  // kolom price hanya jadi nilai cadangan bila custom_price kosong.
+  is_custom_price: z.boolean().optional(),
 })
 
 // Semua endpoint paket butuh admin (dipakai di form pelanggan juga).

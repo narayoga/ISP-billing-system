@@ -619,6 +619,13 @@ components:
           description: Opsional sejak PRD v3.0 — kanal pendamping, bukan identitas login
         address: { type: string }
         package_id: { type: integer, format: int64 }
+        custom_price:
+          type: integer
+          nullable: true
+          description: >
+            Harga langganan yang disepakati khusus untuk pelanggan ini. Hanya
+            terisi bila paketnya bertarif negosiasi (Package.is_custom_price).
+            Nominal tagihan = COALESCE(custom_price, packages.price).
         pppoe_username: { type: string }
         ip_address: { type: string, nullable: true }
         mac_address: { type: string, nullable: true }
@@ -637,6 +644,11 @@ components:
         speed_mbps: { type: integer }
         quota_gb: { type: integer, nullable: true }
         fup_mbps: { type: integer, nullable: true }
+        is_custom_price:
+          type: boolean
+          description: >
+            Paket bertarif negosiasi: harga diisi per pelanggan lewat
+            Customer.custom_price, dan price hanya jadi nilai cadangan.
 
     Invoice:
       type: object
@@ -730,6 +742,7 @@ components:
         quota_gb: { type: integer, minimum: 1, nullable: true }
         fup_mbps: { type: integer, minimum: 1, nullable: true }
         is_active: { type: boolean }
+        is_custom_price: { type: boolean }
 
     CustomerInput:
       type: object
@@ -748,6 +761,14 @@ components:
           description: Opsional sejak PRD v3.0
         address: { type: string }
         package_id: { type: integer, format: int64 }
+        custom_price:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: >
+            Wajib bila paket yang dipilih bertarif negosiasi — server menolak
+            dengan 400 custom_price_required bila kosong. Untuk paket bertarif
+            tetap nilainya diabaikan dan disimpan NULL.
         pppoe_username: { type: string, maxLength: 100 }
         ip_address: { type: string, nullable: true }
         mac_address: { type: string, nullable: true }

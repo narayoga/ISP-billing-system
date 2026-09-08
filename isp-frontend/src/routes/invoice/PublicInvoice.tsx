@@ -4,7 +4,7 @@ import { publicUpload, ApiError } from '../../lib/api'
 import { useFetch } from '../../lib/useFetch'
 import type { PublicInvoiceView } from '../../lib/types'
 import { INVOICE_STATUS, formatDate, formatIDR } from '../../lib/format'
-import { Badge, Button, Card, ErrorBox, Loading } from '../../components/ui'
+import { Badge, Button, Card, ErrorBox, Loading, Notice } from '../../components/ui'
 
 const BANK_NAME = import.meta.env.VITE_BANK_NAME
 const BANK_ACCOUNT = import.meta.env.VITE_BANK_ACCOUNT
@@ -155,9 +155,11 @@ function UploadSection({ token, onUploaded }: { token: string; onUploaded: () =>
 
   if (done) {
     return (
-      <p className="mt-5 border-t border-slate-100 pt-5 text-sm text-green-700">
-        Bukti pembayaran terkirim. Layanan akan diproses setelah admin memverifikasi.
-      </p>
+      <div className="mt-5 border-t border-slate-100 pt-5">
+        <Notice tone="success">
+          Bukti pembayaran terkirim. Layanan akan diproses setelah admin memverifikasi.
+        </Notice>
+      </div>
     )
   }
 

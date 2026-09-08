@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api, ApiError } from '../../../lib/api'
 import type { Customer, Package } from '../../../lib/types'
+import { formatIDR } from '../../../lib/format'
 import {
   Button,
   Card,
@@ -20,6 +21,7 @@ const empty = {
   email: '',
   address: '',
   package_id: '',
+  custom_price: '',
   pppoe_username: '',
   ip_address: '',
   mac_address: '',
@@ -48,6 +50,7 @@ export default function CustomerForm() {
             email: c.email ?? '',
             address: c.address,
             package_id: String(c.package_id),
+            custom_price: c.custom_price != null ? String(c.custom_price) : '',
             pppoe_username: c.pppoe_username,
             ip_address: c.ip_address ?? '',
             mac_address: c.mac_address ?? '',
@@ -62,6 +65,11 @@ export default function CustomerForm() {
     void load()
   }, [editing, id])
 
+  // Paket korporat tidak punya harga tetap — tarifnya disepakati per pelanggan,
+  // jadi kolom harga baru muncul begitu paket semacam itu dipilih.
+  const selectedPackage = packages.find((p) => String(p.id) === form.package_id)
+  const customPriced = selectedPackage?.is_custom_price === true
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
@@ -72,6 +80,7 @@ export default function CustomerForm() {
       email: form.email || null,
       address: form.address,
       package_id: Number(form.package_id),
+      custom_price: customPriced ? Number(form.custom_price) : null,
       pppoe_username: form.pppoe_username,
       ip_address: form.ip_address || null,
       mac_address: form.mac_address || null,
@@ -98,7 +107,9 @@ export default function CustomerForm() {
               ? 'PPPoE username sudah dipakai.'
               : err.message === 'package_not_found'
                 ? 'Paket tidak ditemukan.'
-                : `Gagal menyimpan (${err.message}).`
+                : err.message === 'custom_price_required'
+                  ? 'Paket ini bertarif custom — isi harga langganannya.'
+                  : `Gagal menyimpan (${err.message}).`
           : 'Gagal menyimpan.'
       setError(m)
     } finally {
@@ -161,11 +172,27 @@ export default function CustomerForm() {
               </option>
               {packages.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {p.name} — {p.is_custom_price ? 'harga custom' : formatIDR(p.price)}
                 </option>
               ))}
             </Select>
           </Field>
+          {customPriced && (
+            <Field
+              label="Harga Langganan (IDR)"
+              hint={`Paket ${selectedPackage?.name ?? ''} bertarif custom — nominal ini yang dipakai saat tagihan terbit.`}
+            >
+              <TextInput
+                type="number"
+                min={0}
+                step={1000}
+                required
+                placeholder="350000"
+                value={form.custom_price}
+                onChange={(e) => setForm({ ...form, custom_price: e.target.value })}
+              />
+            </Field>
+          )}
           <Field label="PPPoE username">
             <TextInput
               required

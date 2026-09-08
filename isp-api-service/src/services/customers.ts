@@ -1,4 +1,4 @@
-import { pool } from '../db/pool.js'
+import { pool, type Db } from '../db/pool.js'
 import { HttpError } from '../middleware/error.js'
 import { writeAudit } from '../lib/audit.js'
 
@@ -18,6 +18,12 @@ export type Customer = {
   email: string | null
   address: string
   package_id: number
+  /**
+   * Harga langganan yang disepakati khusus untuk pelanggan ini.
+   * Hanya terisi bila paketnya bertarif negosiasi (packages.is_custom_price).
+   * Nominal tagihan = COALESCE(custom_price, packages.price).
+   */
+  custom_price: number | null
   pppoe_username: string
   ip_address: string | null
   mac_address: string | null
@@ -25,7 +31,11 @@ export type Customer = {
   created_at: Date
 }
 
-export type CustomerListItem = Customer & { package_name: string | null }
+export type CustomerListItem = Customer & {
+  package_name: string | null
+  package_price: number | null
+  package_is_custom_price: boolean | null
+}
 
 export type CustomerInput = {
   name: string
@@ -33,19 +43,21 @@ export type CustomerInput = {
   email: string | null
   address: string
   package_id: number
+  custom_price: number | null
   pppoe_username: string
   ip_address: string | null
   mac_address: string | null
 }
 
-const COLS = `id, name, phone, email, address, package_id, pppoe_username,
+const COLS = `id, name, phone, email, address, package_id, custom_price, pppoe_username,
               ip_address, mac_address, status, created_at`
 
 export async function listCustomers(): Promise<CustomerListItem[]> {
   const { rows } = await pool.query<CustomerListItem>(
-    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.pppoe_username,
-            c.ip_address, c.mac_address, c.status, c.created_at,
-            p.name AS package_name
+    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.custom_price,
+            c.pppoe_username, c.ip_address, c.mac_address, c.status, c.created_at,
+            p.name AS package_name, p.price AS package_price,
+            p.is_custom_price AS package_is_custom_price
      FROM customers c
      LEFT JOIN packages p ON p.id = c.package_id
      ORDER BY c.id DESC`,
@@ -55,9 +67,10 @@ export async function listCustomers(): Promise<CustomerListItem[]> {
 
 export async function getCustomer(id: number): Promise<CustomerListItem | null> {
   const { rows } = await pool.query<CustomerListItem>(
-    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.pppoe_username,
-            c.ip_address, c.mac_address, c.status, c.created_at,
-            p.name AS package_name
+    `SELECT c.id, c.name, c.phone, c.email, c.address, c.package_id, c.custom_price,
+            c.pppoe_username, c.ip_address, c.mac_address, c.status, c.created_at,
+            p.name AS package_name, p.price AS package_price,
+            p.is_custom_price AS package_is_custom_price
      FROM customers c
      LEFT JOIN packages p ON p.id = c.package_id
      WHERE c.id = $1`,
@@ -77,12 +90,12 @@ export async function createCustomer(input: CustomerInput): Promise<Customer> {
   try {
     await client.query('BEGIN')
 
-    const pkg = await client.query(`SELECT id FROM packages WHERE id = $1`, [input.package_id])
-    if (pkg.rowCount === 0) throw new HttpError(400, 'package_not_found')
+    const customPrice = await resolveCustomPrice(client, input)
 
     const { rows } = await client.query<Customer>(
-      `INSERT INTO customers (name, phone, email, address, package_id, pppoe_username, ip_address, mac_address)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO customers (name, phone, email, address, package_id, custom_price,
+                              pppoe_username, ip_address, mac_address)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING ${COLS}`,
       [
         input.name,
@@ -90,6 +103,7 @@ export async function createCustomer(input: CustomerInput): Promise<Customer> {
         input.email,
         input.address,
         input.package_id,
+        customPrice,
         input.pppoe_username,
         input.ip_address,
         input.mac_address,
@@ -119,8 +133,8 @@ export async function updateCustomer(
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const cur = await client.query<{ package_id: number }>(
-      `SELECT package_id FROM customers WHERE id = $1 FOR UPDATE`,
+    const cur = await client.query<{ package_id: number; custom_price: number | null }>(
+      `SELECT package_id, custom_price FROM customers WHERE id = $1 FOR UPDATE`,
       [id],
     )
     if (cur.rowCount === 0) {
@@ -128,11 +142,14 @@ export async function updateCustomer(
       return null
     }
     const prevPackage = cur.rows[0]!.package_id
+    const prevCustomPrice = cur.rows[0]!.custom_price
+    const customPrice = await resolveCustomPrice(client, input)
 
     const { rows } = await client.query<Customer>(
       `UPDATE customers
        SET name = $2, phone = $3, email = $4, address = $5, package_id = $6,
-           pppoe_username = $7, ip_address = $8, mac_address = $9, updated_at = NOW()
+           custom_price = $7, pppoe_username = $8, ip_address = $9, mac_address = $10,
+           updated_at = NOW()
        WHERE id = $1
        RETURNING ${COLS}`,
       [
@@ -142,6 +159,7 @@ export async function updateCustomer(
         input.email,
         input.address,
         input.package_id,
+        customPrice,
         input.pppoe_username,
         input.ip_address,
         input.mac_address,
@@ -149,6 +167,12 @@ export async function updateCustomer(
     )
     const updated = rows[0]!
 
+    if (prevCustomPrice !== customPrice) {
+      await writeAudit(client, adminId, 'change_custom_price', 'customer', id, {
+        from_custom_price: prevCustomPrice,
+        to_custom_price: customPrice,
+      })
+    }
     if (prevPackage !== input.package_id) {
       await writeAudit(client, adminId, 'change_package', 'customer', id, {
         from_package_id: prevPackage,
@@ -175,6 +199,28 @@ export async function setCustomerStatus(
     [id, status],
   )
   return (rowCount ?? 0) > 0
+}
+
+/**
+ * Menentukan nilai custom_price yang boleh disimpan.
+ *
+ * Paket bertarif negosiasi (is_custom_price) wajib punya harga per pelanggan.
+ * Paket bertarif tetap selalu disimpan dengan custom_price NULL, apa pun yang
+ * dikirim klien — supaya tidak ada harga bayangan yang menempel diam-diam pada
+ * pelanggan saat paketnya dipindah ke paket biasa.
+ */
+async function resolveCustomPrice(
+  db: Db,
+  input: CustomerInput,
+): Promise<number | null> {
+  const pkg = await db.query<{ is_custom_price: boolean }>(
+    `SELECT is_custom_price FROM packages WHERE id = $1`,
+    [input.package_id],
+  )
+  if (pkg.rowCount === 0) throw new HttpError(400, 'package_not_found')
+  if (!pkg.rows[0]!.is_custom_price) return null
+  if (input.custom_price == null) throw new HttpError(400, 'custom_price_required')
+  return input.custom_price
 }
 
 /** Konversi unique violation (23505) Postgres menjadi HttpError yang jelas. */

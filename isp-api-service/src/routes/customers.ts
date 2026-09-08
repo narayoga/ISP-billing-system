@@ -43,12 +43,23 @@ const optionalEmail = z.preprocess(
   z.string().email().max(255).nullable(),
 )
 
+/**
+ * Harga khusus pelanggan untuk paket bertarif negosiasi. Dikirim kosong bila
+ * paketnya bertarif tetap; wajib (dan diabaikan bila tidak relevan) ditentukan
+ * di service, karena butuh membaca flag paketnya.
+ */
+const optionalCustomPrice = z.preprocess(
+  (v) => (v === '' || v == null ? null : v),
+  z.number().int().min(0).nullable(),
+)
+
 const customerSchema = z.object({
   name: z.string().min(1).max(150),
   phone: phoneField,
   email: optionalEmail,
   address: z.string().min(1),
   package_id: z.number().int().positive(),
+  custom_price: optionalCustomPrice,
   pppoe_username: z.string().min(1).max(100),
   ip_address: optionalIp,
   mac_address: optionalMac,

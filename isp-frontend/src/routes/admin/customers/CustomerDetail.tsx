@@ -4,15 +4,24 @@ import { api, billingApi, ApiError } from '../../../lib/api'
 import { useFetch } from '../../../lib/useFetch'
 import { useAuth } from '../../../lib/auth'
 import type { Customer } from '../../../lib/types'
-import { CUSTOMER_STATUS, formatDate } from '../../../lib/format'
-import { Badge, Button, Card, ErrorBox, Loading, PageHeader } from '../../../components/ui'
+import { CUSTOMER_STATUS, formatDate, formatIDR } from '../../../lib/format'
+import {
+  Badge,
+  Button,
+  Card,
+  ErrorBox,
+  Loading,
+  Notice,
+  PageHeader,
+  type Tone,
+} from '../../../components/ui'
 
 export default function CustomerDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { auth } = useAuth()
   const { data: c, error, loading, reload } = useFetch<Customer>(id ? `/customers/${id}` : null)
-  const [msg, setMsg] = useState<string | null>(null)
+  const [msg, setMsg] = useState<{ tone: Tone; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
 
   async function doAction(fn: () => Promise<unknown>, okMsg: string) {
@@ -20,10 +29,13 @@ export default function CustomerDetail() {
     setMsg(null)
     try {
       await fn()
-      setMsg(okMsg)
+      setMsg({ tone: 'success', text: okMsg })
       reload()
     } catch (e) {
-      setMsg(e instanceof ApiError ? `Gagal: ${e.message}` : 'Gagal.')
+      setMsg({
+        tone: 'error',
+        text: e instanceof ApiError ? `Gagal: ${e.message}` : 'Gagal.',
+      })
     } finally {
       setBusy(false)
     }
@@ -47,7 +59,9 @@ export default function CustomerDetail() {
         }
       />
       {msg && (
-        <div className="mb-4 text-sm text-slate-700 bg-slate-100 px-3 py-2 rounded-lg">{msg}</div>
+        <Notice tone={msg.tone} className="mb-4">
+          {msg.text}
+        </Notice>
       )}
       <Card className="p-6 space-y-3">
         <Row label="Status">
@@ -56,6 +70,18 @@ export default function CustomerDetail() {
         <Row label="WhatsApp">{c.phone}</Row>
         <Row label="Email">{c.email ?? "—"}</Row>
         <Row label="Paket">{c.package_name ?? '—'}</Row>
+        <Row label="Harga">
+          {c.custom_price != null ? (
+            <>
+              {formatIDR(c.custom_price)}{' '}
+              <span className="text-slate-400">· harga custom</span>
+            </>
+          ) : c.package_price != null ? (
+            formatIDR(c.package_price)
+          ) : (
+            '—'
+          )}
+        </Row>
         <Row label="Alamat">{c.address}</Row>
         <Row label="PPPoE">{c.pppoe_username}</Row>
         <Row label="IP / MAC">

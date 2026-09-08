@@ -10,12 +10,51 @@ export function Loading({ label = 'Memuat…' }: { label?: string }) {
   return <div className="text-slate-500 py-10 text-center">{label}</div>
 }
 
-export function ErrorBox({ children }: { children: ReactNode }) {
+/**
+ * Nada pesan hasil aksi. Warna latarnya sengaja dibedakan supaya admin bisa
+ * membaca hasilnya sekilas tanpa mengeja kalimatnya: hijau berhasil, kuning
+ * berhasil-tapi-perlu-diperhatikan, merah gagal.
+ */
+export type Tone = 'success' | 'warning' | 'error' | 'info'
+
+const noticeStyles: Record<Tone, string> = {
+  success: 'bg-green-50 border-green-200 text-green-800',
+  warning: 'bg-amber-50 border-amber-200 text-amber-800',
+  error: 'bg-red-50 border-red-200 text-red-700',
+  info: 'bg-slate-50 border-slate-200 text-slate-700',
+}
+
+const noticeIcons: Record<Tone, string> = {
+  success: '✓',
+  warning: '!',
+  error: '✕',
+  info: 'i',
+}
+
+export function Notice({
+  tone = 'info',
+  className = '',
+  children,
+}: {
+  tone?: Tone
+  className?: string
+  children: ReactNode
+}) {
   return (
-    <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
-      {children}
+    <div
+      role={tone === 'error' ? 'alert' : 'status'}
+      className={`flex items-start gap-2 text-sm border px-3 py-2 rounded-lg ${noticeStyles[tone]} ${className}`}
+    >
+      <span aria-hidden className="font-semibold leading-5 select-none">
+        {noticeIcons[tone]}
+      </span>
+      <span>{children}</span>
     </div>
   )
+}
+
+export function ErrorBox({ children }: { children: ReactNode }) {
+  return <Notice tone="error">{children}</Notice>
 }
 
 export function Card({

@@ -18,6 +18,7 @@ export default function PackageForm() {
     quota_gb: '',
     fup_mbps: '',
     is_active: true,
+    is_custom_price: false,
   })
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function PackageForm() {
           quota_gb: p.quota_gb != null ? String(p.quota_gb) : '',
           fup_mbps: p.fup_mbps != null ? String(p.fup_mbps) : '',
           is_active: p.is_active,
+          is_custom_price: p.is_custom_price,
         }),
       )
       .catch(() => setError('Gagal memuat paket.'))
@@ -48,6 +50,7 @@ export default function PackageForm() {
       quota_gb: form.quota_gb === '' ? null : Number(form.quota_gb),
       fup_mbps: form.fup_mbps === '' ? null : Number(form.fup_mbps),
       is_active: form.is_active,
+      is_custom_price: form.is_custom_price,
     }
     try {
       if (editing) {
@@ -78,15 +81,29 @@ export default function PackageForm() {
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </Field>
-          <Field label="Harga bulanan (IDR)">
-            <TextInput
-              type="number"
-              min={0}
-              required
-              value={form.price}
-              onChange={(e) => setForm({ ...form, price: e.target.value })}
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={form.is_custom_price}
+              onChange={(e) => setForm({ ...form, is_custom_price: e.target.checked })}
             />
-          </Field>
+            Harga custom per pelanggan
+          </label>
+          <p className="text-xs text-slate-400 -mt-2">
+            Untuk paket bertarif negosiasi seperti paket bisnis. Harga diisi di form pelanggan,
+            bukan di sini.
+          </p>
+          {!form.is_custom_price && (
+            <Field label="Harga bulanan (IDR)">
+              <TextInput
+                type="number"
+                min={0}
+                required
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+              />
+            </Field>
+          )}
           <Field label="Kecepatan (Mbps)">
             <TextInput
               type="number"

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useFetch } from '../../../lib/useFetch'
 import { useNetworkStatus } from '../../../lib/useNetworkStatus'
 import type { Customer } from '../../../lib/types'
-import { CUSTOMER_STATUS } from '../../../lib/format'
+import { CUSTOMER_STATUS, formatIDR } from '../../../lib/format'
 import { Badge, Button, Card, ErrorBox, Loading, PageHeader } from '../../../components/ui'
 
 export default function CustomersList() {
@@ -30,6 +30,7 @@ export default function CustomersList() {
                 <th className="px-4 py-3 font-medium">Nama</th>
                 <th className="px-4 py-3 font-medium">Email</th>
                 <th className="px-4 py-3 font-medium">Paket</th>
+                <th className="px-4 py-3 font-medium">Tagihan / bln</th>
                 <th className="px-4 py-3 font-medium">PPPoE</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Koneksi</th>
@@ -38,7 +39,7 @@ export default function CustomersList() {
             <tbody>
               {data.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                  <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
                     Belum ada pelanggan.
                   </td>
                 </tr>
@@ -54,6 +55,7 @@ export default function CustomersList() {
                     </td>
                     <td className="px-4 py-3 text-slate-600">{c.email}</td>
                     <td className="px-4 py-3 text-slate-600">{c.package_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-600">{monthlyAmount(c)}</td>
                     <td className="px-4 py-3 text-slate-600">{c.pppoe_username}</td>
                     <td className="px-4 py-3">
                       <Badge color={st.color}>{st.label}</Badge>
@@ -70,6 +72,12 @@ export default function CustomersList() {
       )}
     </div>
   )
+}
+
+/** Nominal yang akan ditagih: harga custom pelanggan bila ada, jika tidak harga paket. */
+function monthlyAmount(c: Customer): string {
+  const amount = c.custom_price ?? c.package_price
+  return amount != null ? formatIDR(amount) : '—'
 }
 
 function ConnectionDot({ state }: { state: string | undefined }) {

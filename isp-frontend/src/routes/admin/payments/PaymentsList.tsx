@@ -2,7 +2,15 @@ import { useState } from 'react'
 import { api, apiBlob, ApiError } from '../../../lib/api'
 import { useFetch } from '../../../lib/useFetch'
 import { formatDateTime, formatIDR } from '../../../lib/format'
-import { Button, Card, ErrorBox, Loading, PageHeader } from '../../../components/ui'
+import {
+  Button,
+  Card,
+  ErrorBox,
+  Loading,
+  Notice,
+  PageHeader,
+  type Tone,
+} from '../../../components/ui'
 
 type PendingPayment = {
   id: number
@@ -18,14 +26,14 @@ export default function PaymentsList() {
   const { data, error, loading, reload } = useFetch<PendingPayment[]>('/payments')
   const [viewer, setViewer] = useState<{ url: string; type: string } | null>(null)
   const [busyId, setBusyId] = useState<number | null>(null)
-  const [msg, setMsg] = useState<string | null>(null)
+  const [msg, setMsg] = useState<{ tone: Tone; text: string } | null>(null)
 
   async function viewProof(id: number) {
     setMsg(null)
     try {
       setViewer(await apiBlob(`/payments/${id}/proof`))
     } catch {
-      setMsg('Gagal memuat bukti.')
+      setMsg({ tone: 'error', text: 'Gagal memuat bukti.' })
     }
   }
 
@@ -39,10 +47,13 @@ export default function PaymentsList() {
     setMsg(null)
     try {
       await api(`/payments/${id}/approve`, { method: 'POST' })
-      setMsg('Pembayaran disetujui.')
+      setMsg({ tone: 'success', text: 'Pembayaran disetujui.' })
       reload()
     } catch (e) {
-      setMsg(e instanceof ApiError ? `Gagal approve (${e.message}).` : 'Gagal approve.')
+      setMsg({
+        tone: 'error',
+        text: e instanceof ApiError ? `Gagal approve (${e.message}).` : 'Gagal approve.',
+      })
     } finally {
       setBusyId(null)
     }
@@ -52,17 +63,20 @@ export default function PaymentsList() {
     const reason = window.prompt('Alasan penolakan (dikirim ke pelanggan):')
     if (reason == null) return
     if (reason.trim() === '') {
-      setMsg('Alasan penolakan wajib diisi.')
+      setMsg({ tone: 'warning', text: 'Alasan penolakan wajib diisi.' })
       return
     }
     setBusyId(id)
     setMsg(null)
     try {
       await api(`/payments/${id}/reject`, { method: 'POST', body: JSON.stringify({ reason }) })
-      setMsg('Pembayaran ditolak, notifikasi dikirim ke pelanggan.')
+      setMsg({ tone: 'success', text: 'Pembayaran ditolak, notifikasi dikirim ke pelanggan.' })
       reload()
     } catch (e) {
-      setMsg(e instanceof ApiError ? `Gagal reject (${e.message}).` : 'Gagal reject.')
+      setMsg({
+        tone: 'error',
+        text: e instanceof ApiError ? `Gagal reject (${e.message}).` : 'Gagal reject.',
+      })
     } finally {
       setBusyId(null)
     }
@@ -72,7 +86,9 @@ export default function PaymentsList() {
     <div>
       <PageHeader title="Verifikasi Pembayaran" subtitle="Bukti transfer menunggu persetujuan." />
       {msg && (
-        <div className="mb-4 text-sm text-slate-700 bg-slate-100 px-3 py-2 rounded-lg">{msg}</div>
+        <Notice tone={msg.tone} className="mb-4">
+          {msg.text}
+        </Notice>
       )}
       {loading && <Loading />}
       {error && <ErrorBox>Gagal memuat ({error}).</ErrorBox>}
