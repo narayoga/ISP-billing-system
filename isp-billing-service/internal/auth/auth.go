@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -54,6 +55,14 @@ type ctxKey struct{}
 // RequireSuperadmin middleware: butuh JWT admin dengan role superadmin.
 func RequireSuperadmin(secret string, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		// disable auth for development purposes
+		if os.Getenv("DISABLE_AUTH") == "true" {
+			fakeAdmin := Claims{Type: "admin", Sub: 1, Email: "admin@isp.local", Role: "superadmin"}
+			next(w, r.WithContext(context.WithValue(r.Context(), ctxKey{}, fakeAdmin)))
+			return
+		}
+
 		h := r.Header.Get("Authorization")
 		if !strings.HasPrefix(h, "Bearer ") {
 			httpx.Error(w, http.StatusUnauthorized, "unauthenticated")
@@ -75,6 +84,14 @@ func RequireSuperadmin(secret string, next http.HandlerFunc) http.HandlerFunc {
 // RequireAdmin middleware: butuh JWT admin (role apa pun: superadmin / cs).
 func RequireAdmin(secret string, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		// disable auth for development purposes
+		if os.Getenv("DISABLE_AUTH") == "true" {
+			fakeAdmin := Claims{Type: "admin", Sub: 1, Email: "admin@isp.local", Role: "superadmin"}
+			next(w, r.WithContext(context.WithValue(r.Context(), ctxKey{}, fakeAdmin)))
+			return
+		}
+
 		h := r.Header.Get("Authorization")
 		if !strings.HasPrefix(h, "Bearer ") {
 			httpx.Error(w, http.StatusUnauthorized, "unauthenticated")

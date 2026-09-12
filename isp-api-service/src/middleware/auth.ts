@@ -8,6 +8,18 @@ declare module 'express-serve-static-core' {
 }
 
 export function authRequired(req: Request, res: Response, next: NextFunction) {
+
+  // bypass auth check for now, just set a fake admin account
+  if (process.env.DISABLE_AUTH === 'true') {
+    req.auth = { 
+      type: 'admin', 
+      sub: 1, 
+      email: 'admin@isp.local', 
+      role: 'superadmin' 
+    } as any; // (Tambahkan 'as any' jika TypeScript protes soal tipe data, atau hapus jika aman)
+    return next();
+  }
+
   const header = req.header('authorization')
   if (!header?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'unauthenticated' })

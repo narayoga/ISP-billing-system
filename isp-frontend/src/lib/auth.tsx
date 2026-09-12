@@ -7,7 +7,11 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { api, getToken, setToken } from './api'
+
+// temporarily disable for auth check, just set a fake admin account
+// import { api, getToken, setToken } from './api'
+
+import { api, setToken } from './api'
 
 export type AdminAuth = {
   type: 'admin'
@@ -31,29 +35,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<Auth | null>(null)
   const [ready, setReady] = useState(false)
 
+  // auth is turned off temporarily
+  // *
+  // *
+  // useEffect(() => {
+  //   let cancelled = false
+  //   async function load() {
+  //     if (!getToken()) {
+  //       setReady(true)
+  //       return
+  //     }
+  //     try {
+  //       const res = await api<{ auth: Auth }>('/auth/me')
+  //       if (!cancelled) setAuth(res.auth)
+  //     } catch {
+  //       if (!cancelled) {
+  //         setToken(null)
+  //         setAuth(null)
+  //       }
+  //     } finally {
+  //       if (!cancelled) setReady(true)
+  //     }
+  //   }
+  //   void load()
+  //   return () => {
+  //     cancelled = true
+  //   }
+  // }, [])
+
+  // bypass auth check for now, just set a fake admin account
   useEffect(() => {
-    let cancelled = false
-    async function load() {
-      if (!getToken()) {
-        setReady(true)
-        return
-      }
-      try {
-        const res = await api<{ auth: Auth }>('/auth/me')
-        if (!cancelled) setAuth(res.auth)
-      } catch {
-        if (!cancelled) {
-          setToken(null)
-          setAuth(null)
-        }
-      } finally {
-        if (!cancelled) setReady(true)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
+    setAuth({
+      type: 'admin',
+      sub: 1,
+      email: 'admin@isp.local',
+      role: 'superadmin',
+    })
+    setReady(true)
   }, [])
 
   const loginAdmin = useCallback(async (email: string, password: string) => {
