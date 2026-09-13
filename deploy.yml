@@ -1,0 +1,65 @@
+name: Deploy ke VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # ── Job 1: bangun image, tandai dengan SHA + latest, dorong ke GHCR ──
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Ambil kode repo
+        uses: actions/checkout@v4
+
+      - name: Siapkan Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login ke GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bangun & dorong image api
+        uses: docker/build-push-action@v6
+        with:
+          context: ./isp-api-service
+          push: true
+          tags: |
+            ghcr.io/narayoga/isp-api-service:${{ github.sha }}
+            ghcr.io/narayoga/isp-api-service:latest
+
+      - name: Bangun & dorong image billing
+        uses: docker/build-push-action@v6
+        with:
+          context: ./isp-billing-service
+          push: true
+          tags: |
+            ghcr.io/narayoga/isp-billing-service:${{ github.sha }}
+            ghcr.io/narayoga/isp-billing-service:latest
+
+  # ── Job 2: SSH ke VPS, tarik image ber-SHA itu, ganti container ──
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH ke VPS & deploy
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: IMAGE_TAG
+          script_stop: true
+          script: |
+            cd /opt/billing-system
+            docker compose --env-file .env.prod -f docker-compose.prod.yml pull api billing
+            docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing migrate up
+            docker compose --env-file .env.prod -f docker-compose.prod.yml up -d api billing
+            docker image prune -a -f
