@@ -131,27 +131,26 @@ func main() {
 	})
 
 	// POST /billing/generate — trigger manual (superadmin). Body opsional { "period": "YYYY-MM" }.
-	mux.HandleFunc("POST /billing/generate", auth.RequireSuperadmin(cfg.JWTSecret,
-		func(w http.ResponseWriter, r *http.Request) {
-			var body struct {
-				Period string `json:"period"`
-			}
-			_ = json.NewDecoder(r.Body).Decode(&body)
-			period := strings.TrimSpace(body.Period)
-			if period == "" {
-				period = billing.CurrentPeriod(time.Now().In(loc))
-			}
-			res, err := billing.GenerateMonthly(r.Context(), pool, period, notifier, cfg.PublicBaseURL)
-			if err != nil {
-				httpx.Error(w, http.StatusBadRequest, err.Error())
-				return
-			}
-			claims := auth.FromContext(r.Context())
-			adminID := claims.Sub
-			_ = audit.Write(r.Context(), pool, &adminID, "generate_invoices", "invoice", nil,
-				map[string]any{"period": res.Period, "created": res.Created, "trigger": "manual"})
-			httpx.JSON(w, http.StatusOK, res)
-		}))
+	mux.HandleFunc("POST /billing/generate", auth.RequireSuperadmin(cfg.JWTSecret, auth.RequireWritePin(func(w http.ResponseWriter, r *http.Request) {
+		var body struct {
+			Period string `json:"period"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		period := strings.TrimSpace(body.Period)
+		if period == "" {
+			period = billing.CurrentPeriod(time.Now().In(loc))
+		}
+		res, err := billing.GenerateMonthly(r.Context(), pool, period, notifier, cfg.PublicBaseURL)
+		if err != nil {
+			httpx.Error(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		claims := auth.FromContext(r.Context())
+		adminID := claims.Sub
+		_ = audit.Write(r.Context(), pool, &adminID, "generate_invoices", "invoice", nil,
+			map[string]any{"period": res.Period, "created": res.Created, "trigger": "manual"})
+		httpx.JSON(w, http.StatusOK, res)
+	})))
 
 	// POST /internal/customers/{id}/reactivate — dipanggil isp-api-service saat approve (shared secret).
 	mux.HandleFunc("POST /internal/customers/{id}/reactivate", func(w http.ResponseWriter, r *http.Request) {
@@ -174,37 +173,35 @@ func main() {
 	})
 
 	// Isolir / buka isolir manual oleh superadmin.
-	mux.HandleFunc("POST /billing/customers/{id}/isolate", auth.RequireSuperadmin(cfg.JWTSecret,
-		func(w http.ResponseWriter, r *http.Request) {
-			id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-			if err != nil || id <= 0 {
-				httpx.Error(w, http.StatusBadRequest, "invalid_id")
-				return
-			}
-			changed, err := billing.IsolateOne(r.Context(), pool, net, notifier, id,
-				auth.FromContext(r.Context()).Sub, cfg.PublicBaseURL)
-			if err != nil {
-				httpx.Error(w, http.StatusInternalServerError, "isolate_failed")
-				return
-			}
-			httpx.JSON(w, http.StatusOK, map[string]any{"ok": true, "isolated": changed})
-		}))
+	mux.HandleFunc("POST /billing/customers/{id}/isolate", auth.RequireSuperadmin(cfg.JWTSecret, auth.RequireWritePin(func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+		if err != nil || id <= 0 {
+			httpx.Error(w, http.StatusBadRequest, "invalid_id")
+			return
+		}
+		changed, err := billing.IsolateOne(r.Context(), pool, net, notifier, id,
+			auth.FromContext(r.Context()).Sub, cfg.PublicBaseURL)
+		if err != nil {
+			httpx.Error(w, http.StatusInternalServerError, "isolate_failed")
+			return
+		}
+		httpx.JSON(w, http.StatusOK, map[string]any{"ok": true, "isolated": changed})
+	})))
 
-	mux.HandleFunc("POST /billing/customers/{id}/reactivate", auth.RequireSuperadmin(cfg.JWTSecret,
-		func(w http.ResponseWriter, r *http.Request) {
-			id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-			if err != nil || id <= 0 {
-				httpx.Error(w, http.StatusBadRequest, "invalid_id")
-				return
-			}
-			adminID := auth.FromContext(r.Context()).Sub
-			changed, err := billing.Reactivate(r.Context(), pool, net, id, &adminID, "manual")
-			if err != nil {
-				httpx.Error(w, http.StatusInternalServerError, "reactivate_failed")
-				return
-			}
-			httpx.JSON(w, http.StatusOK, map[string]any{"ok": true, "reactivated": changed})
-		}))
+	mux.HandleFunc("POST /billing/customers/{id}/reactivate", auth.RequireSuperadmin(cfg.JWTSecret, auth.RequireWritePin(func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+		if err != nil || id <= 0 {
+			httpx.Error(w, http.StatusBadRequest, "invalid_id")
+			return
+		}
+		adminID := auth.FromContext(r.Context()).Sub
+		changed, err := billing.Reactivate(r.Context(), pool, net, id, &adminID, "manual")
+		if err != nil {
+			httpx.Error(w, http.StatusInternalServerError, "reactivate_failed")
+			return
+		}
+		httpx.JSON(w, http.StatusOK, map[string]any{"ok": true, "reactivated": changed})
+	})))
 
 	// POST /webhook/network-status — diterima dari Mikrotik (X-Webhook-Secret).
 	mux.HandleFunc("POST /webhook/network-status", func(w http.ResponseWriter, r *http.Request) {

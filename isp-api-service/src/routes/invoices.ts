@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { authRequired, requireAdmin } from '../middleware/auth.js'
+import { authRequired, requireAdmin, writePin } from '../middleware/auth.js'
 import { emailLimiter } from '../middleware/rateLimit.js'
 import { HttpError } from '../middleware/error.js'
 import { writeAudit } from '../lib/audit.js'
@@ -10,7 +10,7 @@ import * as invoices from '../services/invoices.js'
 
 export const invoicesRouter = Router()
 
-invoicesRouter.use(authRequired, requireAdmin)
+invoicesRouter.use(authRequired, requireAdmin, writePin)
 
 invoicesRouter.get('/', async (req, res, next) => {
   try {

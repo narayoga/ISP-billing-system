@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import { authRequired, requireSuperadmin } from '../middleware/auth.js'
 import * as audit from '../services/audit.js'
-
 export const auditRouter = Router()
 
 // Audit log read-only, hanya superadmin (US-11 AC3).

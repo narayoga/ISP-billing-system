@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { authRequired, requireAdmin } from '../middleware/auth.js'
+import { authRequired, requireAdmin, writePin } from '../middleware/auth.js'
 import { HttpError } from '../middleware/error.js'
 import * as customers from '../services/customers.js'
 
@@ -65,7 +65,7 @@ const customerSchema = z.object({
   mac_address: optionalMac,
 })
 
-customersRouter.use(authRequired, requireAdmin)
+customersRouter.use(authRequired, requireAdmin, writePin)
 
 customersRouter.get('/', async (_req, res, next) => {
   try {

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { authRequired, requireAdmin } from '../middleware/auth.js'
+import { authRequired, requireAdmin, writePin } from '../middleware/auth.js'
 import { HttpError } from '../middleware/error.js'
 import * as packages from '../services/packages.js'
 
@@ -25,7 +25,7 @@ const packageSchema = z.object({
 })
 
 // Semua endpoint paket butuh admin (dipakai di form pelanggan juga).
-packagesRouter.use(authRequired, requireAdmin)
+packagesRouter.use(authRequired, requireAdmin, writePin)
 
 packagesRouter.get('/', async (req, res, next) => {
   try {

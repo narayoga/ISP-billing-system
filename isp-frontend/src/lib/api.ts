@@ -2,6 +2,22 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
 const BILLING_BASE = import.meta.env.VITE_BILLING_BASE_URL ?? 'http://localhost:8081'
 const TOKEN_KEY = 'isp.auth.token'
 
+// Jembatan ke modal PIN. api.ts bukan komponen React, jadi PinGateProvider
+// mendaftarkan dirinya lewat registerPinGate saat mount.
+export type PinGate = {
+  // Buka modal, resolve dengan 4 digit yang diketik. Reject bila dibatalkan.
+  requestPin: (opts: { invalid: boolean }) => Promise<string>
+  done: () => void // tutup modal setelah request tulis berhasil
+}
+let pinGate: PinGate | null = null
+export function registerPinGate(gate: PinGate | null) {
+  pinGate = gate
+}
+
+function isMutating(method?: string): boolean {
+  return ['POST', 'PATCH', 'PUT', 'DELETE'].includes((method ?? 'GET').toUpperCase())
+}
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
 }
@@ -34,6 +50,38 @@ async function handle<T>(res: Response): Promise<T> {
 }
 
 async function request<T>(base: string, path: string, init: RequestInit): Promise<T> {
+  // Request tulis: minta PIN, lampirkan sebagai header, ulang bila salah.
+  if (isMutating(init.method) && pinGate) {
+    let invalid = false
+    for (; ;) {
+      const pin = await pinGate.requestPin({ invalid })
+      const headers = new Headers(init.headers)
+      headers.set('content-type', 'application/json')
+      const token = getToken()
+      if (token) headers.set('authorization', `Bearer ${token}`)
+      headers.set('x-write-pin', pin)
+
+      const res = await fetch(`${base}${path}`, { ...init, headers })
+
+      // Server menolak PIN → getarkan modal dan minta lagi (jangan lempar error).
+      if (res.status === 401 || res.status === 403 || res.status === 429) {
+        const peek: unknown = await res.clone().json().catch(() => null)
+        const err =
+          peek && typeof peek === 'object' && 'error' in peek
+            ? String((peek as { error: unknown }).error)
+            : null
+        if (err === 'pin_invalid' || err === 'pin_required' || err === 'pin_locked') {
+          invalid = true
+          continue
+        }
+      }
+
+      pinGate.done()
+      return handle<T>(res)
+    }
+  }
+
+  // Jalur baca (tetap seperti semula).
   const headers = new Headers(init.headers)
   headers.set('content-type', 'application/json')
   const token = getToken()

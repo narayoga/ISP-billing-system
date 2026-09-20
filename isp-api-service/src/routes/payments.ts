@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { Router } from 'express'
 import { z } from 'zod'
-import { authRequired, requireAdmin } from '../middleware/auth.js'
+import { authRequired, requireAdmin, writePin } from '../middleware/auth.js'
 import { HttpError } from '../middleware/error.js'
 import { uploadDirAbs } from '../lib/uploads.js'
 import { notifyCustomer } from '../lib/notify.js'
@@ -18,7 +18,7 @@ function parseId(raw: string): number {
   return id
 }
 
-paymentsRouter.use(authRequired, requireAdmin)
+paymentsRouter.use(authRequired, requireAdmin, writePin)
 
 // Antrian verifikasi: pembayaran berstatus pending.
 paymentsRouter.get('/', async (_req, res, next) => {

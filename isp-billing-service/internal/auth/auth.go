@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/all-over/isp-billing-service/internal/httpx"
@@ -110,4 +111,73 @@ func RequireAdmin(secret string, next http.HandlerFunc) http.HandlerFunc {
 func FromContext(ctx context.Context) Claims {
 	c, _ := ctx.Value(ctxKey{}).(Claims)
 	return c
+}
+
+type pinRec struct {
+	fails int
+	until time.Time
+}
+
+var (
+	pinMu       sync.Mutex
+	pinAttempts = map[string]pinRec{}
+)
+
+const (
+	pinMaxFails = 5
+	pinCooldown = 30 * time.Second
+)
+
+// RequireWritePin menolak request tulis tanpa header X-Write-Pin yang benar.
+// Berdiri sendiri dari JWT, jadi tetap berlaku walau DISABLE_AUTH=true.
+// Gerbang non-aktif bila WRITE_PIN kosong.
+func RequireWritePin(next http.HandlerFunc) http.HandlerFunc {
+	pin := os.Getenv("WRITE_PIN")
+	return func(w http.ResponseWriter, r *http.Request) {
+		if pin == "" {
+			next(w, r)
+			return
+		}
+		ip := pinClientIP(r)
+
+		pinMu.Lock()
+		rec := pinAttempts[ip]
+		locked := rec.until.After(time.Now())
+		pinMu.Unlock()
+		if locked {
+			httpx.Error(w, http.StatusTooManyRequests, "pin_locked")
+			return
+		}
+
+		got := r.Header.Get("X-Write-Pin")
+		if got == "" {
+			httpx.Error(w, http.StatusUnauthorized, "pin_required")
+			return
+		}
+		if got != pin {
+			pinMu.Lock()
+			rec := pinAttempts[ip]
+			rec.fails++
+			if rec.fails >= pinMaxFails {
+				rec.until = time.Now().Add(pinCooldown)
+				rec.fails = 0
+			}
+			pinAttempts[ip] = rec
+			pinMu.Unlock()
+			httpx.Error(w, http.StatusForbidden, "pin_invalid")
+			return
+		}
+
+		pinMu.Lock()
+		delete(pinAttempts, ip)
+		pinMu.Unlock()
+		next(w, r)
+	}
+}
+
+func pinClientIP(r *http.Request) string {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		return xff
+	}
+	return r.RemoteAddr
 }
