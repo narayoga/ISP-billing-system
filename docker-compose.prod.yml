@@ -90,6 +90,7 @@ services:
       TRUST_PROXY: ${TRUST_PROXY:-1}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       NODE_ENV: production
+      WRITE_PIN: ${WRITE_PIN}      
     volumes:
       - uploads-data:/var/lib/isp/uploads
     # Terikat ke 127.0.0.1 saja: hanya nginx di host yang boleh menjangkau.
@@ -134,6 +135,7 @@ services:
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
       SEED_ADMIN_NAME: ${SEED_ADMIN_NAME:-Super Admin}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      WRITE_PIN: ${WRITE_PIN}
     # Sama seperti api: hanya nginx di host yang boleh menjangkau.
     # Webhook dari Mikrotik pun masuk lewat nginx (HTTPS), bukan langsung
     # ke port ini.
