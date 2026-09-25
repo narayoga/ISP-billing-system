@@ -65,6 +65,7 @@ services:
       TZ: ${TZ:-Asia/Jakarta}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
+      DISABLE_AUTH: ${DISABLE_AUTH:-false}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-12h}
       CORS_ORIGINS: ${CORS_ORIGINS}
       # Dasar URL tautan tagihan yang dikirim ke pelanggan (PRD v3.0).
@@ -115,6 +116,7 @@ services:
       TZ: ${TZ:-Asia/Jakarta}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       JWT_SECRET: ${JWT_SECRET}
+      DISABLE_AUTH: ${DISABLE_AUTH:-false}
       CORS_ORIGINS: ${CORS_ORIGINS}
       # Dipakai menyusun tautan tagihan pada notifikasi cron (terbit,
       # reminder H-3, jatuh tempo, isolir). Sama nilainya dengan service api.
