@@ -21,6 +21,7 @@ type Notifier interface {
 
 // New menyusun notifier sesuai konfigurasi:
 // WhatsApp (Wablas) sebagai kanal utama, email sebagai pendamping.
+// Email lewat Gmail API bila dikonfigurasi, selain itu SMTP — tidak keduanya.
 // Bila tidak ada yang dikonfigurasi, jatuh ke LogNotifier (dev).
 func New(cfg config.Config) Notifier {
 	var chans []Notifier
@@ -29,7 +30,11 @@ func New(cfg config.Config) Notifier {
 		log.Printf("[notify] WhatsApp aktif (%s)", cfg.WablasBaseURL)
 		chans = append(chans, NewWablas(cfg.WablasBaseURL, cfg.WablasToken, cfg.WablasSecret))
 	}
-	if cfg.SMTPHost != "" {
+	switch {
+	case cfg.GmailClientID != "" && cfg.GmailClientSecret != "" && cfg.GmailRefreshToken != "":
+		log.Printf("[notify] Email via Gmail API aktif (%s)", cfg.GmailSender)
+		chans = append(chans, NewGmail(cfg.GmailClientID, cfg.GmailClientSecret, cfg.GmailRefreshToken, cfg.GmailSender, cfg.EmailFrom))
+	case cfg.SMTPHost != "":
 		log.Printf("[notify] SMTP aktif (%s)", cfg.SMTPHost)
 		chans = append(chans, NewSMTP(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.EmailFrom))
 	}

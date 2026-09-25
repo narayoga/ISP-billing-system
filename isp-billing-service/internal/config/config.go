@@ -18,6 +18,13 @@ type Config struct {
 	EmailFrom  string
 	AlertEmail string // tujuan alert operasional (mis. Mikrotik unreachable)
 
+	// Gmail API (HTTPS 443) — pengganti SMTP karena VPS blokir port SMTP keluar.
+	// Aktif bila ClientID, ClientSecret, dan RefreshToken terisi.
+	GmailClientID     string
+	GmailClientSecret string
+	GmailRefreshToken string
+	GmailSender       string
+
 	// WhatsApp (Wablas) — kanal notifikasi utama PRD v3.0
 	WablasBaseURL string
 	WablasToken   string
@@ -48,6 +55,11 @@ func Load() Config {
 		SMTPPass:   os.Getenv("SMTP_PASS"),
 		EmailFrom:  env("EMAIL_FROM", "ISP <no-reply@isp.local>"),
 		AlertEmail: os.Getenv("ALERT_EMAIL"),
+
+		GmailClientID:     os.Getenv("GMAIL_CLIENT_ID"),
+		GmailClientSecret: os.Getenv("GMAIL_CLIENT_SECRET"),
+		GmailRefreshToken: os.Getenv("GMAIL_REFRESH_TOKEN"),
+		GmailSender:       os.Getenv("GMAIL_SENDER"),
 
 		WablasBaseURL: env("WABLAS_BASE_URL", "https://smg.wablas.com"),
 		WablasToken:   os.Getenv("WABLAS_TOKEN"),

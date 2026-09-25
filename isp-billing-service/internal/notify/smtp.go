@@ -2,6 +2,7 @@ package notify
 
 import (
 	"log"
+	"mime"
 	"net/smtp"
 	"strings"
 )
@@ -33,11 +34,13 @@ func (s SMTPNotifier) Notify(to Recipient, subject, body string) {
 	log.Printf("[smtp] email terkirim ke %s (%q)", to.Email, subject)
 }
 
+// buildMessage dipakai bersama SMTPNotifier dan GmailNotifier. Subject non-ASCII
+// di-encode RFC 2047 agar tidak rusak di klien email.
 func buildMessage(from, to, subject, body string) []byte {
 	var b strings.Builder
 	b.WriteString("From: " + from + "\r\n")
 	b.WriteString("To: " + to + "\r\n")
-	b.WriteString("Subject: " + subject + "\r\n")
+	b.WriteString("Subject: " + mime.QEncoding.Encode("utf-8", subject) + "\r\n")
 	b.WriteString("MIME-Version: 1.0\r\n")
 	b.WriteString("Content-Type: text/plain; charset=UTF-8\r\n")
 	b.WriteString("\r\n")
