@@ -58,7 +58,10 @@ jobs:
           envs: IMAGE_TAG
           script_stop: true
           script: |
+            set -e
             cd /opt/billing-system
+            git fetch --quiet origin
+            git checkout --quiet --detach "$IMAGE_TAG"
             docker compose --env-file .env.prod -f docker-compose.prod.yml pull api billing
             docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm billing migrate up
             docker compose --env-file .env.prod -f docker-compose.prod.yml up -d api billing
