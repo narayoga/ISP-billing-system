@@ -82,6 +82,11 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-false}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      # Email via Gmail API (HTTPS 443) — pengganti SMTP karena VPS blokir port 25/465/587.
+      GMAIL_CLIENT_ID: ${GMAIL_CLIENT_ID:-}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET:-}
+      GMAIL_REFRESH_TOKEN: ${GMAIL_REFRESH_TOKEN:-}
+      GMAIL_SENDER: ${GMAIL_SENDER:-}
       # WhatsApp (Wablas) — kanal notifikasi utama. Bila WABLAS_TOKEN kosong,
       # kanal ini mati diam-diam dan notifikasi hanya lewat email.
       WABLAS_BASE_URL: ${WABLAS_BASE_URL:-https://smg.wablas.com}
@@ -127,6 +132,11 @@ services:
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      # Email via Gmail API (HTTPS 443) — pengganti SMTP karena VPS blokir port 25/465/587.
+      GMAIL_CLIENT_ID: ${GMAIL_CLIENT_ID:-}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET:-}
+      GMAIL_REFRESH_TOKEN: ${GMAIL_REFRESH_TOKEN:-}
+      GMAIL_SENDER: ${GMAIL_SENDER:-}
       WABLAS_BASE_URL: ${WABLAS_BASE_URL:-https://smg.wablas.com}
       WABLAS_TOKEN: ${WABLAS_TOKEN}
       WABLAS_SECRET: ${WABLAS_SECRET}
