@@ -13,6 +13,7 @@ import { publicRouter } from './routes/public.js'
 import { paymentsRouter } from './routes/payments.js'
 import { auditRouter } from './routes/audit.js'
 import { statsRouter } from './routes/stats.js'
+import { systemRouter } from './routes/system.js'
 import { errorHandler } from './middleware/error.js'
 
 const app = express()
@@ -52,6 +53,7 @@ app.use('/public', publicRouter)
 app.use('/payments', paymentsRouter)
 app.use('/audit-log', auditRouter)
 app.use('/stats', statsRouter)
+app.use('/system', systemRouter)
 
 app.use((_req, res) => res.status(404).json({ error: 'not_found' }))
 app.use(errorHandler)

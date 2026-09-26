@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../lib/auth'
+import EmailTokenBanner from '../../components/tokenBanner'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
   `block px-3 py-2 rounded-lg text-sm ${
@@ -17,6 +18,7 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex">
+      <EmailTokenBanner />
       <aside className="w-60 bg-slate-900 text-slate-100 p-4 flex flex-col">
         <Link to="/admin" className="text-lg font-semibold mb-6">
           ISP Admin
