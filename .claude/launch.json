@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "isp-portfolio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "isp-portfolio", "run", "dev"],
+      "port": 5174
+    }
+  ]
+}
