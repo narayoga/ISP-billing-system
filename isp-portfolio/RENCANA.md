@@ -132,7 +132,9 @@ memunculkan modal "Segera Hadir" tanpa mengirim data.
 - [x] Hasil: **Tersedia** → Daftar Sekarang (`/daftar?area=…`) · **Segera Hadir** →
       WA "Kabari Saya" · **Belum Tersedia** → WA ajukan area · kecamatan/kabupaten →
       ringkasan semua desa beserta aksinya
-- [x] Daftar lengkap area per kota → kecamatan (teks HTML, terindeks Google)
+- [x] Daftar lengkap area per kota → kecamatan (teks HTML, terindeks Google), dengan
+      peta titik ODP di kanannya: hijau = Tersedia, kuning = Segera Hadir + legenda
+      (koordinat `odp` per desa di content/coverage.ts, perkiraan/kosmetik)
 - [x] Widget mini di Beranda memakai komponen & data yang sama; tanpa JS jatuh ke
       `/coverage?q=…`, yang dibaca setelah hidrasi (`useHydrated`)
 

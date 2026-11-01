@@ -72,6 +72,8 @@ export type CoverageArea = {
   /** desa/kelurahan */
   village: string
   status: CoverageStatus
+  /** Titik ODP di peta Area Layanan — perkiraan (kosmetik), tidak harus presisi */
+  odp: { lat: number; lng: number }
 }
 
 export type Feature = {

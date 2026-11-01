@@ -80,3 +80,31 @@
   position: relative;
   z-index: 2;
 }
+
+/* ── Area layanan: daftar di kiri, peta titik ODP di kanan ── */
+.coverage-areas {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 960px) {
+  .coverage-areas {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  /* Peta ikut terlihat saat daftar di-scroll */
+  .coverage-areas__map {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+}
+
+.coverage-city__districts {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.coverage-areas__map .map-view__canvas {
+  min-height: 28rem;
+}

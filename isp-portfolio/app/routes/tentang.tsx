@@ -2,7 +2,7 @@ import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { Icon } from '../components/Icon'
 import { IconBox } from '../components/IconBox'
-import { LocationMap } from '../components/LocationMap'
+import { MapView, type MapMarker } from '../components/MapView'
 import { Masonry } from '../components/Masonry'
 import { PageHeader } from '../components/PageHeader'
 import { Reveal } from '../components/Reveal'
@@ -24,6 +24,11 @@ export function meta() {
     path: '/tentang',
   })
 }
+
+// Titik kantor di peta Lokasi (array tetap di luar komponen agar peta tidak dibuat ulang).
+const officeMarker: MapMarker[] = [
+  { lat: site.address.geo.lat, lng: site.address.geo.lng, label: site.branches[0]?.name ?? site.brand.name },
+]
 
 // PRD US-02: profil, visi-misi, galeri masonry, cabang/POP + peta.
 export default function Tentang() {
@@ -123,7 +128,7 @@ export default function Tentang() {
               </div>
             ))}
           </Reveal>
-          <LocationMap lat={site.address.geo.lat} lng={site.address.geo.lng} label={branches[0]?.name ?? site.brand.name} />
+          <MapView markers={officeMarker} label={`Peta lokasi ${officeMarker[0].label}`} />
         </div>
       </Section>
     </>
