@@ -1,11 +1,10 @@
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react'
 import type { HeroSlide } from '../../content/types'
 import { Button } from '../Button'
-import { Icon } from '../Icon'
 import './HeroSlider.css'
 
 const DURATION = 6000 // ms per slide (CMS-portfolio)
-const TRANSITION = 700 // harus sama dengan animasi di HeroSlider.css
+const EXIT_MS = 450 // harus ≥ durasi heroContentOut (0,35 s) di HeroSlider.css
 const SWIPE_PX = 60
 
 function subscribeMotion(cb: () => void) {
@@ -18,39 +17,34 @@ const getReducedMotionServer = () => false
 
 /**
  * Hero slider layar penuh, diadaptasi dari CMS-portfolio (HeroSlider.jsx):
- * slide bergeser, teks & tombol muncul berurutan, bar progres, panah, swipe.
+ * pergantian otomatis 6 detik, teks & tombol muncul berurutan, bar progres, swipe.
  *
  * Penyesuaian untuk JITU:
- * - Latar gelap tetap diam; hanya isi slide (teks + ilustrasi) yang bergeser,
- *   sehingga header transparan selalu punya latar di belakangnya.
+ * - Latar gelap diam. Isi slide lama memudar sambil bergeser sedikit, isi slide
+ *   baru masuk dari arah berlawanan dengan elemen-elemennya berurutan — tanpa
+ *   jeda kosong di antaranya.
  * - Slide pertama sudah tampil di HTML prerender (tanpa menunggu JavaScript).
- * - Pergantian otomatis dipicu oleh akhir animasi bar progres, sehingga jeda
- *   (hover, fokus, tombol jeda) menghentikan bar dan timer sekaligus.
- * - "Kurangi gerakan" mematikan pergantian otomatis dan animasi geser.
+ * - Pergantian dipicu akhir animasi bar progres. Hover/fokus menjeda animasi bar
+ *   lewat CSS (`:hover`, `:focus-within`), sehingga timer ikut berhenti.
+ * - "Kurangi gerakan" mematikan pergantian otomatis dan semua animasi.
  */
 export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const n = slides.length
   const [idx, setIdx] = useState(0)
   const [exitIdx, setExitIdx] = useState<number | null>(null)
   const [dir, setDir] = useState<'next' | 'prev'>('next')
-  const [hovered, setHovered] = useState(false)
-  const [focused, setFocused] = useState(false)
-  const [userPaused, setUserPaused] = useState(false)
   const reducedMotion = useSyncExternalStore(subscribeMotion, getReducedMotion, getReducedMotionServer)
-  const locked = useRef(false)
+  const exitTimer = useRef<number | undefined>(undefined)
   const drag = useRef<{ x: number; moved: boolean } | null>(null)
 
   const go = useCallback(
     (next: number, direction: 'next' | 'prev') => {
-      if (locked.current || next === idx) return
-      locked.current = true
+      if (next === idx) return
+      window.clearTimeout(exitTimer.current)
       setDir(direction)
       setExitIdx(idx)
       setIdx(next)
-      window.setTimeout(() => {
-        setExitIdx(null)
-        locked.current = false
-      }, reducedMotion ? 0 : TRANSITION)
+      exitTimer.current = window.setTimeout(() => setExitIdx(null), reducedMotion ? 0 : EXIT_MS)
     },
     [idx, reducedMotion],
   )
@@ -58,20 +52,13 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const next = useCallback(() => go((idx + 1) % n, 'next'), [go, idx, n])
   const prev = useCallback(() => go((idx - 1 + n) % n, 'prev'), [go, idx, n])
 
-  const paused = hovered || focused || userPaused || reducedMotion
   const autoplay = n > 1 && !reducedMotion
 
   return (
     <section
-      className={`hero${paused ? ' is-paused' : ''}`}
+      className={`hero dir-${dir}`}
       aria-roledescription="carousel"
       aria-label="Sorotan JITU"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setFocused(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
-      }}
       onPointerDown={(e) => {
         drag.current = { x: e.clientX, moved: false }
       }}
@@ -94,14 +81,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         {slides.map((s, i) => {
           const isActive = i === idx
           const isExiting = i === exitIdx
-          const cls = [
-            'hero-slide',
-            isActive && 'is-active',
-            isExiting && 'is-exiting',
-            (isActive || isExiting) && exitIdx !== null && `dir-${dir}`,
-          ]
-            .filter(Boolean)
-            .join(' ')
+          const cls = ['hero-slide', isActive && 'is-active', isExiting && 'is-exiting'].filter(Boolean).join(' ')
           const Heading = i === 0 ? 'h1' : 'h2'
           return (
             <div
@@ -171,42 +151,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               </button>
             ))}
           </div>
-          <div className="hero__buttons">
-            <button
-              type="button"
-              className="hero__btn"
-              onClick={() => setUserPaused((p) => !p)}
-              aria-label={userPaused ? 'Putar slide otomatis' : 'Jeda slide otomatis'}
-              hidden={!autoplay}
-            >
-              {userPaused ? <PlayGlyph /> : <PauseGlyph />}
-            </button>
-            <button type="button" className="hero__btn" onClick={prev} aria-label="Slide sebelumnya">
-              <Icon name="chevron-down" size={22} className="hero__arrow hero__arrow--prev" />
-            </button>
-            <button type="button" className="hero__btn" onClick={next} aria-label="Slide berikutnya">
-              <Icon name="chevron-down" size={22} className="hero__arrow hero__arrow--next" />
-            </button>
-          </div>
         </div>
       )}
     </section>
-  )
-}
-
-function PauseGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-      <rect x="6" y="5" width="4" height="14" rx="1" />
-      <rect x="14" y="5" width="4" height="14" rx="1" />
-    </svg>
-  )
-}
-
-function PlayGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-      <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
-    </svg>
   )
 }

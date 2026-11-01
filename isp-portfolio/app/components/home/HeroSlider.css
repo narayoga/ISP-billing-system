@@ -1,6 +1,6 @@
 /* ================================================================
    HeroSlider — diadaptasi dari CMS-portfolio (HeroSlider.css).
-   Latar diam; isi slide bergeser (keyframes slide*), teks masuk berurutan.
+   Latar diam; isi slide crossfade + geser halus, teks masuk berurutan.
    ================================================================ */
 
 .hero {
@@ -120,85 +120,69 @@
   }
 }
 
-/* ── Geser isi slide (CMS: slideInRight / slideOutLeft, dst.) ── */
-.hero-slide.is-active.dir-next {
-  animation: heroSlideInRight 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+/* ── Pergantian slide ──────────────────────────────────────────────
+   Isi slide lama memudar cepat sambil bergeser sedikit ke arah keluar;
+   isi slide baru masuk dari arah berlawanan, elemen demi elemen, dengan
+   kurva lembut dan sedikit blur — tanpa jeda kosong di antaranya.
+   Arah (--shift) diambil dari kelas dir-next/dir-prev pada .hero. */
+.hero.dir-next {
+  --shift: 40px;
 }
 
-.hero-slide.is-active.dir-prev {
-  animation: heroSlideInLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+.hero.dir-prev {
+  --shift: -40px;
 }
 
-.hero-slide.is-exiting.dir-next {
-  animation: heroSlideOutLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+.hero-slide.is-exiting .hero-slide__inner {
+  animation: heroContentOut 0.35s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
-.hero-slide.is-exiting.dir-prev {
-  animation: heroSlideOutRight 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+@keyframes heroContentOut {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--shift) * -1));
+  }
 }
 
-@keyframes heroSlideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes heroSlideInLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes heroSlideOutLeft {
-  from { transform: translateX(0); }
-  to { transform: translateX(-100%); }
-}
-
-@keyframes heroSlideOutRight {
-  from { transform: translateX(0); }
-  to { transform: translateX(100%); }
-}
-
-/* ── Teks & tombol muncul berurutan (CMS heroTextIn) ──
-   Muatan pertama: jeda pendek agar judul (LCP) cepat tampil.
-   Setelah pergeseran: tunggu slide tiba dulu (0,5 s), seperti CMS. */
+/* Teks, kapsul, dan tombol masuk berurutan (heroTextIn CMS-portfolio, diperhalus) */
 .hero-slide.is-active .hero-slide__text > * {
-  animation: heroTextIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--d, 0) * 0.12s);
-}
-
-.hero-slide.is-active.dir-next .hero-slide__text > *,
-.hero-slide.is-active.dir-prev .hero-slide__text > * {
-  animation-delay: calc(0.5s + var(--d, 0) * 0.15s);
+  animation: heroTextIn 0.9s cubic-bezier(0.45, 0, 0.2, 1) both;
+  animation-delay: calc(0.2s + var(--d, 0) * 0.12s);
 }
 
 .hero-slide__text > :nth-child(2) { --d: 1; }
 .hero-slide__text > :nth-child(3) { --d: 2; }
 .hero-slide__text > :nth-child(4) { --d: 3; }
 
-/* Teks slide yang keluar tetap terlihat selama bergeser */
-.hero-slide.is-exiting .hero-slide__text > * {
-  animation: none;
-}
-
 .hero-slide.is-active .hero-slide__media img {
-  animation: heroMediaIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-}
-
-.hero-slide.is-active.dir-next .hero-slide__media img,
-.hero-slide.is-active.dir-prev .hero-slide__media img {
-  animation-delay: 0.45s;
+  animation: heroMediaIn 1.1s cubic-bezier(0.45, 0, 0.2, 1) 0.25s both;
 }
 
 @keyframes heroTextIn {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translate(calc(var(--shift, 40px) * 0.6), 16px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
 }
 
 @keyframes heroMediaIn {
-  from { opacity: 0; transform: scale(0.9) translateY(20px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateX(var(--shift, 40px)) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-/* ── Kontrol: bar progres + jeda + panah ── */
+/* ── Bar progres (juga tombol pilih slide) ── */
 .hero__controls {
   position: absolute;
   right: 0;
@@ -207,7 +191,6 @@
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
 }
 
 .hero__progress {
@@ -225,6 +208,11 @@
   border: 0;
   background: none;
   cursor: pointer;
+}
+
+.hero__progress-track:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .hero__progress-track::before,
@@ -257,74 +245,34 @@
   width: 100%;
 }
 
-.hero.is-paused .hero__progress-fill.is-running {
-  animation-play-state: paused;
-}
-
 @keyframes heroProgress {
   from { width: 0; }
   to { width: 100%; }
 }
 
-/* Di kiri, tepat setelah bar progres — sisi kanan bawah dipakai widget WA */
-.hero__buttons {
-  display: flex;
-  gap: 0.5rem;
+/* Jeda saat kursor di atas banner atau saat fokus keyboard di dalamnya.
+   Akhir animasi bar memicu slide berikutnya, jadi menjeda bar = menjeda timer.
+   (hover: hover) mencegah jeda "nyangkut" setelah disentuh di layar sentuh. */
+@media (hover: hover) {
+  .hero:hover .hero__progress-fill.is-running {
+    animation-play-state: paused;
+  }
 }
 
-.hero__btn {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid rgb(255 255 255 / 0.3);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.08);
-  color: #fff;
-  cursor: pointer;
-  transition: background-color var(--transition), border-color var(--transition);
+.hero:focus-within .hero__progress-fill.is-running {
+  animation-play-state: paused;
 }
 
-.hero__btn[hidden] {
-  display: none;
-}
-
-.hero__btn:hover {
-  border-color: transparent;
-  background: var(--color-primary);
-}
-
-.hero__btn:focus-visible,
-.hero__progress-track:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
-}
-
-.hero__arrow--prev {
-  transform: rotate(90deg);
-}
-
-.hero__arrow--next {
-  transform: rotate(-90deg);
-}
-
-/* Ponsel: kontrol tidak bertabrakan dengan widget WA di kanan bawah */
+/* Ponsel: bar tidak bertabrakan dengan widget WA di kanan bawah */
 @media (max-width: 639px) {
   .hero__controls {
     bottom: 1.25rem;
-    gap: 0.75rem;
     padding-right: 4.5rem;
-  }
-
-  .hero__btn {
-    width: 2.25rem;
-    height: 2.25rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-slide.is-active,
-  .hero-slide.is-exiting,
+  .hero-slide.is-exiting .hero-slide__inner,
   .hero-slide.is-active .hero-slide__text > *,
   .hero-slide.is-active .hero-slide__media img {
     animation: none !important;
