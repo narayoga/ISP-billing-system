@@ -23,24 +23,78 @@
   margin-left: 0.75rem;
 }
 
-.coverage-city + .coverage-city {
+.coverage-request {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
   margin-top: 2.5rem;
+  color: var(--color-muted);
 }
 
-.coverage-city__name {
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
+/* Section pencarian di atas section berikutnya, agar daftar saran tidak
+   tertimpa kartu daftar area yang beranimasi (transform = stacking context). */
+.coverage-page {
+  position: relative;
+  z-index: 2;
 }
 
-.coverage-district {
+/* ── Area layanan: daftar (kiri) & peta ODP (kanan) setinggi sama ──
+   Tinggi baris tetap; panel daftar di-scroll sendiri bila area bertambah.
+   Peta tidak sticky — ikut tinggi baris. */
+.coverage-areas {
+  --areas-h: 30rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .coverage-areas {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-rows: var(--areas-h);
+  }
+
+  .coverage-areas__map .map-view__canvas {
+    min-height: 0;
+  }
+}
+
+.coverage-areas__list {
+  max-height: var(--areas-h);
   padding: 1.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border-radius: var(--radius-lg);
   background: var(--color-bg);
   box-shadow: var(--shadow-card);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--color-primary-rgb) / 0.35) transparent;
+}
+
+.coverage-areas__list:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.coverage-city + .coverage-city {
+  margin-top: 1.75rem;
+}
+
+.coverage-city__name {
+  margin-bottom: 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.coverage-district + .coverage-district {
+  margin-top: 1.25rem;
 }
 
 .coverage-district h4 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
   color: var(--color-heading);
   font-size: 1.0625rem;
 }
@@ -65,46 +119,14 @@
   color: var(--color-heading);
 }
 
-.coverage-request {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  color: var(--color-muted);
-}
-
-/* Section pencarian di atas section berikutnya, agar daftar saran tidak
-   tertimpa kartu daftar area yang beranimasi (transform = stacking context). */
-.coverage-page {
-  position: relative;
-  z-index: 2;
-}
-
-/* ── Area layanan: daftar di kiri, peta titik ODP di kanan ── */
-.coverage-areas {
-  display: grid;
-  gap: 2rem;
-}
-
-@media (min-width: 960px) {
-  .coverage-areas {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    align-items: start;
-  }
-
-  /* Peta ikut terlihat saat daftar di-scroll */
-  .coverage-areas__map {
-    position: sticky;
-    top: calc(var(--header-h) + 1.5rem);
-  }
-}
-
-.coverage-city__districts {
-  display: grid;
-  gap: 1.25rem;
-}
-
+/* Peta mengisi tinggi baris di desktop; di ponsel tinggi tetap */
+.coverage-areas__map,
 .coverage-areas__map .map-view__canvas {
-  min-height: 28rem;
+  height: 100%;
+}
+
+@media (max-width: 959px) {
+  .coverage-areas__map .map-view__canvas {
+    height: 22rem;
+  }
 }
