@@ -35,8 +35,15 @@ export default function Layanan() {
     <>
       <PageHeader title="Layanan & Paket" description="Fiber optic unlimited tanpa FUP untuk rumah dan bisnis di Ubud." />
 
-      {/* Internet Rumah — anchor dari mega menu */}
-      <Section id={home.slug} eyebrow={home.title} title="Paket JaberNITE untuk Rumah" description={home.description}>
+      {/* Internet Rumah — nuansa JaberNITE LITE (merah muda); anchor dari mega menu */}
+      <Section
+        id={home.slug}
+        className="theme-lite product-section"
+        align="left"
+        eyebrow={`${home.title} · JaberNITE LITE`}
+        title="Paket JaberNITE untuk Rumah"
+        description={home.description}
+      >
         <Reveal className="package-grid">
           {homePackages.map((p, i) => (
             <div key={p.slug} {...reveal('fade-up', i * 100)}>
@@ -46,11 +53,11 @@ export default function Layanan() {
         </Reveal>
       </Section>
 
-      {/* Internet Bisnis — anchor dari mega menu */}
-      <Section id={business.slug} surface>
+      {/* Internet Bisnis — nuansa JaberNITE HOME (biru); anchor dari mega menu */}
+      <Section id={business.slug} className="theme-home product-section">
         <Reveal className="business">
           <div className="business__text">
-            <span {...reveal('fade-up', 0, 'section-title__eyebrow')}>{business.title}</span>
+            <span {...reveal('fade-up', 0, 'section-title__eyebrow')}>{business.title} · JaberNITE HOME</span>
             <h2 {...reveal('fade-up', 100, 'business__title')}>Dedicated Internet untuk Usaha Anda</h2>
             <p {...reveal('fade-up', 200)}>
               {business.description} Kecepatan dan harga disesuaikan kebutuhan — dari kantor kecil hingga hotel dan resort.
@@ -58,7 +65,8 @@ export default function Layanan() {
             <ul className="business__features">
               {features.map((f, i) => (
                 <li key={f.title} {...reveal('fade-up', 300 + i * 80)}>
-                  <IconBox icon={f.icon} tone={f.tone} />
+                  {/* tone primary = biru tema HOME, agar satu nuansa dalam section */}
+                  <IconBox icon={f.icon} tone="primary" />
                   <div>
                     <h3>{f.title}</h3>
                     <p>{f.description}</p>

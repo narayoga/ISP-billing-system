@@ -50,12 +50,12 @@
 .btn--primary {
   background: var(--gradient-primary);
   color: #fff;
-  box-shadow: 0 10px 25px -8px rgb(237 39 117 / 0.55);
+  box-shadow: 0 10px 25px -8px rgb(var(--color-primary-rgb) / 0.55);
 }
 
 .btn--primary:hover {
   filter: brightness(1.06);
-  box-shadow: 0 14px 30px -8px rgb(237 39 117 / 0.6);
+  box-shadow: 0 14px 30px -8px rgb(var(--color-primary-rgb) / 0.6);
 }
 
 /* Garis tepi, isi transparan */

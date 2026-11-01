@@ -1,0 +1,50 @@
+{
+  "01-tim-teknisi": {
+    "width": 900,
+    "height": 506
+  },
+  "02-tower-bts": {
+    "width": 900,
+    "height": 1350
+  },
+  "03-sambung-fiber": {
+    "width": 900,
+    "height": 900
+  },
+  "04-peluncuran": {
+    "width": 900,
+    "height": 675
+  },
+  "05-tarik-kabel": {
+    "width": 900,
+    "height": 1200
+  },
+  "06-kerja-sama": {
+    "width": 900,
+    "height": 1125
+  },
+  "07-splicing-odp": {
+    "width": 900,
+    "height": 675
+  },
+  "08-cek-odp": {
+    "width": 900,
+    "height": 1200
+  },
+  "09-gathering": {
+    "width": 900,
+    "height": 506
+  },
+  "10-survei-jalur": {
+    "width": 900,
+    "height": 900
+  },
+  "11-penghargaan": {
+    "width": 900,
+    "height": 675
+  },
+  "12-rapat-koordinasi": {
+    "width": 900,
+    "height": 1125
+  }
+}

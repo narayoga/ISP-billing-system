@@ -17,6 +17,7 @@ type Props = {
  * transisi buka/tutup mulus; saat tertutup dibuat `inert` (tak terjangkau Tab).
  */
 export function MegaMenu({ id, data, open, onNavigate }: Props) {
+  const rows = data.layout === 'rows'
   return (
     <div id={id} className={`mega${open ? ' is-open' : ''}`} inert={!open}>
       <div className="container mega__inner">
@@ -29,13 +30,17 @@ export function MegaMenu({ id, data, open, onNavigate }: Props) {
             <Icon name="arrow-right" size={16} />
           </Link>
         </div>
-        <ul className="mega__links">
+        <ul className={`mega__links${rows ? ' mega__links--rows' : ''}`}>
           {data.links.map((link, i) => (
-            <li key={link.to + link.label} style={{ '--i': i } as CSSProperties}>
+            <li
+              key={link.to + link.label}
+              className={link.theme ? `theme-${link.theme}` : undefined}
+              style={{ '--i': i } as CSSProperties}
+            >
               <Link to={link.to} className="mega__link" onClick={onNavigate}>
                 {link.icon && (
                   <span className="mega__link-icon">
-                    <Icon name={link.icon} size={20} />
+                    <Icon name={link.icon} size={rows ? 30 : 20} />
                   </span>
                 )}
                 <span>

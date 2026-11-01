@@ -20,6 +20,7 @@ export const site: Site = {
   address: {
     office: 'Ubud, Kabupaten Gianyar, Bali', // TODO(konten): alamat lengkap kantor
     mapsUrl: 'https://maps.google.com/?q=Ubud,+Gianyar,+Bali', // TODO(konten)
+    geo: { lat: -8.5069, lng: 115.2625 }, // sementara: pusat Ubud — ganti titik kantor JITU
   },
   branches: [{ name: 'JITU Ubud', address: 'Ubud, Kabupaten Gianyar, Bali' }], // TODO(konten)
   hours: 'Senin–Sabtu, 08.00–17.00 WITA · Dukungan teknis 24/7', // TODO(konten)
@@ -35,7 +36,6 @@ export const site: Site = {
       'Memperluas jangkauan jaringan ke seluruh desa di Ubud.',
     ], // TODO(konten)
   },
-  gallery: [], // TODO(konten): foto kantor, tim, instalasi
   fees: { installation: 0, taxNote: 'Harga sudah termasuk PPN 11%.' }, // TODO(konten)
   terms: [
     'Harga sudah termasuk PPN 11%.',

@@ -168,3 +168,35 @@
   margin-top: 2.5rem;
   color: var(--color-muted);
 }
+
+/* ── Section lini produk (tema LITE / HOME dari app.css) ──
+   Latar diberi rona tipis warna lininya, dengan garis gradien di tepi atas,
+   agar dua section terasa sebagai dua lini produk berbeda. */
+.product-section {
+  position: relative;
+  background: linear-gradient(180deg, rgb(var(--color-primary-rgb) / 0.07) 0%, rgb(var(--color-primary-rgb) / 0.02) 55%, transparent 100%);
+}
+
+.product-section::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+/* Sub-judul tema tampil sebagai kapsul bergradien */
+.product-section .section-title__eyebrow {
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-primary);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #fff;
+  letter-spacing: 0.04em;
+  justify-self: start; /* di dalam grid jangan melebar selebar kolom */
+}
+
+.product-section .package-card__check {
+  color: var(--color-primary);
+}

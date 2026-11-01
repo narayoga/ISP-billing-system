@@ -24,13 +24,12 @@ export type Site = {
     phone: string
     email: string
   }
-  address: { office: string; mapsUrl: string }
+  /** geo = titik pin peta Leaflet/OpenStreetMap di section Lokasi */
+  address: { office: string; mapsUrl: string; geo: { lat: number; lng: number } }
   branches: Branch[]
   hours: string
   social: { label: string; url: string }[]
   profile: { about: string; vision: string; mission: string[] }
-  /** Foto galeri Tentang Kami; kosong = section galeri disembunyikan (US-02 AC 3) */
-  gallery: ImageAsset[]
   fees: { installation: number; taxNote: string }
   /** Poin "Mohon Diperhatikan" pada form pendaftaran */
   terms: string[]
@@ -97,6 +96,9 @@ export type LegalDoc = {
 
 export type ImageAsset = { src: string; width: number; height: number; alt: string }
 
+/** Foto galeri masonry: gambar + tahun + judul kegiatan (pola daftar proyek CMS-portfolio) */
+export type GalleryItem = ImageAsset & { year: number; title: string; category: string }
+
 export type CtaLink = { label: string; href: string; icon?: IconName }
 
 export type HeroSlide = {
@@ -118,6 +120,8 @@ export type NavLink = {
   to: string
   description?: string
   icon?: IconName
+  /** Warnai tautan dengan tema lini produk (lihat .theme-* di app.css) */
+  theme?: 'lite' | 'home'
 }
 
 export type MegaMenu = {
@@ -127,6 +131,8 @@ export type MegaMenu = {
   tone: Feature['tone']
   cta: NavLink
   links: NavLink[]
+  /** 'rows': tautan bertumpuk satu kolom dengan teks & ikon lebih besar */
+  layout?: 'grid' | 'rows'
 }
 
 /** Item menu utama: tautan biasa, atau pemicu mega menu */

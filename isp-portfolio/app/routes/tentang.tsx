@@ -2,11 +2,14 @@ import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { Icon } from '../components/Icon'
 import { IconBox } from '../components/IconBox'
+import { LocationMap } from '../components/LocationMap'
+import { Masonry } from '../components/Masonry'
 import { PageHeader } from '../components/PageHeader'
 import { Reveal } from '../components/Reveal'
 import { Section } from '../components/Section'
 import { SmoothImg } from '../components/SmoothImg'
 import { features } from '../content/features'
+import { gallery } from '../content/gallery'
 import { site } from '../content/site'
 import { formatPhone } from '../lib/format'
 import { reveal } from '../lib/reveal'
@@ -22,9 +25,9 @@ export function meta() {
   })
 }
 
-// PRD US-02: profil, visi-misi, cabang/POP, galeri (bila ada foto).
+// PRD US-02: profil, visi-misi, galeri masonry, cabang/POP + peta.
 export default function Tentang() {
-  const { profile, branches, gallery } = site
+  const { profile, branches } = site
   return (
     <>
       <PageHeader title="Tentang Kami" description="Mengenal JITU — Jagonya Internet Ubud, bagian dari keluarga Jagonet." />
@@ -85,44 +88,44 @@ export default function Tentang() {
         </Reveal>
       </Section>
 
-      {/* Cabang & POP — anchor dari mega menu */}
-      <Section id="cabang" eyebrow="Cabang & POP" title="Lokasi Kami" description="Kunjungi kantor atau hubungi cabang terdekat.">
-        <Reveal className="grid grid--3">
-          {branches.map((b, i) => (
-            <div key={b.name} {...reveal('fade-up', i * 120)}>
-              <Card hover className="about-branch">
-                <span className="about-branch__icon">
-                  <Icon name="map-pin" size={22} />
-                </span>
-                <h3>{b.name}</h3>
-                <p>{b.address}</p>
-                {b.phone ? (
-                  <a href={telLink(b.phone)} className="about-branch__link">
-                    <Icon name="phone" size={16} /> {formatPhone(b.phone)}
-                  </a>
-                ) : (
-                  <a href={waLink('WEB-KONTAK')} target="_blank" rel="noopener noreferrer" className="about-branch__link">
-                    <Icon name="whatsapp" size={16} /> Hubungi via WhatsApp
-                  </a>
-                )}
-              </Card>
-            </div>
-          ))}
-        </Reveal>
-      </Section>
-
-      {/* Galeri — hanya bila foto tersedia (US-02 AC 3) */}
+      {/* Galeri masonry — pola daftar proyek CMS-portfolio; hanya bila ada foto (US-02 AC 3) */}
       {gallery.length > 0 && (
-        <Section surface eyebrow="Galeri" title="Kegiatan Kami">
-          <Reveal className="grid grid--3">
-            {gallery.map((g, i) => (
-              <div key={g.src} {...reveal('zoom-in', i * 100, 'about-gallery__item')}>
-                <SmoothImg src={g.src} alt={g.alt} width={g.width} height={g.height} loading="lazy" decoding="async" />
+        <Section id="galeri" eyebrow="Galeri" title="Kegiatan Kami di Lapangan" align="left">
+          <Masonry items={gallery} />
+        </Section>
+      )}
+
+      {/* Cabang & POP + peta OpenStreetMap — anchor dari mega menu */}
+      <Section id="cabang" surface eyebrow="Cabang & POP" title="Lokasi Kami" description="Kunjungi kantor atau hubungi cabang terdekat." align="left">
+        <div className="about-location">
+          <Reveal className="about-location__branches">
+            {branches.map((b, i) => (
+              <div key={b.name} {...reveal('fade-up', i * 120)}>
+                <Card hover className="about-branch">
+                  <span className="about-branch__icon">
+                    <Icon name="map-pin" size={22} />
+                  </span>
+                  <h3>{b.name}</h3>
+                  <p>{b.address}</p>
+                  {b.phone ? (
+                    <a href={telLink(b.phone)} className="about-branch__link">
+                      <Icon name="phone" size={16} /> {formatPhone(b.phone)}
+                    </a>
+                  ) : (
+                    <a href={waLink('WEB-KONTAK')} target="_blank" rel="noopener noreferrer" className="about-branch__link">
+                      <Icon name="whatsapp" size={16} /> Hubungi via WhatsApp
+                    </a>
+                  )}
+                  <a href={site.address.mapsUrl} target="_blank" rel="noopener noreferrer" className="about-branch__link">
+                    <Icon name="map-pin" size={16} /> Petunjuk arah
+                  </a>
+                </Card>
               </div>
             ))}
           </Reveal>
-        </Section>
-      )}
+          <LocationMap lat={site.address.geo.lat} lng={site.address.geo.lng} label={branches[0]?.name ?? site.brand.name} />
+        </div>
+      </Section>
     </>
   )
 }

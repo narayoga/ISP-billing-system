@@ -13,7 +13,7 @@
 }
 
 .package-card__badge .badge {
-  box-shadow: 0 6px 16px -4px rgb(237 39 117 / 0.5);
+  box-shadow: 0 6px 16px -4px rgb(var(--color-primary-rgb) / 0.5);
 }
 
 .package-card__name {

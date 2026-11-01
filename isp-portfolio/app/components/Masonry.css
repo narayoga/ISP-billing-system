@@ -1,0 +1,79 @@
+/* Masonry kolom CSS — dari CMS-portfolio (ProjectList.css): 3 → 2 → 1 kolom */
+.masonry {
+  column-count: 3;
+  column-gap: 2.5rem;
+}
+
+.masonry__item {
+  margin: 0 0 2.5rem;
+  break-inside: avoid;
+}
+
+.masonry__img {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--color-surface);
+}
+
+.masonry__img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+
+.masonry__card:hover .masonry__img img {
+  transform: scale(1.03);
+}
+
+.masonry figcaption {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 1rem;
+}
+
+.masonry__year {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.masonry__title {
+  color: var(--color-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  transition: color var(--transition);
+}
+
+.masonry__card:hover .masonry__title {
+  color: var(--color-primary);
+}
+
+.masonry__category {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 1024px) {
+  .masonry {
+    column-count: 2;
+    column-gap: 1.5rem;
+  }
+
+  .masonry__item {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .masonry {
+    column-count: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masonry__card:hover .masonry__img img {
+    transform: none;
+  }
+}

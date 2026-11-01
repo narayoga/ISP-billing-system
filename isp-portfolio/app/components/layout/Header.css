@@ -297,8 +297,45 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  background: rgb(237 39 117 / 0.1);
+  background: rgb(var(--color-primary-rgb) / 0.1);
   color: var(--color-primary);
+}
+
+/* Tata letak 'rows' (mega menu Layanan): dua baris besar, ikon bergradien tema */
+.mega__links--rows {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.mega__links--rows .mega__link {
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.mega__links--rows .mega__link:hover,
+.mega__links--rows .mega__link:focus-visible {
+  border-color: transparent;
+  background: rgb(var(--color-primary-rgb) / 0.06);
+}
+
+.mega__links--rows .mega__link-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1.25rem;
+  background: var(--gradient-primary);
+  color: #fff;
+}
+
+.mega__links--rows .mega__link-label {
+  font-size: 1.25rem;
+}
+
+.mega__links--rows .mega__link-desc {
+  margin-top: 0.15rem;
+  font-size: 1rem;
 }
 
 .mega__link-label {

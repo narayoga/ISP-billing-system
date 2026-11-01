@@ -113,6 +113,12 @@ di ponsel, dan tampilan rapi di lebar 360px.
 - [x] Komponen baru: Modal (`<dialog>`), ComingSoonNotice/Modal, Field/Input/Select/
       Textarea, LegalDocument, `lib/validation.ts` (dipakai lagi di Fase 6–7)
 - [x] Widget WA disembunyikan di layar kecil selama mengisi field (US-03 AC 4)
+- [x] Revisi: section Rumah bernuansa JaberNITE LITE (merah muda) dan Bisnis
+      JaberNITE HOME (biru) lewat kelas `.theme-lite` / `.theme-home`, judul rata kiri;
+      mega menu Layanan jadi 2 baris besar; galeri masonry 12 foto Jagonet (di-crop
+      rasio campur oleh `npm run gallery` / sharp) setelah Visi & Misi; peta
+      Leaflet + OpenStreetMap (tanpa API key, dimuat saat mendekati layar) di
+      kanan section Lokasi — titik pin sementara pusat Ubud (`site.address.geo`)
 
 **Cara cek:** semua angka paket sama persis di Beranda dan `/layanan`. Tombol
 "Berlangganan" membawa ke `/daftar?paket=…`. Form Kirim Pesan memvalidasi isian lalu

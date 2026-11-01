@@ -15,3 +15,6 @@ build
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# Foto mentah galeri (besar) — hasil crop ada di public/images/galeri
+assets-source/gallery-raw/
