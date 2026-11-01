@@ -9,7 +9,8 @@ import './site-layout.css'
  * Kerangka semua halaman publik: header, konten, footer, widget melayang.
  *
  * Transisi antar halaman meniru CMS-portfolio (PublicLayout.jsx): konten
- * di-mount ulang per pathname lalu fade-up 0,35 detik. Muatan pertama tidak
+ * di-mount ulang per pathname lalu isinya fade-up 0,35 detik (latar tetap diam,
+ * lihat site-layout.css). Muatan pertama tidak
  * dianimasikan agar HTML prerender langsung tampil (dan hidrasi cocok); animasi
  * aktif sejak navigasi pertama, termasuk saat tombol Kembali.
  * Scroll ke atas/ke #anchor saat pindah halaman ditangani <ScrollRestoration>.
