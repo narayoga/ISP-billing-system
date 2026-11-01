@@ -1,0 +1,88 @@
+.floating-contact {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 80;
+  display: grid;
+  justify-items: end;
+  gap: 0.75rem;
+}
+
+.floating-contact__btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 10px 25px -6px rgb(38 42 55 / 0.35);
+  transition: transform var(--transition);
+}
+
+.floating-contact__btn:hover {
+  transform: scale(1.08);
+}
+
+.floating-contact__btn:focus-visible {
+  outline: 3px solid var(--color-heading);
+  outline-offset: 3px;
+}
+
+.floating-contact__btn--wa {
+  background: #25d366;
+}
+
+.floating-contact__btn--phone {
+  background: var(--color-float);
+}
+
+/* Label muncul di kiri tombol saat hover/fokus; tetap terbaca pembaca layar */
+.floating-contact__label {
+  position: absolute;
+  right: calc(100% + 0.6rem);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-heading);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.floating-contact__btn:hover .floating-contact__label,
+.floating-contact__btn:focus-visible .floating-contact__label {
+  opacity: 1;
+  transform: none;
+}
+
+/* Layar kecil: tombol lebih ringkas agar tidak menutupi konten (US-03 AC 4) */
+@media (max-width: 479px) {
+  .floating-contact__btn {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+/* Sembunyikan saat menu ponsel terbuka */
+body:has(.has-mobile-open) .floating-contact {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-contact__btn,
+  .floating-contact__label {
+    transition: none;
+  }
+
+  .floating-contact__btn:hover {
+    transform: none;
+  }
+}

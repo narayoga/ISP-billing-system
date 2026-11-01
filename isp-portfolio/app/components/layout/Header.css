@@ -1,0 +1,435 @@
+/* Header fixed — perilaku dari CMS-portfolio (Header.css), warna Jagonet. */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  background: rgb(255 255 255 / 0.97);
+  box-shadow: 0 1px 2px rgb(38 42 55 / 0.06), 0 2px 8px rgb(38 42 55 / 0.06);
+  backdrop-filter: saturate(180%) blur(8px);
+  transition:
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.site-header.is-transparent {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* Saat mega menu terbuka, header & panel menyatu tanpa bayangan pemisah */
+.site-header.has-mega-open {
+  box-shadow: none;
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: var(--header-h);
+}
+
+/* ── Logo: dua gambar ditumpuk, di-crossfade ── */
+.site-header__logo {
+  display: grid;
+  flex-shrink: 0;
+}
+
+.site-header__logo img {
+  grid-area: 1 / 1;
+  width: auto;
+  height: 52px;
+  transition: opacity 0.35s ease;
+}
+
+/* Transparan → logo putih; solid → logo hitam */
+.site-header__logo-dark,
+.is-solid .site-header__logo-light {
+  opacity: 0;
+}
+
+.is-solid .site-header__logo-dark {
+  opacity: 1;
+}
+
+/* ── Navigasi desktop ── */
+.site-nav {
+  display: none;
+  margin-inline: auto;
+}
+
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.85rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.site-nav__link:hover,
+.site-nav__link.active,
+.site-nav__item.is-open > .site-nav__link {
+  color: var(--color-primary);
+}
+
+/* Garis bawah halaman aktif */
+.site-nav__link.active::after {
+  content: '';
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.15rem;
+  left: 0.85rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gradient-primary);
+}
+
+.site-nav__link:focus-visible,
+.site-header__toggle:focus-visible,
+.site-header__logo:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.site-nav__caret {
+  transition: transform 0.25s ease;
+}
+
+.site-nav__item.is-open .site-nav__caret {
+  transform: rotate(180deg);
+}
+
+.is-transparent .site-nav__link {
+  color: rgb(255 255 255 / 0.9);
+}
+
+.is-transparent .site-nav__link:hover,
+.is-transparent .site-nav__link.active {
+  color: #fff;
+}
+
+.is-transparent .site-nav__link.active::after {
+  background: #fff;
+}
+
+/* ── Aksi kanan ── */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.site-header__toggle {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--color-heading);
+  cursor: pointer;
+  transition: color 0.35s ease;
+}
+
+.is-transparent .site-header__toggle {
+  color: #fff;
+}
+
+@media (max-width: 479px) {
+  .site-header__cta {
+    display: none;
+  }
+}
+
+@media (min-width: 1100px) {
+  .site-nav {
+    display: block;
+  }
+
+  .site-header__actions {
+    margin-left: 0;
+  }
+
+  .site-header__toggle {
+    display: none;
+  }
+}
+
+/* ── Mega menu (CMS-portfolio .mega-wrap) ── */
+.mega {
+  position: fixed;
+  top: var(--header-h);
+  right: 0;
+  left: 0;
+  z-index: 90;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: 0 24px 48px -12px rgb(38 42 55 / 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+}
+
+.mega.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s;
+}
+
+.mega__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 2.5rem;
+  padding-block: 2.5rem;
+}
+
+.mega__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.mega__title {
+  margin-top: 0.5rem;
+  color: var(--color-heading);
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.mega__subtitle {
+  color: var(--color-muted);
+}
+
+.mega__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mega__cta:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.mega__links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Tautan masuk berurutan saat panel terbuka */
+.mega__links li {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.mega.is-open .mega__links li {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i) * 50ms + 60ms);
+}
+
+.mega__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  color: var(--color-heading);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.mega__link:hover,
+.mega__link:focus-visible {
+  background: var(--color-surface);
+}
+
+.mega__link-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgb(237 39 117 / 0.1);
+  color: var(--color-primary);
+}
+
+.mega__link-label {
+  display: block;
+  font-weight: 600;
+}
+
+.mega__link-desc {
+  display: block;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Menu ponsel ── */
+.mobile-menu {
+  position: fixed;
+  top: var(--header-h);
+  right: 0;
+  left: 0;
+  height: calc(100dvh - var(--header-h));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+
+.mobile-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s;
+}
+
+@media (min-width: 1100px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
+.mobile-menu__list {
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+}
+
+.mobile-menu__list > li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mobile-menu__link.active {
+  color: var(--color-primary);
+}
+
+.mobile-menu__caret {
+  transition: transform 0.25s ease;
+}
+
+.is-expanded .mobile-menu__caret {
+  transform: rotate(180deg);
+}
+
+/* Akordeon: animasi tinggi dengan grid-template-rows 0fr → 1fr */
+.mobile-menu__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.is-expanded .mobile-menu__panel {
+  grid-template-rows: 1fr;
+}
+
+.mobile-menu__panel > ul {
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 0 0.75rem;
+  overflow: hidden;
+  list-style: none;
+}
+
+.mobile-menu__sublink {
+  display: block;
+  padding: 0.65rem 0.25rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.is-expanded .mobile-menu__panel > ul li:last-child .mobile-menu__sublink {
+  margin-bottom: 0.75rem;
+}
+
+.mobile-menu__actions {
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.5rem 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header__logo img,
+  .mega,
+  .mega__links li,
+  .mobile-menu,
+  .mobile-menu__panel {
+    transition: none;
+  }
+}

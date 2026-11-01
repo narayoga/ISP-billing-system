@@ -42,7 +42,7 @@ Anda mengecek bagian **Cara cek**. Fase berikutnya baru dimulai setelah Anda set
 - [x] Palet warna & font stack Jagonet di `app/app.css`, tombol `.btn-primary`
 - [x] Logo & favicon Jagonet di `public/brand/`
 
-## Fase 1 — Konten & Komponen Dasar ✅ selesai, menunggu review
+## Fase 1 — Konten & Komponen Dasar ✅ selesai (`c1aa110`)
 - [x] File konten bertipe di `app/content/`: `site`, `packages`, `coverage`, `features`,
       `stats`, `faq`, `sales`, `legal` (isi sementara dari Jagonet + placeholder JITU,
       ditandai `TODO(konten)`)
@@ -63,16 +63,20 @@ dan judul section tampil dengan warna Jagonet. Scroll terasa mulus, elemen muncu
 dengan animasi saat di-scroll, dan gambar menampilkan shimmer sebelum fade-in.
 Matikan JavaScript di DevTools: semua konten tetap terlihat.
 
-## Fase 2 — Layout Global
-- [ ] Header fixed: logo, menu, CTA **Daftar**. Transparan dengan logo putih di atas
-      hero, lalu putih solid dengan logo hitam setelah scroll (gaya CMS)
-- [ ] Mega menu gaya CMS untuk Tentang Kami & Layanan (panel gambar + kolom tautan,
-      animasi fade/geser)
-- [ ] Menu mobile: hamburger, dan mega menu berubah menjadi akordeon
-- [ ] Transisi antar halaman fade-up + scroll otomatis ke atas saat pindah route
-- [ ] Footer: logo, alamat, kontak, cabang/POP, tautan cepat, media sosial, hak cipta
-- [ ] Widget WhatsApp & telepon melayang (kanan bawah) dengan kode `[WEB-WIDGET]`
-- [ ] Kerangka semua route (halaman kosong berjudul) + halaman 404 kustom
+## Fase 2 — Layout Global ✅ selesai, menunggu review
+- [x] Header fixed: logo, menu, CTA **Daftar**. Transparan dengan logo putih di atas
+      hero, lalu putih solid dengan logo hitam setelah scroll (gaya CMS). Halaman
+      tanpa latar gelap memakai `handle = { header: 'solid' }`
+- [x] Mega menu gaya CMS untuk Tentang Kami & Layanan (panel kiri + kolom tautan,
+      animasi fade/geser, tautan masuk berurutan). Panel kiri sementara memakai kotak
+      ikon bergradien, belum gambar (pertanyaan terbuka no. 8)
+- [x] Menu mobile: hamburger, mega menu menjadi akordeon, scroll halaman dikunci
+- [x] Transisi antar halaman fade-up + scroll otomatis ke atas / ke #anchor
+- [x] Footer: logo, alamat, kontak, cabang/POP, tautan cepat, media sosial
+      (tampil bila diisi), hak cipta
+- [x] Widget WhatsApp & telepon melayang (kanan bawah) dengan kode `[WEB-WIDGET]`
+- [x] Kerangka semua route (PageHeader + placeholder per fase, semua di-prerender)
+      + halaman 404 kustom + tautan "Lewati ke konten"
 
 **Cara cek:** klik semua menu di desktop dan di lebar 360px (DevTools). Mega menu dan
 akordeon bisa dipakai dengan keyboard. Pindah halaman terlihat fade-up, dan header

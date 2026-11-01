@@ -50,6 +50,7 @@
   --radius-icon: 30px; /* kotak ikon keunggulan Jagonet */
   --radius-pill: 30px; /* tombol .default-btn Jagonet */
   --container: 72rem;
+  --header-h: 80px; /* tinggi header fixed (CMS-portfolio) */
 
   /* Bayangan */
   --shadow-card: 0 25px 50px 5px rgb(0 0 0 / 0.05); /* pricing box Jagonet */
@@ -107,6 +108,11 @@ a {
   padding-inline: 1rem;
 }
 
+/* Target anchor (mis. /tentang#cabang) tidak tertutup header fixed */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+
 /* Grid responsif: 1 kolom di ponsel, naik sesuai lebar layar */
 .grid {
   display: grid;
@@ -131,6 +137,16 @@ a {
   }
 }
 
+/* Daftar isi halaman kerangka (PagePlaceholder) */
+.page-placeholder {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  color: var(--color-muted);
+}
+
 /* Teks khusus pembaca layar */
 .sr-only {
   position: absolute;
@@ -141,7 +157,6 @@ a {
   white-space: nowrap;
 }
 
-.home-placeholder,
 .error-page {
   display: grid;
   gap: 0.75rem;

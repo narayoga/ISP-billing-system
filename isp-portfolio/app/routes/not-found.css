@@ -1,0 +1,32 @@
+.not-found {
+  padding-block: calc(var(--header-h) + 4rem) 5rem;
+}
+
+.not-found__inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.not-found__inner > p:not(.not-found__code) {
+  color: var(--color-muted);
+}
+
+.not-found__code {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(5rem, 18vw, 8rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}

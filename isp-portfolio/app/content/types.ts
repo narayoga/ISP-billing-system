@@ -93,6 +93,25 @@ export type LegalDoc = {
   sections: { heading: string; paragraphs: string[] }[]
 }
 
+export type NavLink = {
+  label: string
+  to: string
+  description?: string
+  icon?: IconName
+}
+
+export type MegaMenu = {
+  title: string
+  subtitle: string
+  icon: IconName
+  tone: Feature['tone']
+  cta: NavLink
+  links: NavLink[]
+}
+
+/** Item menu utama: tautan biasa, atau pemicu mega menu */
+export type NavItem = { label: string; to: string; mega?: undefined } | { label: string; mega: MegaMenu; to?: undefined }
+
 export type IconName =
   | 'home'
   | 'building'

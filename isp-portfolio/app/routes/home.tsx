@@ -1,18 +1,26 @@
-import type { Route } from './+types/home'
+import { PageHeader } from '../components/PageHeader'
+import { PagePlaceholder } from '../components/PagePlaceholder'
+import { site } from '../content/site'
+import { pageMeta } from '../lib/seo'
 
-export function meta(): Route.MetaDescriptors {
-  return [
-    { title: 'JITU — Jagonya Internet Ubud' },
-    { name: 'description', content: 'Layanan internet Jagonet untuk wilayah Ubud dan sekitarnya.' },
-  ]
+export function meta() {
+  return pageMeta({ path: '/' })
 }
 
-// Placeholder sampai section Beranda dibangun (PRD isp-portfolio Fase 2).
+// Sementara: hero slider & seluruh section Beranda dibangun di Fase 3.
 export default function Home() {
   return (
-    <main className="container home-placeholder">
-      <h1>JITU — Jagonya Internet Ubud</h1>
-      <p>Situs sedang disiapkan.</p>
-    </main>
+    <>
+      <PageHeader title={site.seo.defaultTitle} description={site.brand.tagline} crumb={null} />
+      <PagePlaceholder
+        phase="Fase 3"
+        items={[
+          'Hero slider layar penuh',
+          'Kategori layanan & keunggulan',
+          'Paket unggulan & cara berlangganan',
+          'CTA coverage, FAQ singkat, CTA penutup',
+        ]}
+      />
+    </>
   )
 }

@@ -5,7 +5,18 @@ import type { Config } from '@react-router/dev/config'
 export default {
   appDirectory: 'app',
   ssr: false,
-  prerender: ['/'],
+  prerender: [
+    '/',
+    '/tentang',
+    '/layanan',
+    '/coverage',
+    '/daftar',
+    '/cek-tagihan',
+    '/kontak',
+    '/faq',
+    '/syarat-ketentuan',
+    '/kebijakan-privasi',
+  ],
   // Proyek baru: langsung pakai perilaku React Router v8 agar upgrade nanti mulus.
   future: {
     v8_middleware: true,

@@ -4,6 +4,7 @@ import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { Icon } from '../components/Icon'
 import { IconBox } from '../components/IconBox'
+import type { HeaderHandle } from '../components/layout/Header'
 import { PackageCard } from '../components/PackageCard'
 import { Reveal } from '../components/Reveal'
 import { Section } from '../components/Section'
@@ -19,6 +20,8 @@ import { waLink } from '../lib/whatsapp'
 import './ui-kit.css'
 
 // Halaman review komponen (RENCANA.md Fase 1). Tidak di-prerender dan noindex.
+export const handle: HeaderHandle = { header: 'solid' }
+
 export function meta() {
   return pageMeta({ title: 'UI Kit', path: '/ui-kit', noindex: true })
 }
@@ -55,7 +58,7 @@ export default function UiKit() {
   const [revealKey, setRevealKey] = useState(0)
 
   return (
-    <main className="ui-kit">
+    <div className="ui-kit">
       <header className="ui-kit__header">
         <div className="container">
           <SmoothImg src={site.brand.logo.dark} alt={site.brand.name} plain width={96} height={83} />
@@ -217,6 +220,6 @@ export default function UiKit() {
           </dd>
         </dl>
       </Section>
-    </main>
+    </div>
   )
 }
