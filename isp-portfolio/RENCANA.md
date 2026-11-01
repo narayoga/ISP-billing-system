@@ -100,7 +100,7 @@ berganti gaya saat di-scroll. URL asal-asalan menampilkan halaman 404.
 CMS-portfolio (gerak & animasi). Urutan section sesuai PRD §3, slider bisa digeser
 di ponsel, dan tampilan rapi di lebar 360px.
 
-## Fase 4 — Halaman Informasi ✅ selesai, menunggu review
+## Fase 4 — Halaman Informasi ✅ selesai (`0b09514`, revisi `cf418f4` `d43ce3b`)
 - [x] Tentang Kami: profil + ilustrasi, visi-misi (`#visi-misi`), cabang/POP
       (`#cabang`), galeri otomatis tersembunyi selama `site.gallery` kosong
 - [x] Layanan & Paket: paket rumah (`#rumah`), bisnis dedicated (`#bisnis`, paket
@@ -124,12 +124,17 @@ di ponsel, dan tampilan rapi di lebar 360px.
 "Berlangganan" membawa ke `/daftar?paket=…`. Form Kirim Pesan memvalidasi isian lalu
 memunculkan modal "Segera Hadir" tanpa mengirim data.
 
-## Fase 5 — Cek Coverage (`/coverage`)
-- [ ] Pencarian desa/kecamatan/kota di browser (saran maks. 8, tidak peka huruf besar/kecil)
-- [ ] Hasil: **Tersedia** → Daftar Sekarang · **Segera Hadir** → WA "Kabari Saya" ·
-      **Belum Tersedia** → WA ajukan area
-- [ ] Daftar lengkap area per kota → kecamatan (teks HTML, terindeks Google)
-- [ ] Widget mini di Beranda memakai logika yang sama
+## Fase 5 — Cek Coverage (`/coverage`) ✅ selesai, menunggu review
+- [x] Pencarian desa/kecamatan/kota di browser (`lib/coverage.ts`): saran maks. 8,
+      tidak peka huruf besar/kecil, aksen, dan spasi berlebih; awalan yang diketik
+      ("kec.", "kab.", "desa") memprioritaskan tingkat wilayah tersebut
+- [x] Combobox ARIA: panah atas/bawah, Enter, Esc; klik saran dengan mouse
+- [x] Hasil: **Tersedia** → Daftar Sekarang (`/daftar?area=…`) · **Segera Hadir** →
+      WA "Kabari Saya" · **Belum Tersedia** → WA ajukan area · kecamatan/kabupaten →
+      ringkasan semua desa beserta aksinya
+- [x] Daftar lengkap area per kota → kecamatan (teks HTML, terindeks Google)
+- [x] Widget mini di Beranda memakai komponen & data yang sama; tanpa JS jatuh ke
+      `/coverage?q=…`, yang dibaca setelah hidrasi (`useHydrated`)
 
 **Cara cek:** ketik beberapa nama desa (huruf besar/kecil, spasi berlebih). Tab Network
 di DevTools tidak menunjukkan request saat mencari.

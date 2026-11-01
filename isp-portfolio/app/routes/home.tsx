@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { Accordion } from '../components/Accordion'
 import { Button } from '../components/Button'
 import { Card } from '../components/Card'
+import { CoverageSearch } from '../components/CoverageSearch'
 import { FeatureCard } from '../components/FeatureCard'
 import { AnimatedWord } from '../components/home/AnimatedWord'
 import { HeroSlider } from '../components/home/HeroSlider'
@@ -146,21 +147,16 @@ export default function Home() {
         </Reveal>
       </Section>
 
-      {/* 7. CTA coverage — form GET biasa: berfungsi tanpa JavaScript, logika pencarian di Fase 5 */}
+      {/* 7. CTA coverage — widget mini dengan logika & data yang sama dengan /coverage (US-06 AC 5) */}
       <section className="coverage-cta">
         <Reveal className="container coverage-cta__inner">
           <div {...reveal('slide-left', 0, 'coverage-cta__text')}>
             <h2>Cek Ketersediaan Jaringan di Lokasi Anda</h2>
             <p>Ketik nama desa atau kecamatan untuk memastikan JITU sudah menjangkau rumah Anda.</p>
           </div>
-          <form action="/coverage" method="get" role="search" {...reveal('slide-right', 120, 'coverage-cta__form')}>
-            <label htmlFor="home-coverage-q" className="sr-only">
-              Nama desa atau kecamatan
-            </label>
-            <Icon name="search" size={20} className="coverage-cta__icon" />
-            <input id="home-coverage-q" name="q" type="search" placeholder="Contoh: Peliatan" autoComplete="off" />
-            <Button type="submit">Cek</Button>
-          </form>
+          <div {...reveal('slide-right', 120, 'coverage-cta__search')}>
+            <CoverageSearch variant="compact" />
+          </div>
         </Reveal>
       </section>
 

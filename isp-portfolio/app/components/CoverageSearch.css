@@ -1,0 +1,194 @@
+.coverage-search {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* ── Kotak pencarian (pill) ── */
+.coverage-search__form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.coverage-search--compact .coverage-search__form {
+  border-color: transparent;
+  box-shadow: 0 20px 40px -12px rgb(38 42 55 / 0.35);
+}
+
+.coverage-search__form:focus-within {
+  outline: 3px solid var(--color-heading);
+  outline-offset: 3px;
+}
+
+.coverage-search__icon {
+  flex-shrink: 0;
+  margin-left: 0.85rem;
+  color: var(--color-muted);
+}
+
+.coverage-search__form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 1.0625rem;
+  outline: none;
+}
+
+/* Tombol × bawaan input search disembunyikan agar tampilan konsisten */
+.coverage-search__form input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* ── Daftar saran ── */
+.coverage-search__list {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  left: 0;
+  z-index: 20;
+  max-height: 22rem;
+  margin: 0;
+  padding: 0.4rem;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 24px 48px -12px rgb(38 42 55 / 0.25);
+  list-style: none;
+  animation: suggestIn 0.18s ease both;
+}
+
+.coverage-search__option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.85rem;
+  color: var(--color-heading);
+  cursor: pointer;
+}
+
+.coverage-search__option svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.coverage-search__option.is-active {
+  background: var(--color-surface);
+}
+
+.coverage-search__option-label {
+  display: grid;
+  flex: 1;
+  font-weight: 600;
+  text-align: left;
+}
+
+.coverage-search__option-label small {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+@keyframes suggestIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Kartu hasil ── */
+.coverage-result {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+  text-align: left;
+  animation: resultIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.coverage-result h3 {
+  color: var(--color-heading);
+  font-size: 1.25rem;
+}
+
+.coverage-result p {
+  color: var(--color-muted);
+}
+
+.coverage-result--ok {
+  border-left: 5px solid var(--color-success);
+}
+
+.coverage-result--soon {
+  border-left: 5px solid var(--color-warning);
+}
+
+.coverage-result--none {
+  border-left: 5px solid var(--color-muted);
+}
+
+.coverage-result__areas {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coverage-result__areas li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.coverage-result__areas span:first-child {
+  color: var(--color-heading);
+  font-weight: 600;
+}
+
+.coverage-result__areas a {
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@keyframes resultIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coverage-search__list,
+  .coverage-result {
+    animation: none;
+  }
+}

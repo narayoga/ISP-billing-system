@@ -173,6 +173,8 @@
 
 /* ── CTA coverage ── */
 .coverage-cta {
+  position: relative;
+  z-index: 2; /* di atas section berikutnya agar daftar saran tidak tertimpa */
   padding-block: clamp(3rem, 6vw, 4.5rem);
   background: var(--gradient-primary);
   color: #fff;
@@ -199,39 +201,6 @@
 .coverage-cta__text p {
   margin-top: 0.5rem;
   color: rgb(255 255 255 / 0.9);
-}
-
-.coverage-cta__form {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem;
-  border-radius: var(--radius-pill);
-  background: #fff;
-  box-shadow: 0 20px 40px -12px rgb(38 42 55 / 0.35);
-}
-
-.coverage-cta__icon {
-  flex-shrink: 0;
-  margin-left: 0.85rem;
-  color: var(--color-muted);
-}
-
-.coverage-cta__form input {
-  flex: 1;
-  min-width: 0;
-  padding: 0.75rem 0.25rem;
-  border: 0;
-  background: transparent;
-  color: var(--color-heading);
-  font: inherit;
-  outline: none;
-}
-
-.coverage-cta__form:focus-within {
-  outline: 3px solid var(--color-heading);
-  outline-offset: 3px;
 }
 
 /* ── Partner ── */

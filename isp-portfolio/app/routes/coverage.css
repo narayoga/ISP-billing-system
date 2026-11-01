@@ -1,0 +1,82 @@
+.coverage-page__search {
+  max-width: 44rem;
+}
+
+.coverage-page__hint {
+  margin-bottom: 0.9rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.coverage-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 2rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.coverage-legend .badge:not(:first-child) {
+  margin-left: 0.75rem;
+}
+
+.coverage-city + .coverage-city {
+  margin-top: 2.5rem;
+}
+
+.coverage-city__name {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.coverage-district {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.coverage-district h4 {
+  margin: 0 0 0.75rem;
+  color: var(--color-heading);
+  font-size: 1.0625rem;
+}
+
+.coverage-district ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coverage-district li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.coverage-district li span:first-child {
+  color: var(--color-heading);
+}
+
+.coverage-request {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  color: var(--color-muted);
+}
+
+/* Section pencarian di atas section berikutnya, agar daftar saran tidak
+   tertimpa kartu daftar area yang beranimasi (transform = stacking context). */
+.coverage-page {
+  position: relative;
+  z-index: 2;
+}
