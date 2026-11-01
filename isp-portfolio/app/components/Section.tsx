@@ -9,9 +9,12 @@ type Props = {
   surface?: boolean
   /** Teks kecil bergradien di atas judul (".sub-title" Jagonet) */
   eyebrow?: string
-  title?: string
+  /** Boleh berisi elemen, mis. <AnimatedWord> */
+  title?: ReactNode
   description?: string
   align?: 'center' | 'left'
+  /** Kelas tambahan untuk elemen <section> */
+  className?: string
   children?: ReactNode
 }
 
@@ -19,10 +22,10 @@ type Props = {
  * Section halaman dengan judul bergaya Jagonet. Judul, sub-judul, dan deskripsi
  * muncul berurutan saat di-scroll (scroll reveal CMS-portfolio).
  */
-export function Section({ id, surface, eyebrow, title, description, align = 'center', children }: Props) {
+export function Section({ id, surface, eyebrow, title, description, align = 'center', className, children }: Props) {
   const hasHeader = eyebrow || title || description
   return (
-    <section id={id} className={`section${surface ? ' section--surface' : ''}`}>
+    <section id={id} className={['section', surface && 'section--surface', className].filter(Boolean).join(' ')}>
       <div className="container">
         {hasHeader && (
           <Reveal className={`section-title section-title--${align}`}>

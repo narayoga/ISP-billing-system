@@ -1,0 +1,289 @@
+.home-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+/* ── Kategori layanan ── */
+.category-card {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.category-card__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.category-card__media {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.category-card__media img {
+  width: 70%;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+
+.category-card:hover .category-card__media img {
+  transform: scale(1.08);
+}
+
+.category-card__body {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.category-card__body h3 {
+  font-size: 1.25rem;
+}
+
+.category-card__body p {
+  color: var(--color-muted);
+}
+
+.category-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.category-card:focus-visible {
+  border-radius: var(--radius-lg);
+  outline: 3px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+@media (max-width: 479px) {
+  .category-card__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── Statistik ── */
+.stats {
+  padding-block: 3rem;
+  background: var(--color-heading);
+  color: #fff;
+}
+
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.stats__value {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.stats__label {
+  color: rgb(255 255 255 / 0.8);
+}
+
+/* ── Cara berlangganan ── */
+.steps {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Garis penghubung antar-langkah */
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 2.25rem;
+    right: 12.5%;
+    left: 12.5%;
+    border-top: 2px dashed rgb(237 39 117 / 0.35);
+  }
+}
+
+.steps__item {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.steps__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.steps__number {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.steps__item h3 {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.steps__item p {
+  max-width: 16rem;
+  color: var(--color-muted);
+}
+
+/* ── CTA coverage ── */
+.coverage-cta {
+  padding-block: clamp(3rem, 6vw, 4.5rem);
+  background: var(--gradient-primary);
+  color: #fff;
+}
+
+.coverage-cta__inner {
+  display: grid;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+@media (min-width: 900px) {
+  .coverage-cta__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.coverage-cta__text h2 {
+  color: #fff;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+}
+
+.coverage-cta__text p {
+  margin-top: 0.5rem;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.coverage-cta__form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  box-shadow: 0 20px 40px -12px rgb(38 42 55 / 0.35);
+}
+
+.coverage-cta__icon {
+  flex-shrink: 0;
+  margin-left: 0.85rem;
+  color: var(--color-muted);
+}
+
+.coverage-cta__form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-heading);
+  font: inherit;
+  outline: none;
+}
+
+.coverage-cta__form:focus-within {
+  outline: 3px solid var(--color-heading);
+  outline-offset: 3px;
+}
+
+/* ── Partner ── */
+.partner-logo {
+  width: auto;
+  height: 3rem;
+  filter: grayscale(1);
+  opacity: 0.7;
+  transition: filter var(--transition), opacity var(--transition);
+}
+
+.partner-logo:hover {
+  filter: none;
+  opacity: 1;
+}
+
+/* ── FAQ singkat ── */
+.home-faq {
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+/* ── CTA penutup ── */
+.closing-cta {
+  padding-block: clamp(3.5rem, 8vw, 5.5rem);
+  background:
+    radial-gradient(50% 120% at 85% 0%, rgb(237 39 117 / 0.45), transparent 60%),
+    var(--color-heading);
+  color: #fff;
+}
+
+.closing-cta__inner {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.closing-cta__inner h2 {
+  color: #fff;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.closing-cta__inner p {
+  max-width: 34rem;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.closing-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}

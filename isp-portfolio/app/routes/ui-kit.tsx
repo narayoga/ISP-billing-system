@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Badge } from '../components/Badge'
 import { Button } from '../components/Button'
-import { Card } from '../components/Card'
+import { FeatureCard } from '../components/FeatureCard'
 import { Icon } from '../components/Icon'
 import { IconBox } from '../components/IconBox'
 import type { HeaderHandle } from '../components/layout/Header'
@@ -149,11 +149,7 @@ export default function UiKit() {
         <Reveal className="grid grid--4">
           {features.map((f, i) => (
             <div key={f.title} {...reveal('fade-up', i * 120)}>
-              <Card hover className="ui-kit__feature">
-                <IconBox icon={f.icon} tone={f.tone} />
-                <h3>{f.title}</h3>
-                <p>{f.description}</p>
-              </Card>
+              <FeatureCard feature={f} />
             </div>
           ))}
         </Reveal>

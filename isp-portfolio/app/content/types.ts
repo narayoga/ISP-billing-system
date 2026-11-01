@@ -93,6 +93,24 @@ export type LegalDoc = {
   sections: { heading: string; paragraphs: string[] }[]
 }
 
+export type ImageAsset = { src: string; width: number; height: number; alt: string }
+
+export type CtaLink = { label: string; href: string; icon?: IconName }
+
+export type HeroSlide = {
+  id: string
+  eyebrow: string
+  title: string
+  text: string
+  image: ImageAsset
+  primary: CtaLink
+  secondary?: CtaLink
+}
+
+export type Step = { icon: IconName; title: string; description: string }
+
+export type Partner = { name: string; logo: string }
+
 export type NavLink = {
   label: string
   to: string

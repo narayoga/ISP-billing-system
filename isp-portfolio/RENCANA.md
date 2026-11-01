@@ -63,7 +63,7 @@ dan judul section tampil dengan warna Jagonet. Scroll terasa mulus, elemen muncu
 dengan animasi saat di-scroll, dan gambar menampilkan shimmer sebelum fade-in.
 Matikan JavaScript di DevTools: semua konten tetap terlihat.
 
-## Fase 2 — Layout Global ✅ selesai, menunggu review
+## Fase 2 — Layout Global ✅ selesai (`686e934`, perbaikan transisi `82cf3ca`)
 - [x] Header fixed: logo, menu, CTA **Daftar**. Transparan dengan logo putih di atas
       hero, lalu putih solid dengan logo hitam setelah scroll (gaya CMS). Halaman
       tanpa latar gelap memakai `handle = { header: 'solid' }`
@@ -82,16 +82,19 @@ Matikan JavaScript di DevTools: semua konten tetap terlihat.
 akordeon bisa dipakai dengan keyboard. Pindah halaman terlihat fade-up, dan header
 berganti gaya saat di-scroll. URL asal-asalan menampilkan halaman 404.
 
-## Fase 3 — Beranda (`/`)
-- [ ] Hero slider gaya CMS: layar penuh, slide bergeser, teks dan CTA muncul
-      berurutan, bar progres, swipe. Slide berisi coverage, promo paket, dan kontak
-      (gaya Jagonet). Slide pertama sudah ada di HTML prerender.
-- [ ] Headline dengan kata berganti (mis. "Internet Cepat / Stabil / Terjangkau")
-- [ ] Kategori layanan → Keunggulan (4 kartu) → Statistik (tersembunyi bila kosong)
-- [ ] Paket unggulan (maks. 3) → Cara berlangganan (4 langkah)
-- [ ] CTA coverage (kotak pencarian mini, fungsinya aktif di Fase 5)
-- [ ] Partner (marquee logo berjalan, opsional) → FAQ singkat → CTA penutup
-- [ ] Scroll reveal dengan jeda berurutan di setiap section
+## Fase 3 — Beranda (`/`) ✅ selesai, menunggu review
+- [x] Hero slider gaya CMS: layar penuh, isi slide bergeser (latar diam), teks dan
+      CTA muncul berurutan, bar progres yang bisa diklik, panah, tombol jeda, swipe.
+      Tiga slide (solusi, paket unlimited, dukungan 24/7) dengan ilustrasi Jagonet
+      dalam format WebP. Slide pertama ada di HTML prerender
+- [x] Headline dengan kata berganti ("Internet Cepat / Stabil / Unlimited / Terjangkau")
+- [x] Kategori layanan → Keunggulan (4 kartu) → Statistik (tersembunyi selama kosong)
+- [x] Paket unggulan (3 kartu `featured`) → Cara berlangganan (4 langkah)
+- [x] CTA coverage: form GET ke `/coverage?q=…` (berfungsi tanpa JS; hasil
+      pencarian di Fase 5)
+- [x] Partner (komponen marquee siap, tersembunyi selama kosong) → FAQ singkat
+      (akordeon `<details>`) → CTA penutup
+- [x] Scroll reveal dengan jeda berurutan di setiap section
 
 **Cara cek:** bandingkan berdampingan dengan jagonet.co.id (warna & isi) dan dengan
 CMS-portfolio (gerak & animasi). Urutan section sesuai PRD §3, slider bisa digeser

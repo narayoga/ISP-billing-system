@@ -1,0 +1,336 @@
+/* ================================================================
+   HeroSlider — diadaptasi dari CMS-portfolio (HeroSlider.css).
+   Latar diam; isi slide bergeser (keyframes slide*), teks masuk berurutan.
+   ================================================================ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(55% 80% at 90% 10%, rgb(237 39 117 / 0.5), transparent 65%),
+    radial-gradient(45% 70% at 0% 100%, rgb(255 116 72 / 0.35), transparent 65%),
+    var(--color-heading);
+  color: #fff;
+  touch-action: pan-y; /* swipe horizontal untuk slider, scroll vertikal tetap */
+  user-select: none;
+}
+
+/* Slide ditumpuk di sel grid yang sama → tinggi mengikuti slide tertinggi,
+   tanpa tinggi tetap yang rawan terpotong di ponsel. */
+.hero__slides {
+  display: grid;
+}
+
+.hero-slide {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+.hero-slide.is-active,
+.hero-slide.is-exiting {
+  visibility: visible;
+}
+
+.hero-slide.is-active {
+  z-index: 2;
+}
+
+.hero-slide.is-exiting {
+  z-index: 1;
+}
+
+.hero-slide__inner {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+  min-height: 100svh;
+  padding-block: calc(var(--header-h) + 2.5rem) 7rem;
+}
+
+@media (min-width: 900px) {
+  .hero-slide__inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 3rem;
+  }
+}
+
+.hero-slide__text {
+  display: grid;
+  justify-items: start;
+  gap: 1.1rem;
+}
+
+.hero-slide__eyebrow {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.08);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.hero-slide__title {
+  max-width: 38rem;
+  color: #fff;
+  font-size: clamp(2rem, 5.2vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.hero-slide__desc {
+  max-width: 34rem;
+  color: rgb(255 255 255 / 0.85);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+}
+
+.hero-slide__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.hero-slide__media {
+  display: grid;
+  place-items: center;
+}
+
+.hero-slide__media img {
+  width: 100%;
+  max-width: min(520px, 80vw);
+  max-height: 52vh;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.35));
+  pointer-events: none;
+}
+
+/* Ponsel/tablet: teks di atas, ilustrasi lebih kecil, agar slide + kontrol muat satu layar */
+@media (max-width: 899px) {
+  .hero-slide__inner {
+    align-content: center;
+    gap: 1.5rem;
+    padding-block: calc(var(--header-h) + 1.25rem) 5rem;
+  }
+
+  .hero-slide__media img {
+    max-width: min(260px, 62vw);
+    max-height: 26svh;
+  }
+}
+
+/* ── Geser isi slide (CMS: slideInRight / slideOutLeft, dst.) ── */
+.hero-slide.is-active.dir-next {
+  animation: heroSlideInRight 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.hero-slide.is-active.dir-prev {
+  animation: heroSlideInLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.hero-slide.is-exiting.dir-next {
+  animation: heroSlideOutLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.hero-slide.is-exiting.dir-prev {
+  animation: heroSlideOutRight 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes heroSlideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes heroSlideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes heroSlideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes heroSlideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+/* ── Teks & tombol muncul berurutan (CMS heroTextIn) ──
+   Muatan pertama: jeda pendek agar judul (LCP) cepat tampil.
+   Setelah pergeseran: tunggu slide tiba dulu (0,5 s), seperti CMS. */
+.hero-slide.is-active .hero-slide__text > * {
+  animation: heroTextIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--d, 0) * 0.12s);
+}
+
+.hero-slide.is-active.dir-next .hero-slide__text > *,
+.hero-slide.is-active.dir-prev .hero-slide__text > * {
+  animation-delay: calc(0.5s + var(--d, 0) * 0.15s);
+}
+
+.hero-slide__text > :nth-child(2) { --d: 1; }
+.hero-slide__text > :nth-child(3) { --d: 2; }
+.hero-slide__text > :nth-child(4) { --d: 3; }
+
+/* Teks slide yang keluar tetap terlihat selama bergeser */
+.hero-slide.is-exiting .hero-slide__text > * {
+  animation: none;
+}
+
+.hero-slide.is-active .hero-slide__media img {
+  animation: heroMediaIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.hero-slide.is-active.dir-next .hero-slide__media img,
+.hero-slide.is-active.dir-prev .hero-slide__media img {
+  animation-delay: 0.45s;
+}
+
+@keyframes heroTextIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes heroMediaIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Kontrol: bar progres + jeda + panah ── */
+.hero__controls {
+  position: absolute;
+  right: 0;
+  bottom: 2rem;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hero__progress {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  max-width: 22rem;
+}
+
+.hero__progress-track {
+  position: relative;
+  flex: 1;
+  height: 1.5rem; /* area klik nyaman; garisnya tipis di tengah */
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.hero__progress-track::before,
+.hero__progress-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 3px;
+  border-radius: 3px;
+  transform: translateY(-50%);
+}
+
+.hero__progress-track::before {
+  content: '';
+  right: 0;
+  background: rgb(255 255 255 / 0.25);
+}
+
+.hero__progress-fill {
+  width: 0;
+  background: var(--gradient-primary);
+}
+
+.hero__progress-fill.is-running {
+  animation: heroProgress linear forwards;
+}
+
+.hero__progress-fill.is-done,
+.hero__progress-track[aria-current='true'] .hero__progress-fill:not(.is-running) {
+  width: 100%;
+}
+
+.hero.is-paused .hero__progress-fill.is-running {
+  animation-play-state: paused;
+}
+
+@keyframes heroProgress {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Di kiri, tepat setelah bar progres — sisi kanan bawah dipakai widget WA */
+.hero__buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hero__btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.hero__btn[hidden] {
+  display: none;
+}
+
+.hero__btn:hover {
+  border-color: transparent;
+  background: var(--color-primary);
+}
+
+.hero__btn:focus-visible,
+.hero__progress-track:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.hero__arrow--prev {
+  transform: rotate(90deg);
+}
+
+.hero__arrow--next {
+  transform: rotate(-90deg);
+}
+
+/* Ponsel: kontrol tidak bertabrakan dengan widget WA di kanan bawah */
+@media (max-width: 639px) {
+  .hero__controls {
+    bottom: 1.25rem;
+    gap: 0.75rem;
+    padding-right: 4.5rem;
+  }
+
+  .hero__btn {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide.is-active,
+  .hero-slide.is-exiting,
+  .hero-slide.is-active .hero-slide__text > *,
+  .hero-slide.is-active .hero-slide__media img {
+    animation: none !important;
+  }
+
+  .hero-slide.is-exiting {
+    visibility: hidden;
+  }
+}

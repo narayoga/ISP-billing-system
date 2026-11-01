@@ -15,8 +15,7 @@
 }
 
 .ui-kit__header p,
-.ui-kit__muted,
-.ui-kit__feature p {
+.ui-kit__muted {
   color: var(--color-muted);
 }
 
@@ -99,16 +98,6 @@
   color: var(--color-heading);
 }
 
-.ui-kit__feature {
-  display: grid;
-  gap: 0.75rem;
-  height: 100%;
-}
-
-.ui-kit__feature h3 {
-  margin-top: 0.5rem;
-  font-size: 1.125rem;
-}
 
 .ui-kit__reveal-box {
   display: grid;

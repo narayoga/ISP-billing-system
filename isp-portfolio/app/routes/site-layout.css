@@ -3,9 +3,10 @@
  * hanya ISI section (teks, kartu) yang fade-up — latar section dan pita judul
  * gelap tetap diam. Bila seluruh halaman ikut digeser & dipudarkan, latar putih
  * body terlihat di belakang header transparan (celah putih di atas).
- * Teks pita judul punya animasi sendiri (heroTextIn di PageHeader.css).
+ * Teks pita judul & hero slider punya animasi sendiri (heroTextIn di
+ * PageHeader.css dan HeroSlider.css).
  */
-.route-fade section:not(.page-header) > .container {
+.route-fade section:not(.page-header, .hero) > .container {
   animation: routeFade 0.35s ease both;
 }
 
