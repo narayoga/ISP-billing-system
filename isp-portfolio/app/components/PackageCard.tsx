@@ -12,12 +12,15 @@ export function PackageCard({ pkg }: { pkg: Package }) {
   const highlighted = pkg.badge === 'Most Popular'
   return (
     <Card hover highlight={highlighted} className="package-card">
+      {/* Badge menempel di tepi atas kartu agar tidak menyempitkan nama paket */}
+      {pkg.badge && (
+        <span className="package-card__badge">
+          <Badge>{pkg.badge}</Badge>
+        </span>
+      )}
       <div className="package-card__head">
-        <div>
-          <h3 className="package-card__name">{pkg.name}</h3>
-          <p className="package-card__terms">*Syarat &amp; Ketentuan Berlaku</p>
-        </div>
-        {pkg.badge && <Badge>{pkg.badge}</Badge>}
+        <h3 className="package-card__name">{pkg.name}</h3>
+        <p className="package-card__terms">*Syarat &amp; Ketentuan Berlaku</p>
       </div>
 
       <p className="package-card__price">

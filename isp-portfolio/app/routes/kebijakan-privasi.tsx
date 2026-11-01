@@ -1,11 +1,12 @@
+import { LegalDocument } from '../components/LegalDocument'
 import { PageHeader } from '../components/PageHeader'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { privacy } from '../content/legal'
 import { pageMeta } from '../lib/seo'
 
 export function meta() {
   return pageMeta({
-    title: 'Kebijakan Privasi',
-    description: 'Kebijakan privasi situs dan layanan JITU.',
+    title: privacy.title,
+    description: 'Kebijakan privasi situs JITU — formulir belum mengirim maupun menyimpan data, tanpa cookie.',
     path: '/kebijakan-privasi',
   })
 }
@@ -13,8 +14,8 @@ export function meta() {
 export default function KebijakanPrivasi() {
   return (
     <>
-      <PageHeader title="Kebijakan Privasi" description="Bagaimana kami memperlakukan data Anda." />
-      <PagePlaceholder phase="Fase 4" items={['Teks kebijakan privasi']} />
+      <PageHeader title={privacy.title} description="Bagaimana kami memperlakukan data Anda." />
+      <LegalDocument doc={privacy} />
     </>
   )
 }

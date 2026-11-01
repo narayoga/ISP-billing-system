@@ -1,0 +1,94 @@
+.modal {
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text);
+  overflow: visible;
+}
+
+.modal::backdrop {
+  background: rgb(38 42 55 / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.modal[open] {
+  animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.modal[open]::backdrop {
+  animation: modalFade 0.3s ease both;
+}
+
+.modal__panel {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  padding: 2.25rem 1.75rem 1.75rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: 0 30px 60px -15px rgb(38 42 55 / 0.45);
+  text-align: center;
+}
+
+.modal__title {
+  font-size: 1.375rem;
+}
+
+.modal__panel p {
+  color: var(--color-muted);
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-heading);
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  color: var(--color-primary);
+}
+
+.modal__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal[open],
+  .modal[open]::backdrop {
+    animation: none;
+  }
+}

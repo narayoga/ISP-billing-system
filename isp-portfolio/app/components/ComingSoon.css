@@ -1,0 +1,21 @@
+.coming-soon-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgb(249 188 19 / 0.45);
+  border-radius: 1rem;
+  background: rgb(249 188 19 / 0.12);
+  color: var(--color-heading);
+  font-size: 0.9375rem;
+}
+
+.coming-soon-notice p {
+  flex: 1 1 16rem;
+}
+
+.coming-soon-notice__icon {
+  flex-shrink: 0;
+  color: #b07d00;
+}

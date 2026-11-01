@@ -82,7 +82,7 @@ Matikan JavaScript di DevTools: semua konten tetap terlihat.
 akordeon bisa dipakai dengan keyboard. Pindah halaman terlihat fade-up, dan header
 berganti gaya saat di-scroll. URL asal-asalan menampilkan halaman 404.
 
-## Fase 3 — Beranda (`/`) ✅ selesai, menunggu review
+## Fase 3 — Beranda (`/`) ✅ selesai (`8d18ad1`, revisi hero `0742a54` `054a490` `bdb204b`)
 - [x] Hero slider gaya CMS: layar penuh, isi slide bergeser (latar diam), teks dan
       CTA muncul berurutan, bar progres yang bisa diklik, panah, tombol jeda, swipe.
       Tiga slide (solusi, paket unlimited, dukungan 24/7) dengan ilustrasi Jagonet
@@ -100,13 +100,19 @@ berganti gaya saat di-scroll. URL asal-asalan menampilkan halaman 404.
 CMS-portfolio (gerak & animasi). Urutan section sesuai PRD §3, slider bisa digeser
 di ponsel, dan tampilan rapi di lebar 360px.
 
-## Fase 4 — Halaman Informasi
-- [ ] Tentang Kami (profil, visi-misi, cabang/POP, galeri opsional)
-- [ ] Layanan & Paket (semua paket per kategori, biaya instalasi, ringkasan S&K;
-      paket custom → "Hubungi Kami")
-- [ ] Kontak (WA/telepon/email, alamat + tombol Google Maps, jam operasional,
-      form Kirim Pesan kosmetik)
-- [ ] FAQ (akordeon per topik), Syarat & Ketentuan, Kebijakan Privasi
+## Fase 4 — Halaman Informasi ✅ selesai, menunggu review
+- [x] Tentang Kami: profil + ilustrasi, visi-misi (`#visi-misi`), cabang/POP
+      (`#cabang`), galeri otomatis tersembunyi selama `site.gallery` kosong
+- [x] Layanan & Paket: paket rumah (`#rumah`), bisnis dedicated (`#bisnis`, paket
+      custom → "Hubungi Kami" via WA), biaya instalasi + ringkasan S&K
+- [x] Kontak: kanal WA/telepon/email (WA dukungan muncul bila nomornya beda), alamat
+      + tombol Google Maps, jam operasional, form Kirim Pesan kosmetik (validasi,
+      modal Segera Hadir, input tanpa `name` sehingga tanpa JS pun data tidak ikut URL)
+- [x] FAQ (akordeon `<details>` per topik + navigasi topik), Syarat & Ketentuan,
+      Kebijakan Privasi (draf; menyatakan form belum mengirim/menyimpan data)
+- [x] Komponen baru: Modal (`<dialog>`), ComingSoonNotice/Modal, Field/Input/Select/
+      Textarea, LegalDocument, `lib/validation.ts` (dipakai lagi di Fase 6–7)
+- [x] Widget WA disembunyikan di layar kecil selama mengisi field (US-03 AC 4)
 
 **Cara cek:** semua angka paket sama persis di Beranda dan `/layanan`. Tombol
 "Berlangganan" membawa ke `/daftar?paket=…`. Form Kirim Pesan memvalidasi isian lalu

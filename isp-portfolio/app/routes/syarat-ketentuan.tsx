@@ -1,11 +1,12 @@
+import { LegalDocument } from '../components/LegalDocument'
 import { PageHeader } from '../components/PageHeader'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { terms } from '../content/legal'
 import { pageMeta } from '../lib/seo'
 
 export function meta() {
   return pageMeta({
-    title: 'Syarat & Ketentuan',
-    description: 'Syarat dan ketentuan layanan internet JITU.',
+    title: terms.title,
+    description: 'Syarat dan ketentuan layanan internet JITU — Jagonya Internet Ubud.',
     path: '/syarat-ketentuan',
   })
 }
@@ -13,8 +14,8 @@ export function meta() {
 export default function SyaratKetentuan() {
   return (
     <>
-      <PageHeader title="Syarat & Ketentuan" description="Ketentuan yang berlaku untuk layanan JITU." />
-      <PagePlaceholder phase="Fase 4" items={['Teks syarat & ketentuan']} />
+      <PageHeader title={terms.title} description="Ketentuan yang berlaku untuk layanan JITU." />
+      <LegalDocument doc={terms} />
     </>
   )
 }

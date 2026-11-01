@@ -76,6 +76,21 @@ body:has(.has-mobile-open) .floating-contact {
   visibility: hidden;
 }
 
+/* Layar kecil: sembunyikan selama mengisi form agar tidak menutupi field
+   (PRD US-03 AC 4) — muncul lagi begitu fokus keluar dari field. */
+@media (max-width: 767px) {
+  .floating-contact {
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s;
+  }
+
+  body:has(:is(input, textarea, select):focus) .floating-contact {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .floating-contact__btn,
   .floating-contact__label {

@@ -1,24 +1,113 @@
+import { Link } from 'react-router'
+import { Button } from '../components/Button'
+import { Card } from '../components/Card'
+import { Icon } from '../components/Icon'
+import { IconBox } from '../components/IconBox'
+import { PackageCard } from '../components/PackageCard'
 import { PageHeader } from '../components/PageHeader'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { Reveal } from '../components/Reveal'
 import { Section } from '../components/Section'
+import { features } from '../content/features'
+import { categories, packages } from '../content/packages'
+import { site } from '../content/site'
+import { formatRupiah } from '../lib/format'
+import { reveal } from '../lib/reveal'
 import { pageMeta } from '../lib/seo'
+import './layanan.css'
 
 export function meta() {
   return pageMeta({
     title: 'Layanan & Paket',
-    description: 'Paket internet fiber optic JITU untuk rumah dan bisnis di Ubud — unlimited tanpa FUP.',
+    description: 'Paket internet fiber optic JITU untuk rumah dan bisnis di Ubud — unlimited tanpa FUP, mulai Rp175.500/bulan.',
     path: '/layanan',
   })
 }
 
+// PRD US-05: semua paket per kategori (urutan sesuai file konten), biaya
+// instalasi + ringkasan S&K. Data langsung dari app/content — tanpa request jaringan.
 export default function Layanan() {
+  const [home, business] = categories
+  const homePackages = packages.filter((p) => p.category === home.slug)
+  const businessPackages = packages.filter((p) => p.category === business.slug)
+  const { fees, terms } = site
+
   return (
     <>
-      <PageHeader title="Layanan & Paket" description="Fiber optic unlimited tanpa FUP untuk rumah dan bisnis." />
-      <PagePlaceholder phase="Fase 4" items={['Biaya instalasi & ringkasan S&K']} />
-      {/* Anchor dari mega menu "Layanan" */}
-      <Section id="rumah" surface eyebrow="Fase 4" title="Internet Rumah" />
-      <Section id="bisnis" eyebrow="Fase 4" title="Internet Bisnis" />
+      <PageHeader title="Layanan & Paket" description="Fiber optic unlimited tanpa FUP untuk rumah dan bisnis di Ubud." />
+
+      {/* Internet Rumah — anchor dari mega menu */}
+      <Section id={home.slug} eyebrow={home.title} title="Paket JaberNITE untuk Rumah" description={home.description}>
+        <Reveal className="package-grid">
+          {homePackages.map((p, i) => (
+            <div key={p.slug} {...reveal('fade-up', i * 100)}>
+              <PackageCard pkg={p} />
+            </div>
+          ))}
+        </Reveal>
+      </Section>
+
+      {/* Internet Bisnis — anchor dari mega menu */}
+      <Section id={business.slug} surface>
+        <Reveal className="business">
+          <div className="business__text">
+            <span {...reveal('fade-up', 0, 'section-title__eyebrow')}>{business.title}</span>
+            <h2 {...reveal('fade-up', 100, 'business__title')}>Dedicated Internet untuk Usaha Anda</h2>
+            <p {...reveal('fade-up', 200)}>
+              {business.description} Kecepatan dan harga disesuaikan kebutuhan — dari kantor kecil hingga hotel dan resort.
+            </p>
+            <ul className="business__features">
+              {features.map((f, i) => (
+                <li key={f.title} {...reveal('fade-up', 300 + i * 80)}>
+                  <IconBox icon={f.icon} tone={f.tone} />
+                  <div>
+                    <h3>{f.title}</h3>
+                    <p>{f.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="business__packages">
+            {businessPackages.map((p, i) => (
+              <div key={p.slug} {...reveal('slide-right', 200 + i * 100)}>
+                <PackageCard pkg={p} />
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </Section>
+
+      {/* Biaya instalasi & ringkasan S&K (US-05 AC 5) */}
+      <Section eyebrow="Biaya & Ketentuan" title="Transparan Sejak Awal">
+        <Reveal className="terms-summary">
+          <div {...reveal('fade-up')}>
+            <Card className="terms-summary__card">
+              <div className="terms-summary__fee">
+                <span className="terms-summary__fee-label">Biaya instalasi</span>
+                <strong>{fees.installation > 0 ? formatRupiah(fees.installation) : 'Gratis'}</strong>
+                <span className="terms-summary__fee-note">{fees.taxNote}</span>
+              </div>
+              <ul className="terms-summary__list">
+                {terms.map((t) => (
+                  <li key={t}>
+                    <Icon name="check" size={18} />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <p className="terms-summary__label">
+                *Syarat &amp; ketentuan berlaku. Selengkapnya di <Link to="/syarat-ketentuan">Syarat &amp; Ketentuan</Link>.
+              </p>
+            </Card>
+          </div>
+        </Reveal>
+        <div className="layanan-cta">
+          <p>Belum yakin jaringan sudah sampai rumah Anda?</p>
+          <Button href="/coverage" variant="secondary" icon="search">
+            Cek Coverage
+          </Button>
+        </div>
+      </Section>
     </>
   )
 }

@@ -2,13 +2,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  height: 100%; /* kartu dalam satu baris grid sama tinggi */
 }
 
-.package-card__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
+.package-card__badge {
+  position: absolute;
+  top: 0;
+  right: 1.25rem;
+  transform: translateY(-50%);
+}
+
+.package-card__badge .badge {
+  box-shadow: 0 6px 16px -4px rgb(237 39 117 / 0.5);
 }
 
 .package-card__name {

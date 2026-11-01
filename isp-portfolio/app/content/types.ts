@@ -29,6 +29,8 @@ export type Site = {
   hours: string
   social: { label: string; url: string }[]
   profile: { about: string; vision: string; mission: string[] }
+  /** Foto galeri Tentang Kami; kosong = section galeri disembunyikan (US-02 AC 3) */
+  gallery: ImageAsset[]
   fees: { installation: number; taxNote: string }
   /** Poin "Mohon Diperhatikan" pada form pendaftaran */
   terms: string[]

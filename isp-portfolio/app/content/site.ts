@@ -35,6 +35,7 @@ export const site: Site = {
       'Memperluas jangkauan jaringan ke seluruh desa di Ubud.',
     ], // TODO(konten)
   },
+  gallery: [], // TODO(konten): foto kantor, tim, instalasi
   fees: { installation: 0, taxNote: 'Harga sudah termasuk PPN 11%.' }, // TODO(konten)
   terms: [
     'Harga sudah termasuk PPN 11%.',
