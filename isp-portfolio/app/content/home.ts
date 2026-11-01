@@ -28,7 +28,7 @@ export const heroSlides: HeroSlide[] = [
     eyebrow: 'Fast Support 24/7',
     title: 'Ada Kendala? Tim Kami Siap Membantu',
     text: 'NOC dan teknisi JITU siaga 7 × 24 jam. Hubungi kami lewat WhatsApp kapan saja.',
-    image: { src: '/images/support.webp', width: 128, height: 128, alt: 'Ilustrasi petugas layanan pelanggan' },
+    image: { src: '/images/cs-agent.webp', width: 900, height: 774, alt: 'Ilustrasi petugas layanan pelanggan berbaju batik dengan headset' },
     primary: { label: 'Chat WhatsApp', href: waLink('WEB-HERO'), icon: 'whatsapp' },
     secondary: { label: 'Kontak Kami', href: '/kontak' },
   },

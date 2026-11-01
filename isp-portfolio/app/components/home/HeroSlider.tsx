@@ -116,7 +116,9 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                     width={s.image.width}
                     height={s.image.height}
                     draggable={false}
-                    loading={i === 0 ? 'eager' : 'lazy'}
+                    // Semua slide dimuat sejak awal (slide 2+ berprioritas rendah) agar
+                    // gambarnya sudah siap saat slide aktif, tidak muncul tiba-tiba.
+                    loading="eager"
                     fetchPriority={i === 0 ? 'high' : 'low'}
                     decoding="async"
                   />
