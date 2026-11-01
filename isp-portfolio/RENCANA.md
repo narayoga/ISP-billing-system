@@ -110,7 +110,7 @@ di ponsel, dan tampilan rapi di lebar 360px.
       modal Segera Hadir, input tanpa `name` sehingga tanpa JS pun data tidak ikut URL)
 - [x] FAQ (akordeon `<details>` per topik + navigasi topik), Syarat & Ketentuan,
       Kebijakan Privasi (draf; menyatakan form belum mengirim/menyimpan data)
-- [x] Komponen baru: Modal (`<dialog>`), ComingSoonNotice/Modal, Field/Input/Select/
+- [x] Komponen baru: Modal (`<dialog>`), ComingSoonModal, Field/Input/Select/
       Textarea, LegalDocument, `lib/validation.ts` (dipakai lagi di Fase 6–7)
 - [x] Widget WA disembunyikan di layar kecil selama mengisi field (US-03 AC 4)
 - [x] Revisi: section Rumah bernuansa JaberNITE LITE (merah muda) dan Bisnis
@@ -135,7 +135,7 @@ memunculkan modal "Segera Hadir" tanpa mengirim data.
 di DevTools tidak menunjukkan request saat mencari.
 
 ## Fase 6 — Form Pendaftaran (`/daftar`)
-- [ ] 28 field sesuai PRD §6A, banner "segera hadir" + tombol WA
+- [ ] 28 field sesuai PRD §6A (tanpa banner "segera hadir" — keputusan pemilik; cukup modal saat kirim)
 - [ ] Validasi di browser (NIK 16 digit, HP, email, kode pos, usia ≥ 17, foto ≤ 2 MB)
 - [ ] Alamat berjenjang Provinsi → Kab/Kota → Kecamatan → Desa dari data coverage
 - [ ] Pratinjau foto KTP/rumah lokal, tanda tangan canvas, tombol "Gunakan Lokasi Saya"

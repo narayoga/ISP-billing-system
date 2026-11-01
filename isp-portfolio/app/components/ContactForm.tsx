@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { length, phoneOrEmail, required, validate, type Validator } from '../lib/validation'
 import { Button } from './Button'
-import { ComingSoonModal, ComingSoonNotice } from './ComingSoon'
+import { ComingSoonModal } from './ComingSoon'
 import { Field, Input, Select, Textarea } from './form/Field'
 
 const SUBJECTS = ['Informasi Layanan', 'Pemasangan Baru', 'Gangguan', 'Tagihan', 'Lainnya'] as const
@@ -62,7 +62,6 @@ export function ContactForm() {
   return (
     <>
       <form className="contact-form" noValidate onSubmit={onSubmit}>
-        <ComingSoonNotice source="WEB-KONTAK" />
         <div className="contact-form__row">
           <Field label="Nama" required error={errors.name}>
             {(a11y) => (
