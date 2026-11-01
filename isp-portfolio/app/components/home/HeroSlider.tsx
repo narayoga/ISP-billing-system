@@ -20,12 +20,11 @@ const getReducedMotionServer = () => false
  * pergantian otomatis 6 detik, teks & tombol muncul berurutan, bar progres, swipe.
  *
  * Penyesuaian untuk JITU:
- * - Latar gelap diam. Isi slide lama memudar sambil bergeser sedikit, isi slide
- *   baru masuk dari arah berlawanan dengan elemen-elemennya berurutan — tanpa
- *   jeda kosong di antaranya.
+ * - Latar gelap diam. Isi slide lama memudar sambil bergeser sedikit, lalu
+ *   elemen slide baru naik satu per satu — tanpa jeda kosong di antaranya.
  * - Slide pertama sudah tampil di HTML prerender (tanpa menunggu JavaScript).
- * - Pergantian dipicu akhir animasi bar progres. Hover/fokus menjeda animasi bar
- *   lewat CSS (`:hover`, `:focus-within`), sehingga timer ikut berhenti.
+ * - Pergantian dipicu akhir animasi bar progres; timer tidak pernah dijeda
+ *   (termasuk saat hover), sesuai keputusan pemilik.
  * - "Kurangi gerakan" mematikan pergantian otomatis dan semua animasi.
  */
 export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
