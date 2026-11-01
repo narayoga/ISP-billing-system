@@ -1,0 +1,41 @@
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6.25rem); /* ptb-100 Jagonet */
+}
+
+.section--surface {
+  background: var(--color-surface);
+}
+
+.section-title {
+  max-width: 44rem;
+  margin-bottom: clamp(2rem, 5vw, 3.25rem);
+}
+
+.section-title--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ".sub-title" Jagonet: teks kecil berisi gradien */
+.section-title__eyebrow {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-title__heading {
+  font-size: clamp(1.625rem, 4vw, 2.25rem);
+  font-weight: 700;
+}
+
+.section-title__description {
+  margin-top: 0.75rem;
+  color: var(--color-muted);
+}

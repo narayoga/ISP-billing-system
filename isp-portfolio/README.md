@@ -27,9 +27,13 @@ npm run dev        # http://localhost:5174
 
 ```
 app/
-  root.tsx      kerangka HTML (lang="id"), meta global, error boundary
+  root.tsx      kerangka HTML (lang="id"), meta global, smooth scroll, error boundary
   routes.ts     daftar route
-  routes/       satu file per halaman
+  routes/       satu file per halaman (+ CSS-nya); /ui-kit = review komponen
+  components/   komponen UI, masing-masing dengan file CSS sendiri
+  content/      SELURUH konten situs (paket, coverage, kontak, FAQ, …) — edit di sini
+  lib/          util: format Rupiah, tautan WhatsApp, SEO, scroll reveal, Lenis
+  styles/       animations.css (pustaka scroll reveal)
   app.css       token warna/font (CSS variables) + reset
 public/         aset statis (robots.txt, …)
   brand/        logo & favicon Jagonet (dari jagonet.co.id/assets/img/)

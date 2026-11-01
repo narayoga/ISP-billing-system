@@ -1,0 +1,63 @@
+/* ================================================================
+   animations.css — pustaka animasi pusat
+   Diadaptasi dari CMS-portfolio (src/styles/animations.css).
+   ----------------------------------------------------------------
+   CARA PAKAI (scroll reveal)
+   1. Beri elemen kelas  reveal  + varian, mis.  reveal reveal--fade-up
+   2. Animasi berjalan saat elemen (atau leluhurnya) mendapat kelas
+      is-visible — dipasang oleh hook useReveal / komponen <Reveal>.
+   3. Jeda berurutan: style={{ '--reveal-delay': `${i * 120}ms` }}
+
+   Atur per elemen (opsional):
+        --reveal-duration   (default .7s)
+        --reveal-ease       (default kurva ease-out)
+        --reveal-delay      (default 0ms)
+
+   PERBEDAAN DARI CMS-portfolio: situs ini di-prerender, jadi keadaan
+   tersembunyi hanya aktif bila <html> berkelas .js (dipasang skrip di
+   root.tsx). Tanpa JavaScript, semua konten tetap terlihat.
+   ================================================================ */
+
+/* ── Keyframes ─────────────────────────────────────────────────── */
+@keyframes fadeIn       { from { opacity: 0; }                               to { opacity: 1; } }
+@keyframes fadeUp       { from { opacity: 0; transform: translateY(48px); }  to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown     { from { opacity: 0; transform: translateY(-48px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft  { from { opacity: 0; transform: translateX(-48px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(48px); }  to { opacity: 1; transform: translateX(0); } }
+@keyframes scaleIn      { from { opacity: 0; transform: scale(0.9); }        to { opacity: 1; transform: scale(1); } }
+@keyframes zoomIn       { from { opacity: 0; transform: scale(1.08); }       to { opacity: 1; transform: scale(1); } }
+@keyframes blurIn       { from { opacity: 0; filter: blur(12px); }           to { opacity: 1; filter: blur(0); } }
+
+/* ── Scroll reveal ─────────────────────────────────────────────── */
+.js .reveal {
+  opacity: 0;
+}
+
+.js .reveal.is-visible,
+.js .is-visible .reveal {
+  animation-duration: var(--reveal-duration, 0.7s);
+  animation-timing-function: var(--reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  animation-fill-mode: both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.js .reveal--fade-in.is-visible,     .js .is-visible .reveal--fade-in     { animation-name: fadeIn; }
+.js .reveal--fade-up.is-visible,     .js .is-visible .reveal--fade-up     { animation-name: fadeUp; }
+.js .reveal--fade-down.is-visible,   .js .is-visible .reveal--fade-down   { animation-name: fadeDown; }
+.js .reveal--slide-left.is-visible,  .js .is-visible .reveal--slide-left  { animation-name: slideInLeft; }
+.js .reveal--slide-right.is-visible, .js .is-visible .reveal--slide-right { animation-name: slideInRight; }
+.js .reveal--scale-in.is-visible,    .js .is-visible .reveal--scale-in    { animation-name: scaleIn; }
+.js .reveal--zoom-in.is-visible,     .js .is-visible .reveal--zoom-in     { animation-name: zoomIn; }
+.js .reveal--blur-in.is-visible,     .js .is-visible .reveal--blur-in     { animation-name: blurIn; }
+
+/* Aksesibilitas: tanpa gerakan, langsung tampil */
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal,
+  .js .reveal.is-visible,
+  .js .is-visible .reveal {
+    opacity: 1 !important;
+    filter: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

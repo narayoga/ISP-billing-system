@@ -1,18 +1,27 @@
 import type { ReactNode } from 'react'
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import type { Route } from './+types/root'
+import { useSmoothScroll } from './lib/useSmoothScroll'
+import 'lenis/dist/lenis.css'
 import './app.css'
+import './styles/animations.css'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'icon', type: 'image/png', href: '/brand/favicon.png' },
 ]
 
+// Dijalankan sebelum halaman tampil: menandai bahwa JavaScript aktif, sehingga
+// animasi masuk (.js .reveal) hanya menyembunyikan konten bila JS benar-benar jalan.
+const MARK_JS = "document.documentElement.classList.add('js')"
+
 export function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id">
+    // suppressHydrationWarning: kelas "js" ditambahkan skrip di atas sebelum hidrasi.
+    <html lang="id" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: MARK_JS }} />
         <Meta />
         <Links />
       </head>
@@ -26,6 +35,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  useSmoothScroll()
   return <Outlet />
 }
 

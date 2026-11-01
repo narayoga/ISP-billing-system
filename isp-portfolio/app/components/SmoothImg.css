@@ -1,0 +1,42 @@
+/* Diadaptasi dari CMS-portfolio (global.css → SmoothImg). Shimmer & fade hanya
+   aktif bila JavaScript jalan (.js), agar tanpa JS gambar tampil normal. */
+.smooth-img {
+  color: transparent; /* sembunyikan teks alt saat memuat/rusak */
+}
+
+.js .smooth-img:not(.is-loaded, .is-error, .smooth-img--plain) {
+  background-color: var(--color-surface);
+  background-image: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.6) 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: smoothImgShimmer 1.3s ease-in-out infinite;
+}
+
+.js .smooth-img.is-loaded:not(.is-instant) {
+  animation: smoothImgFade 0.35s ease both;
+}
+
+@keyframes smoothImgShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes smoothImgFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .smooth-img,
+  .js .smooth-img.is-loaded {
+    animation: none !important;
+  }
+}

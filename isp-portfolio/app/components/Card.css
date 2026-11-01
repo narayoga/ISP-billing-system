@@ -1,0 +1,57 @@
+.card {
+  position: relative;
+  padding: 1.5625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+/* Hover dari CMS-portfolio: naik sedikit + bayangan lebih dalam */
+.card--hover {
+  transition:
+    transform var(--transition-slow),
+    box-shadow var(--transition-slow),
+    border-color var(--transition-slow);
+}
+
+.card--hover:hover {
+  transform: translateY(-6px);
+  border-color: transparent;
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Garis tepi gradien tanpa mengubah radius */
+.card--highlight {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+    var(--gradient-primary) border-box;
+}
+
+/* Gambar di dalam kartu ikut zoom saat hover (CMS-portfolio .card-img) */
+.card__media {
+  margin: -1.5625rem -1.5625rem 1.25rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-surface);
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card--hover:hover .card__media img {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--hover:hover,
+  .card--hover:hover .card__media img {
+    transform: none;
+  }
+}

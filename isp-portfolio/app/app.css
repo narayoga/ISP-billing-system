@@ -46,8 +46,18 @@
     Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --radius: 0.75rem;
+  --radius-lg: 25px; /* kartu paket Jagonet */
+  --radius-icon: 30px; /* kotak ikon keunggulan Jagonet */
   --radius-pill: 30px; /* tombol .default-btn Jagonet */
   --container: 72rem;
+
+  /* Bayangan */
+  --shadow-card: 0 25px 50px 5px rgb(0 0 0 / 0.05); /* pricing box Jagonet */
+  --shadow-card-hover: 0 30px 60px -10px rgb(38 42 55 / 0.18);
+
+  /* Gerak (kurva dari CMS-portfolio) */
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Reset ringan */
@@ -90,34 +100,45 @@ a {
   color: var(--color-link);
 }
 
-/* Tombol utama — meniru .default-btn Jagonet (pill, gradien merah muda → oranye) */
-.btn-primary {
-  display: inline-block;
-  padding: 0.75rem 1.75rem;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--gradient-primary);
-  color: #fff;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: filter 0.2s;
-}
-
-.btn-primary:hover {
-  filter: brightness(1.08);
-}
-
-.btn-primary:focus-visible {
-  outline: 3px solid var(--color-heading);
-  outline-offset: 2px;
-}
-
 .container {
   width: 100%;
   max-width: var(--container);
   margin-inline: auto;
   padding-inline: 1rem;
+}
+
+/* Grid responsif: 1 kolom di ponsel, naik sesuai lebar layar */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .grid--2,
+  .grid--3,
+  .grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Teks khusus pembaca layar */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .home-placeholder,

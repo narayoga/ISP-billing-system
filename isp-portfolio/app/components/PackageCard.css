@@ -1,0 +1,85 @@
+.package-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.package-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.package-card__name {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.package-card__terms {
+  margin-top: 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.package-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+}
+
+.package-card__speed {
+  color: var(--color-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.package-card__speed--text {
+  font-size: 1.75rem;
+}
+
+.package-card__speed small {
+  margin-left: 0.15rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.package-card__amount {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.package-card__note {
+  margin-top: -0.5rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.package-card__cta {
+  width: 100%;
+}
+
+.package-card__features {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--color-border);
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.package-card__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.package-card__check {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--color-success);
+}

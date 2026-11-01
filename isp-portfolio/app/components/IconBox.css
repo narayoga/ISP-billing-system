@@ -1,0 +1,25 @@
+.icon-box {
+  display: inline-grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--radius-icon);
+  color: #fff;
+  box-shadow: 15px 20px 35px rgb(38 42 55 / 0.08);
+}
+
+.icon-box--primary {
+  background: var(--gradient-primary);
+}
+
+.icon-box--purple {
+  background: var(--gradient-purple);
+}
+
+.icon-box--blue {
+  background: var(--gradient-blue);
+}
+
+.icon-box--orange {
+  background: var(--gradient-orange);
+}
