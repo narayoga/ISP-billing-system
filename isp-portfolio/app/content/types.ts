@@ -160,3 +160,4 @@ export type IconName =
   | 'close'
   | 'search'
   | 'copy'
+  | 'alert'

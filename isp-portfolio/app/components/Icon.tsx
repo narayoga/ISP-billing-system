@@ -2,6 +2,7 @@ import {
   ArrowRight,
   Building2,
   ChartLine,
+  CircleAlert,
   Check,
   ChevronDown,
   Clock,
@@ -42,6 +43,7 @@ const LUCIDE: Record<Exclude<IconName, 'whatsapp'>, LucideIcon> = {
   close: X,
   search: Search,
   copy: Copy,
+  alert: CircleAlert,
 }
 
 type Props = {

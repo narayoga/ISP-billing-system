@@ -1,10 +1,11 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { coverage } from '../content/coverage'
 import { packages } from '../content/packages'
 import { sales } from '../content/sales'
 import { site } from '../content/site'
 import { formatRupiah } from '../lib/format'
+import { getLenis } from '../lib/useSmoothScroll'
 import {
   email,
   googleMapsUrl,
@@ -57,6 +58,50 @@ type Text = {
   voucher: string
 }
 
+const EMPTY: Text = {
+  nama: '', email: '', hp: '', gender: '', tempatLahir: '', tanggalLahir: '', jenisId: 'KTP',
+  nomorId: '', npwp: '',
+  provinsi: '', kota: '', kecamatan: '', desa: '',
+  alamat: '', kodePos: '', mapsUrl: '',
+  jenisPelanggan: '', sales: '', paket: '', voucher: '',
+}
+
+// Isian disimpan di sessionStorage tab ini saja agar tidak hilang saat halaman
+// dimuat ulang; terhapus sendiri ketika tab ditutup. Foto & tanda tangan tidak ikut.
+const STORAGE_KEY = 'jitu-daftar'
+
+/** `paket` & `area` = parameter URL saat isian disimpan, untuk mengenali prefill baru. */
+type Saved = { v?: Partial<Record<keyof Text, unknown>>; setuju?: unknown; paket?: string; area?: string }
+
+function readSaved(): Saved | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    return raw ? (JSON.parse(raw) as Saved) : null
+  } catch {
+    return null
+  }
+}
+
+function initialValues(saved: Saved | null, initialPackage: string, initialArea: string): Text {
+  const v = { ...EMPTY }
+  for (const key of Object.keys(EMPTY) as (keyof Text)[]) {
+    const x = saved?.v?.[key]
+    if (typeof x === 'string') v[key] = x
+  }
+  // Desa tersimpan yang tidak lagi "Tersedia" → alamat berjenjang dipilih ulang.
+  if (v.desa && !AREAS.some((a) => a.id === v.desa)) Object.assign(v, { provinsi: '', kota: '', kecamatan: '', desa: '' })
+  // Prefill URL menang hanya bila berbeda dari saat isian disimpan (datang dari tautan lain).
+  const area = AREAS.find((a) => a.id === initialArea)
+  if (area && saved?.area !== initialArea) {
+    Object.assign(v, { provinsi: area.province, kota: area.city, kecamatan: area.district, desa: area.id })
+  }
+  if (packages.some((p) => p.slug === initialPackage) && saved?.paket !== initialPackage) v.paket = initialPackage
+  return v
+}
+
+/** Jeda kosmetik "memeriksa" sebelum hasil validasi tampil. */
+const CHECK_DELAY = 700
+
 type Errors = Partial<Record<keyof Text | 'fotoKtp' | 'fotoRumah' | 'setuju' | 'ttd', string>>
 
 /** Urutan field = urutan fokus saat validasi gagal. */
@@ -103,28 +148,44 @@ type Props = {
 
 /**
  * Formulir Pendaftaran Berlangganan — KOSMETIK (PRD §6A, US-07).
- * Validasi lengkap di browser; bila lolos muncul modal "Segera Hadir" dengan
- * tombol WhatsApp. Tidak ada fetch, tidak ada penyimpanan (local/sessionStorage,
- * IndexedDB, cookie); foto & tanda tangan hanya tampil di perangkat pengunjung.
+ * Validasi lengkap di browser; bila gagal, ringkasan galat tampil di atas formulir
+ * dan halaman kembali ke sana; bila lolos muncul modal "Segera Hadir" dengan
+ * tombol WhatsApp. Tidak ada fetch; isian teks hanya disimpan di sessionStorage
+ * tab ini; foto & tanda tangan hanya tampil di perangkat pengunjung.
  */
 export function RegistrationForm({ initialPackage = '', initialArea = '', today }: Props) {
-  const area = AREAS.find((a) => a.id === initialArea)
-  const [v, setV] = useState<Text>(() => ({
-    nama: '', email: '', hp: '', gender: '', tempatLahir: '', tanggalLahir: '', jenisId: 'KTP',
-    nomorId: '', npwp: '',
-    provinsi: area?.province ?? '', kota: area?.city ?? '', kecamatan: area?.district ?? '', desa: area?.id ?? '',
-    alamat: '', kodePos: '', mapsUrl: '',
-    jenisPelanggan: '', sales: '', voucher: '',
-    paket: packages.some((p) => p.slug === initialPackage) ? initialPackage : '',
-  }))
+  // `today` terisi = sudah hidrasi (form dipasang ulang), baru boleh membaca sessionStorage.
+  const [saved] = useState(() => (today ? readSaved() : null))
+  const [v, setV] = useState<Text>(() => initialValues(saved, initialPackage, initialArea))
   const [fotoKtp, setFotoKtp] = useState<File | null>(null)
   const [fotoRumah, setFotoRumah] = useState<File | null>(null)
-  const [setuju, setSetuju] = useState(false)
+  const [setuju, setSetuju] = useState(saved?.setuju === true)
   const [ttd, setTtd] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [locating, setLocating] = useState<'idle' | 'busy' | 'error'>('idle')
+  const [checking, setChecking] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+  const formRef = useRef<HTMLFormElement>(null)
+  const summaryRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!today) return
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ v, setuju, paket: initialPackage, area: initialArea }))
+    } catch {
+      // Penyimpanan diblokir (mode privat dsb.) — formulir tetap jalan tanpa pemulihan isian.
+    }
+  }, [v, setuju, today, initialPackage, initialArea])
+
+  // Setelah kirim gagal: kembali ke ringkasan galat di atas formulir.
+  useEffect(() => {
+    const el = summaryRef.current
+    if (!attempt || !el) return
+    scrollToEl(el)
+    el.focus({ preventScroll: true })
+  }, [attempt])
 
   // ── Opsi alamat berjenjang ──
   const provinces = useMemo(() => unique(AREAS.map((a) => a.province)), [])
@@ -193,22 +254,49 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setSubmitted(true)
-    const found = check(v)
-    setErrors(found)
-    const first = ORDER.find((k) => found[k])
-    if (first) {
-      e.currentTarget.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus()
-      return
-    }
-    setModalOpen(true)
+    if (checking) return
+    setChecking(true)
+    window.setTimeout(() => {
+      setChecking(false)
+      setSubmitted(true)
+      const found = check(v)
+      setErrors(found)
+      if (Object.keys(found).length > 0) setAttempt((n) => n + 1)
+      else setModalOpen(true)
+    }, CHECK_DELAY)
+  }
+
+  function focusField(k: keyof Errors) {
+    const el = formRef.current?.querySelector<HTMLElement>(`[data-field="${k}"]`)
+    if (!el) return
+    scrollToEl(el)
+    el.focus({ preventScroll: true })
   }
 
   const err = (k: keyof Errors) => errors[k]
+  const errorKeys = ORDER.filter((k) => errors[k])
 
   return (
     <>
-      <form className="reg-form" noValidate onSubmit={onSubmit}>
+      <form ref={formRef} className="reg-form" noValidate onSubmit={onSubmit} aria-busy={checking}>
+        {submitted && errorKeys.length > 0 && (
+          <div ref={summaryRef} className="reg-errors" role="alert" tabIndex={-1}>
+            <h2 className="reg-errors__title">
+              <Icon name="alert" size={20} /> Pendaftaran belum bisa dikirim
+            </h2>
+            <p>Periksa {errorKeys.length} isian berikut:</p>
+            <ul>
+              {errorKeys.map((k) => (
+                <li key={k}>
+                  <button type="button" onClick={() => focusField(k)}>
+                    {errors[k]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <FormSection step={1} title="Data Diri" icon="support">
           <div className="reg-grid">
             <Field label="Nama Lengkap" required hint="Sesuai kartu identitas." error={err('nama')}>
@@ -486,14 +574,10 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
         </FormSection>
 
         <div className="reg-submit">
-          {submitted && Object.keys(errors).length > 0 && (
-            <p className="reg-submit__summary" role="alert">
-              Masih ada {Object.keys(errors).length} isian yang perlu diperbaiki.
-            </p>
-          )}
           {/* Nonaktif sampai JavaScript siap, agar formulir tidak pernah terkirim apa adanya */}
-          <Button type="submit" iconRight="arrow-right" disabled={!today}>
-            Kirim Pendaftaran
+          <Button type="submit" iconRight={checking ? undefined : 'arrow-right'} disabled={!today || checking}>
+            {checking && <span className="reg-spinner" aria-hidden="true" />}
+            {checking ? 'Memeriksa isian…' : 'Kirim Pendaftaran'}
           </Button>
         </div>
       </form>
@@ -509,6 +593,15 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
       />
     </>
   )
+}
+
+/** Scroll mulus ke elemen, menyisakan ruang untuk header tetap. */
+function scrollToEl(el: HTMLElement) {
+  const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80
+  const offset = -header - 24
+  const lenis = getLenis()
+  if (lenis) return lenis.scrollTo(el, { offset })
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset })
 }
 
 function FormSection({

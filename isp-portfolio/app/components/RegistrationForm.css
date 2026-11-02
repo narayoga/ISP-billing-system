@@ -157,7 +157,104 @@
   gap: 1rem;
 }
 
-.reg-submit__summary {
+/* ── Memeriksa (loading) ── */
+.reg-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.6em;
+  border: 2px solid rgb(255 255 255 / 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  vertical-align: -0.15em;
+  animation: reg-spin 0.7s linear infinite;
+}
+
+@keyframes reg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reg-form[aria-busy='true'] .reg-submit .btn {
+  cursor: progress;
+}
+
+/* ── Ringkasan galat di atas formulir ── */
+.reg-errors {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgb(196 24 63 / 0.35);
+  border-left-width: 4px;
+  border-radius: 1rem;
+  background: rgb(196 24 63 / 0.06);
+  animation: reg-errors-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reg-errors:focus {
+  outline: none;
+}
+
+.reg-errors:focus-visible {
+  outline: 2px solid #c4183f;
+  outline-offset: 3px;
+}
+
+.reg-errors__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #a0122f;
+  font-size: 1.125rem;
+}
+
+.reg-errors p {
+  color: var(--color-text);
+  font-size: 0.9375rem;
+}
+
+.reg-errors ul {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.reg-errors li {
   color: #c4183f;
-  font-weight: 600;
+}
+
+.reg-errors button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #c4183f;
+  font: inherit;
+  font-size: 0.9375rem;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.reg-errors button:hover {
+  color: #a0122f;
+}
+
+@keyframes reg-errors-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reg-spinner {
+    animation-duration: 1.5s;
+  }
+
+  .reg-errors {
+    animation: none;
+  }
 }

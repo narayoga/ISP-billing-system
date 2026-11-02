@@ -147,7 +147,13 @@ di DevTools tidak menunjukkan request saat mencari.
       Layanan, Persetujuan) — tanpa banner "segera hadir", cukup modal saat kirim
 - [x] Validasi di browser (NIK 16 digit / SIM 12–16, NPWP 15/16, HP, email, kode pos,
       usia ≥ 17, tautan Google Maps, voucher, foto JPG/PNG ≤ 2 MB); pesan galat di
-      bawah field, fokus pindah ke isian pertama yang salah
+      bawah field
+- [x] Revisi: tombol Kirim menampilkan loading "Memeriksa isian…"; bila gagal,
+      ringkasan galat muncul di paling atas formulir dan halaman kembali ke sana
+      (tiap butir bisa diklik untuk lompat ke field-nya)
+- [x] Revisi: isian teks, pilihan & centang persetujuan disimpan di sessionStorage
+      tab (tidak hilang saat refresh, hilang saat tab ditutup); foto & tanda tangan
+      tidak ikut disimpan. Prefill `?paket=`/`?area=` dari tautan baru tetap menang
 - [x] Alamat berjenjang Provinsi → Kab/Kota → Kecamatan → Desa dari area **Tersedia**;
       mengganti level atas mengosongkan level di bawahnya
 - [x] Pratinjau foto KTP/rumah lokal (`blob:`), tanda tangan canvas (mouse/jari),
@@ -155,12 +161,13 @@ di DevTools tidak menunjukkan request saat mencari.
 - [x] Biaya bulanan/instalasi otomatis, tanggal registrasi hari ini (read-only),
       `?paket=` dan `?area=` mengisi form (dibaca setelah hidrasi)
 - [x] Kirim → modal "Segera Hadir" + WA berisi nama paket saja; diuji: 0 request
-      jaringan, local/sessionStorage, cookie, IndexedDB kosong; tombol Kirim nonaktif
+      jaringan, localStorage, cookie, IndexedDB kosong; tombol Kirim nonaktif
       sampai JS siap sehingga form tak pernah terkirim apa adanya
 - [x] Flag `site.forms.daftar = 'hidden'` menampilkan ajakan daftar via WA
 
-**Cara cek:** isi form dengan data salah lalu benar. Pastikan Network kosong saat
-kirim, dan Application → Storage tidak menyimpan apa pun.
+**Cara cek:** isi sebagian form lalu klik Kirim — muncul loading, lalu halaman naik
+ke ringkasan galat di atas. Refresh: isian tetap ada. Pastikan Network kosong saat
+kirim; Application → Storage hanya berisi sessionStorage `jitu-daftar`.
 
 ## Fase 7 — Cek Tagihan (`/cek-tagihan`)
 - [ ] Form ID pelanggan / No. WA (kosmetik) + modal "Segera Hadir"
