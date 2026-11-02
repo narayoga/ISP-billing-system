@@ -1,3 +1,8 @@
+/* Jarak dari banner = jarak antar-kartu formulir (.reg-form gap) */
+.daftar-page {
+  padding-top: 1.5rem;
+}
+
 .daftar-page__inner {
   max-width: 56rem;
 }
