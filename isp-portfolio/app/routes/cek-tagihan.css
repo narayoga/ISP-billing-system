@@ -1,0 +1,155 @@
+/* ── Form + keunggulan VA ── */
+.bill-intro {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 960px) {
+  .bill-intro {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3.5rem;
+  }
+
+  .bill-intro--single {
+    grid-template-columns: minmax(0, 44rem);
+    justify-content: center;
+  }
+}
+
+.bill-card {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.bill-card__title {
+  font-size: 1.5rem;
+}
+
+.bill-card__desc {
+  margin: 0.35rem 0 1.5rem;
+  color: var(--color-muted);
+}
+
+.bill-form {
+  display: grid;
+  justify-items: start;
+  gap: 1.25rem;
+}
+
+.bill-form .field {
+  width: 100%;
+}
+
+.bill-notes h2 {
+  margin-bottom: 1.25rem;
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+}
+
+.bill-notes ul {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bill-notes li {
+  display: flex;
+  gap: 0.85rem;
+  color: var(--color-text);
+}
+
+.bill-notes__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: #fff;
+}
+
+/* ── Cara pembayaran ── */
+.bill-methods {
+  display: grid;
+  align-items: start;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .bill-methods {
+    grid-template-columns: 1.25fr 0.75fr;
+  }
+}
+
+.bill-method {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.bill-method__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bill-method__head h3 {
+  font-size: 1.375rem;
+}
+
+.bill-method__desc {
+  margin-top: -0.4rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.bill-account {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: var(--color-surface);
+}
+
+.bill-account dt {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.bill-account dd {
+  margin: 0.15rem 0 0;
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+.bill-account__number {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.bill-account__number span {
+  font-size: 1.375rem;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bill-steps {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--color-text);
+  font-size: 0.9375rem;
+}
+
+.bill-method > .btn {
+  justify-self: start;
+}

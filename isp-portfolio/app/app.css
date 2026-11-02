@@ -165,16 +165,6 @@ a {
   }
 }
 
-/* Daftar isi halaman kerangka (PagePlaceholder) */
-.page-placeholder {
-  display: grid;
-  gap: 0.5rem;
-  max-width: 36rem;
-  margin: 0 auto;
-  padding-left: 1.25rem;
-  color: var(--color-muted);
-}
-
 /* Teks khusus pembaca layar */
 .sr-only {
   position: absolute;

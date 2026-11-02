@@ -32,6 +32,16 @@ export const length =
 export const phoneOrEmail: Validator = (v) =>
   isIndonesianPhone(v) || isEmail(v) ? null : 'Isi nomor WhatsApp (08… / 62…) atau alamat email yang valid.'
 
+/** Angka saja berawalan 08/62 dianggap nomor WhatsApp; selain itu ID pelanggan. */
+export function customerKeyKind(value: string): 'phone' | 'id' {
+  return /^(08|62)[\d\s-]*$/.test(value.trim()) ? 'phone' : 'id'
+}
+
+export const customerKey: Validator = (v) => {
+  if (customerKeyKind(v) === 'phone') return isIndonesianPhone(v) ? null : 'Nomor WhatsApp harus 10–15 digit, diawali 08 atau 62.'
+  return /^[A-Za-z0-9-]{3,30}$/.test(v.trim()) ? null : 'ID pelanggan berupa huruf/angka, 3–30 karakter.'
+}
+
 export const email: Validator = (v) => (isEmail(v) ? null : 'Format email tidak valid.')
 
 export const phone: Validator = (v) =>

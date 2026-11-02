@@ -13,6 +13,8 @@ type Common = {
   icon?: IconName
   /** Ikon di kanan teks (mis. panah) */
   iconRight?: IconName
+  /** Spinner menggantikan ikon kanan; tombol nonaktif & aria-busy */
+  loading?: boolean
   className?: string
   children: ReactNode
 }
@@ -29,6 +31,7 @@ export function Button({
   size = 'md',
   icon,
   iconRight,
+  loading = false,
   className,
   children,
   ...rest
@@ -39,7 +42,7 @@ export function Button({
     <>
       {icon && <Icon name={icon} size={iconSize} />}
       <span>{children}</span>
-      {iconRight && <Icon name={iconRight} size={iconSize} />}
+      {loading ? <span className="btn__spinner" aria-hidden="true" /> : iconRight && <Icon name={iconRight} size={iconSize} />}
     </>
   )
 
@@ -59,9 +62,9 @@ export function Button({
     )
   }
 
-  const { type = 'button', ...buttonProps } = rest as NativeButtonProps
+  const { type = 'button', disabled, ...buttonProps } = rest as NativeButtonProps
   return (
-    <button type={type} className={cls} {...buttonProps}>
+    <button type={type} className={cls} disabled={disabled || loading} aria-busy={loading || undefined} {...buttonProps}>
       {content}
     </button>
   )

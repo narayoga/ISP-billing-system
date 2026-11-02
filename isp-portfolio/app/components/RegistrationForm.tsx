@@ -278,7 +278,7 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
 
   return (
     <>
-      <form ref={formRef} className="reg-form" noValidate onSubmit={onSubmit} aria-busy={checking}>
+      <form ref={formRef} className="reg-form" noValidate onSubmit={onSubmit}>
         {submitted && errorKeys.length > 0 && (
           <div ref={summaryRef} className="reg-errors" role="alert" tabIndex={-1}>
             <h2 className="reg-errors__title">
@@ -575,8 +575,7 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
 
         <div className="reg-submit">
           {/* Nonaktif sampai JavaScript siap, agar formulir tidak pernah terkirim apa adanya */}
-          <Button type="submit" iconRight={checking ? undefined : 'arrow-right'} disabled={!today || checking}>
-            {checking && <span className="reg-spinner" aria-hidden="true" />}
+          <Button type="submit" iconRight="arrow-right" loading={checking} disabled={!today}>
             {checking ? 'Memeriksa isian…' : 'Kirim Pendaftaran'}
           </Button>
         </div>

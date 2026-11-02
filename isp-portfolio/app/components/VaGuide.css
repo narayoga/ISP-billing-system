@@ -1,0 +1,71 @@
+.va-guide {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* ── Tab bank: pil bergulir horizontal di ponsel ── */
+.va-guide__tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem;
+  scrollbar-width: none;
+}
+
+.va-guide__tab {
+  flex-shrink: 0;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    box-shadow var(--transition);
+}
+
+.va-guide__tab:hover {
+  border-color: rgb(var(--color-primary-rgb) / 0.5);
+}
+
+.va-guide__tab:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.va-guide__tab[aria-selected='true'] {
+  border-color: transparent;
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgb(var(--color-primary-rgb) / 0.55);
+}
+
+.va-guide__panel {
+  animation: va-panel-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.va-guide__steps {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+@keyframes va-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .va-guide__panel {
+    animation: none;
+  }
+}

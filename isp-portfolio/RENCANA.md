@@ -142,7 +142,7 @@ memunculkan modal "Segera Hadir" tanpa mengirim data.
 **Cara cek:** ketik beberapa nama desa (huruf besar/kecil, spasi berlebih). Tab Network
 di DevTools tidak menunjukkan request saat mencari.
 
-## Fase 6 — Form Pendaftaran (`/daftar`) ✅ selesai, menunggu review
+## Fase 6 — Form Pendaftaran (`/daftar`) ✅ selesai (`bcf5a56`, revisi `9a16a8f` `75b8b02` `353010c`)
 - [x] 28 field sesuai PRD §6A dalam 5 langkah (Data Diri, Dokumen, Alamat Pemasangan,
       Layanan, Persetujuan) — tanpa banner "segera hadir", cukup modal saat kirim
 - [x] Validasi di browser (NIK 16 digit / SIM 12–16, NPWP 15/16, HP, email, kode pos,
@@ -169,11 +169,21 @@ di DevTools tidak menunjukkan request saat mencari.
 ke ringkasan galat di atas. Refresh: isian tetap ada. Pastikan Network kosong saat
 kirim; Application → Storage hanya berisi sessionStorage `jitu-daftar`.
 
-## Fase 7 — Cek Tagihan (`/cek-tagihan`)
-- [ ] Form ID pelanggan / No. WA (kosmetik) + modal "Segera Hadir"
-- [ ] Section Cara Pembayaran (lihat pertanyaan terbuka no. 4)
+## Fase 7 — Cek Tagihan (`/cek-tagihan`) ✅ selesai, menunggu review
+- [x] Form satu isian ID pelanggan / No. WA (jenis terdeteksi otomatis, validasi
+      format), loading "Memeriksa…", lalu modal "Segera Hadir" + WA dukungan
+      (`WEB-TAGIHAN`, tanpa data dari form); tanpa fetch/penyimpanan
+- [x] Cara Pembayaran (pertanyaan no. 4 → keduanya): **Virtual Account** sebagai cara
+      utama — tab bank (BCA, BNI, BRI, Mandiri, Permata) + langkah per kanal
+      (m-banking/ATM/internet banking) di `content/payment.ts`; **Transfer Manual**
+      sebagai alternatif — rekening dari `site.payment` + tombol "Salin" +
+      "Konfirmasi via WhatsApp"
+- [x] Flag `forms.cekTagihan = 'hidden'` menyembunyikan form, Cara Pembayaran tetap
+- [x] `Button` punya prop `loading` (spinner), dipakai juga di form pendaftaran
 
-**Cara cek:** validasi format input dan modal muncul. Tombol "Salin" menyalin teks.
+**Cara cek:** isi `ab`, `0812`, lalu `JITU-00123` / `081234567890` — pesan galat &
+label "Terdeteksi" berubah; Cek Tagihan → loading lalu modal. Ganti tab bank (klik /
+panah kiri-kanan), buka langkah per kanal. Tombol "Salin" → "Tersalin".
 
 ## Fase 8 — SEO & Keamanan
 - [ ] `<title>`, meta description, canonical, Open Graph unik per halaman
@@ -202,7 +212,7 @@ validator Rich Results Google setelah staging live.
 | 1 | Paket & harga JITU di Bali: sama dengan Jagonet atau berbeda? | Fase 1 (sementara pakai paket Jagonet) |
 | 2 | Kontak JITU: nomor WA sales & support, telepon, email, alamat kantor Ubud, jam operasional, media sosial | Fase 2 |
 | 3 | Daftar area coverage (desa/kecamatan di Ubud/Gianyar) beserta statusnya | Fase 5 |
-| 4 | Cek Tagihan & Cara Pembayaran: transfer manual + konfirmasi WA (PRD v1.0), atau diarahkan ke tautan tagihan/VA dari sistem billing (PRD billing v4.0)? | Fase 7 |
+| 4 | ~~Cek Tagihan & Cara Pembayaran: transfer manual atau VA?~~ **Keduanya** — VA utama, transfer manual + konfirmasi WA alternatif. Daftar bank VA & rekening transfer masih sementara | Fase 7 ✅ |
 | 5 | Ilustrasi hero & peta coverage: pakai milik Jagonet (peta Jawa Timur) atau perlu peta Bali? | Fase 3 |
 | 6 | Saat go-live, form kosmetik ditampilkan (`preview`) atau disembunyikan (`hidden`)? | Fase 9 |
 | 7 | Domain produksi | Fase 9 |

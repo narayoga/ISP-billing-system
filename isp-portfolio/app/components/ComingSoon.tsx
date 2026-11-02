@@ -11,15 +11,17 @@ type Props = {
   source: WaSource
   /** Pesan WA awal — tanpa data pribadi dari form (PRD §6) */
   message?: string
+  /** Nomor WA tujuan; default WhatsApp sales */
+  number?: string
 }
 
 /** Modal "Segera Hadir" setelah validasi form lolos — data tidak dikirim ke mana pun. */
-export function ComingSoonModal({ open, onClose, title, text, source, message }: Props) {
+export function ComingSoonModal({ open, onClose, title, text, source, message, number }: Props) {
   return (
     <Modal open={open} onClose={onClose} title={title}>
       <IconBox icon="clock" tone="primary" />
       <p>{text}</p>
-      <Button variant="whatsapp" icon="whatsapp" href={waLink(source, message)}>
+      <Button variant="whatsapp" icon="whatsapp" href={waLink(source, message, number)}>
         Lanjut via WhatsApp
       </Button>
     </Modal>

@@ -41,6 +41,31 @@
   transform: none;
 }
 
+.btn[aria-busy='true'] {
+  cursor: progress;
+}
+
+.btn__spinner {
+  width: 1.1em;
+  height: 1.1em;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.7s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn__spinner {
+    animation-duration: 1.5s;
+  }
+}
+
 .btn--sm {
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;

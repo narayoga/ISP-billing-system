@@ -157,29 +157,6 @@
   gap: 1rem;
 }
 
-/* ── Memeriksa (loading) ── */
-.reg-spinner {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  margin-right: 0.6em;
-  border: 2px solid rgb(255 255 255 / 0.4);
-  border-top-color: #fff;
-  border-radius: 50%;
-  vertical-align: -0.15em;
-  animation: reg-spin 0.7s linear infinite;
-}
-
-@keyframes reg-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.reg-form[aria-busy='true'] .reg-submit .btn {
-  cursor: progress;
-}
-
 /* ── Ringkasan galat di atas formulir ── */
 .reg-errors {
   display: grid;
@@ -250,10 +227,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reg-spinner {
-    animation-duration: 1.5s;
-  }
-
   .reg-errors {
     animation: none;
   }

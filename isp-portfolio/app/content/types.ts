@@ -38,6 +38,9 @@ export type Site = {
   seo: { defaultTitle: string; description: string; keywords: string[] }
 }
 
+/** Panduan bayar Virtual Account satu bank, per kanal (m-banking, ATM, …) */
+export type VaBank = { id: string; name: string; channels: { name: string; steps: string[] }[] }
+
 export type PackageCategory = {
   slug: string
   title: string
