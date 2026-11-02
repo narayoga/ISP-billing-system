@@ -124,7 +124,7 @@ di ponsel, dan tampilan rapi di lebar 360px.
 "Berlangganan" membawa ke `/daftar?paket=…`. Form Kirim Pesan memvalidasi isian lalu
 memunculkan modal "Segera Hadir" tanpa mengirim data.
 
-## Fase 5 — Cek Coverage (`/coverage`) ✅ selesai, menunggu review
+## Fase 5 — Cek Coverage (`/coverage`) ✅ selesai (`289c3bd`, peta ODP `34102d4` `6adcb2d`)
 - [x] Pencarian desa/kecamatan/kota di browser (`lib/coverage.ts`): saran maks. 8,
       tidak peka huruf besar/kecil, aksen, dan spasi berlebih; awalan yang diketik
       ("kec.", "kab.", "desa") memprioritaskan tingkat wilayah tersebut
@@ -142,13 +142,22 @@ memunculkan modal "Segera Hadir" tanpa mengirim data.
 **Cara cek:** ketik beberapa nama desa (huruf besar/kecil, spasi berlebih). Tab Network
 di DevTools tidak menunjukkan request saat mencari.
 
-## Fase 6 — Form Pendaftaran (`/daftar`)
-- [ ] 28 field sesuai PRD §6A (tanpa banner "segera hadir" — keputusan pemilik; cukup modal saat kirim)
-- [ ] Validasi di browser (NIK 16 digit, HP, email, kode pos, usia ≥ 17, foto ≤ 2 MB)
-- [ ] Alamat berjenjang Provinsi → Kab/Kota → Kecamatan → Desa dari data coverage
-- [ ] Pratinjau foto KTP/rumah lokal, tanda tangan canvas, tombol "Gunakan Lokasi Saya"
-- [ ] Biaya bulanan/instalasi otomatis, `?paket=` dan `?area=` mengisi form
-- [ ] Kirim → modal "Segera Hadir"; data tidak dikirim dan tidak disimpan
+## Fase 6 — Form Pendaftaran (`/daftar`) ✅ selesai, menunggu review
+- [x] 28 field sesuai PRD §6A dalam 5 langkah (Data Diri, Dokumen, Alamat Pemasangan,
+      Layanan, Persetujuan) — tanpa banner "segera hadir", cukup modal saat kirim
+- [x] Validasi di browser (NIK 16 digit / SIM 12–16, NPWP 15/16, HP, email, kode pos,
+      usia ≥ 17, tautan Google Maps, voucher, foto JPG/PNG ≤ 2 MB); pesan galat di
+      bawah field, fokus pindah ke isian pertama yang salah
+- [x] Alamat berjenjang Provinsi → Kab/Kota → Kecamatan → Desa dari area **Tersedia**;
+      mengganti level atas mengosongkan level di bawahnya
+- [x] Pratinjau foto KTP/rumah lokal (`blob:`), tanda tangan canvas (mouse/jari),
+      tombol "Gunakan Lokasi Saya" (Geolocation diproses di perangkat)
+- [x] Biaya bulanan/instalasi otomatis, tanggal registrasi hari ini (read-only),
+      `?paket=` dan `?area=` mengisi form (dibaca setelah hidrasi)
+- [x] Kirim → modal "Segera Hadir" + WA berisi nama paket saja; diuji: 0 request
+      jaringan, local/sessionStorage, cookie, IndexedDB kosong; tombol Kirim nonaktif
+      sampai JS siap sehingga form tak pernah terkirim apa adanya
+- [x] Flag `site.forms.daftar = 'hidden'` menampilkan ajakan daftar via WA
 
 **Cara cek:** isi form dengan data salah lalu benar. Pastikan Network kosong saat
 kirim, dan Application → Storage tidak menyimpan apa pun.

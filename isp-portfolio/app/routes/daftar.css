@@ -1,0 +1,14 @@
+.daftar-page__inner {
+  max-width: 56rem;
+}
+
+.daftar-page__wa {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.daftar-page__wa p {
+  color: var(--color-muted);
+}

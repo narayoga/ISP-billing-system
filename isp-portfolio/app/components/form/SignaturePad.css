@@ -1,0 +1,62 @@
+.signature__box {
+  position: relative;
+  height: 11rem;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 1rem;
+  background:
+    linear-gradient(transparent calc(100% - 2.75rem), var(--color-border) calc(100% - 2.75rem), var(--color-border) calc(100% - 2.65rem), transparent calc(100% - 2.65rem)),
+    #fff;
+}
+
+.field--error .signature__box {
+  border-color: #d92d54;
+}
+
+.signature__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  cursor: crosshair;
+  touch-action: none; /* jari menggambar, bukan menggulir halaman */
+}
+
+.signature__canvas:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.signature__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #b6b4c0;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.signature__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.signature__clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #c4183f;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signature__clear:disabled {
+  color: var(--color-muted);
+  cursor: default;
+  opacity: 0.6;
+}

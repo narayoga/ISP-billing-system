@@ -1,0 +1,70 @@
+.photo-input__box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface);
+}
+
+.field--error .photo-input__box {
+  border-color: #d92d54;
+}
+
+.photo-input__box:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgb(var(--color-primary-rgb) / 0.15);
+}
+
+.photo-input__preview,
+.photo-input__placeholder {
+  flex-shrink: 0;
+  width: 5.5rem;
+  height: 4.25rem;
+  border-radius: 0.65rem;
+}
+
+.photo-input__preview {
+  object-fit: cover;
+  box-shadow: 0 4px 10px -4px rgb(38 42 55 / 0.35);
+}
+
+.photo-input__placeholder {
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--color-muted);
+}
+
+.photo-input__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.photo-input__pick {
+  background: #fff;
+}
+
+.photo-input__clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #c4183f;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photo-input__name {
+  flex-basis: 100%;
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
