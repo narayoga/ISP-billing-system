@@ -598,10 +598,11 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
 /** Scroll mulus ke elemen, menyisakan ruang untuk header tetap. */
 function scrollToEl(el: HTMLElement) {
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80
-  const offset = -header - 24
+  // Posisi dihitung dari scrollY asli; posisi internal Lenis bisa tertinggal bila halaman di-scroll tanpa Lenis.
+  const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - header - 24)
   const lenis = getLenis()
-  if (lenis) return lenis.scrollTo(el, { offset })
-  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset })
+  if (lenis) return lenis.scrollTo(top)
+  window.scrollTo({ top })
 }
 
 function FormSection({

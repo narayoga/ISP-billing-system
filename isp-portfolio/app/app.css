@@ -132,6 +132,15 @@ a {
   scroll-margin-top: calc(var(--header-h) + 1rem);
 }
 
+/* Jarak atas-bawah section — global karena juga dipakai halaman tanpa <Section> (form, dokumen legal) */
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6.25rem); /* ptb-100 Jagonet */
+}
+
+.section--surface {
+  background: var(--color-surface);
+}
+
 /* Grid responsif: 1 kolom di ponsel, naik sesuai lebar layar */
 .grid {
   display: grid;
