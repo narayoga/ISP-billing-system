@@ -1,9 +1,11 @@
 // Menyajikan build/client seperti Cloudflare Pages untuk uji lokal: header dari
 // `_headers` (pola /* dan /dir/*), /path → /path/index.html, URL tak dikenal →
-// 404.html berstatus 404. Jalankan setelah build: npm run preview:cf
+// 404.html berstatus 404, teks dikompres gzip (Cloudflare memakai brotli/gzip).
+// Jalankan setelah build: npm run preview:cf
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { extname, join, normalize } from 'node:path'
+import { createGzip } from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 
 const client = fileURLToPath(new URL('../build/client', import.meta.url))
@@ -48,6 +50,10 @@ createServer((req, res) => {
   const file = resolve(path)
   for (const r of rules) if (matches(r.pattern, path)) for (const [k, v] of r.headers) res.setHeader(k, v)
   const target = file ?? join(client, '404.html')
-  res.writeHead(file ? 200 : 404, { 'Content-Type': TYPES[extname(target)] ?? 'application/octet-stream' })
-  createReadStream(target).pipe(res)
+  const type = TYPES[extname(target)] ?? 'application/octet-stream'
+  const gzip = /text|javascript|json|xml|svg/.test(type) && /\bgzip\b/.test(req.headers['accept-encoding'] ?? '')
+  res.writeHead(file ? 200 : 404, { 'Content-Type': type, ...(gzip ? { 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' } : {}) })
+  const stream = createReadStream(target)
+  if (gzip) stream.pipe(createGzip()).pipe(res)
+  else stream.pipe(res)
 }).listen(port, () => console.log(`build/client → http://localhost:${port}`))

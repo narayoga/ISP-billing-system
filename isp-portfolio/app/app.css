@@ -30,7 +30,7 @@
   /* Aksen */
   --color-float: #f0346d; /* widget WhatsApp/telepon melayang */
   --color-success: #36cc72; /* judul banner coverage */
-  --color-success-dark: #0b8344; /* peta coverage */
+  --color-success-dark: #08703a; /* peta coverage; kontras ≥ 4.5:1 di atas latar badge hijau muda */
   --color-warning: #f9bc13;
 
   /* Gradien sekunder (kartu ikon & funfacts) */

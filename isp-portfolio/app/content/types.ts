@@ -101,7 +101,14 @@ export type LegalDoc = {
   sections: { heading: string; paragraphs: string[] }[]
 }
 
-export type ImageAsset = { src: string; width: number; height: number; alt: string }
+export type ImageAsset = {
+  src: string
+  width: number
+  height: number
+  alt: string
+  /** Varian lebih kecil untuk srcset, dibuat `npm run images` */
+  srcSet?: string
+}
 
 /** Foto galeri masonry: gambar + tahun + judul kegiatan (pola daftar proyek CMS-portfolio) */
 export type GalleryItem = ImageAsset & { year: number; title: string; category: string }

@@ -109,9 +109,11 @@ export function Header() {
     <header ref={headerRef} className={cls} onMouseLeave={scheduleClose}>
       <div className="container site-header__inner">
         <Link to="/" className="site-header__logo" aria-label={`${site.brand.name} — Beranda`} onClick={closeAll}>
-          {/* Dua logo ditumpuk lalu di-crossfade, agar pergantian tidak berkedip */}
-          <img src={site.brand.logo.light} alt="" width={1240} height={1073} className="site-header__logo-light" />
-          <img src={site.brand.logo.dark} alt="" width={1239} height={1073} className="site-header__logo-dark" />
+          {/* Dua logo ditumpuk lalu di-crossfade, agar pergantian tidak berkedip.
+              fetchPriority high: logo termasuk elemen pertama yang tampil (LCP) — tanpa itu
+              ia mengantre di belakang skrip. */}
+          <img src={site.brand.logo.light} alt="" width={222} height={192} fetchPriority="high" className="site-header__logo-light" />
+          <img src={site.brand.logo.dark} alt="" width={222} height={192} fetchPriority="high" className="site-header__logo-dark" />
         </Link>
 
         <nav className="site-nav" aria-label="Menu utama">

@@ -11,7 +11,8 @@
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint .",
     "gallery": "node scripts/crop-gallery.mjs",
-    "og-image": "node scripts/og-image.mjs"
+    "og-image": "node scripts/og-image.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@react-router/node": "~7.18.4",

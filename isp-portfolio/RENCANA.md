@@ -185,7 +185,7 @@ kirim; Application → Storage hanya berisi sessionStorage `jitu-daftar`.
 label "Terdeteksi" berubah; Cek Tagihan → loading lalu modal. Ganti tab bank (klik /
 panah kiri-kanan), buka langkah per kanal. Tombol "Salin" → "Tersalin".
 
-## Fase 8 — SEO & Keamanan ✅ selesai, menunggu review
+## Fase 8 — SEO & Keamanan ✅ selesai (`bf720ce`)
 - [x] `<title>`, meta description, canonical, Open Graph + Twitter Card unik per
       halaman; `og:image` 1200×630 (`public/og-image.jpg`, dibuat `npm run og-image`)
 - [x] JSON-LD dari file konten (`lib/structured-data.ts`): `LocalBusiness` (Beranda,
@@ -206,11 +206,22 @@ Setelah staging live: uji di Rich Results Test Google & securityheaders.com.
 **Catatan:** isi `VITE_SITE_URL` (domain produksi) sebelum build deploy — tanpa itu
 canonical, OG, dan sitemap memakai `http://localhost:5174` (build memberi peringatan).
 
-## Fase 9 — Performa, Konten Final & Go-Live
-- [ ] Optimasi gambar (logo 96 KB → WebP kecil, `srcset`, lazy-load) dan aset hero
-- [ ] Audit Lighthouse mobile (Performance & A11y ≥ 90, SEO & Best Practices ≥ 95)
-- [ ] Pasang konten final JITU, hapus semua placeholder
-- [ ] Proyek Cloudflare Pages (staging → domain produksi), README panduan konten
+## Fase 9 — Performa, Konten Final & Go-Live 🟡 bagian kode selesai, menunggu konten & akun
+- [x] Optimasi gambar (`npm run images`): logo PNG 96 KB → WebP 14–17 KB (dua logo
+      header dimuat bersamaan, `fetchpriority="high"`), hero `srcset` 560w/1100w
+      (ponsel memuat 46 KB, bukan 113 KB); galeri & gambar bawah lipatan `loading="lazy"`
+- [x] Audit Lighthouse mobile di `npm run preview:cf` (gzip, HTTP/1.1 lokal):
+      Performance 91–100, Accessibility 96–100, Best Practices 100, SEO 100 —
+      semua target PRD terpenuhi. JS awal ±66 KB gzip (anggaran 150 KB)
+- [x] Hijau badge "Tersedia" digelapkan (`#08703a`) agar kontras ≥ 4,5:1
+- [ ] **Keputusan:** teks kecil merah muda `#ed2775` di atas putih kontras 4,07:1
+      (WCAG minta 4,5:1) — tetap palet Jagonet, atau pakai varian teks `#d81b66`
+      (4,92:1) khusus teks kecil?
+- [x] README: panduan konten per file, langkah deploy Cloudflare Pages, cek go-live
+- [ ] Pasang konten final JITU, hapus semua placeholder (`TODO(konten)`: 21 titik)
+      — menunggu data pertanyaan terbuka 1, 2, 3, 5, 8, 9 + rekening & bank VA
+- [ ] Proyek Cloudflare Pages + `VITE_SITE_URL` → staging → domain produksi
+      (pertanyaan 6 & 7) — perlu akun Cloudflare pemilik
 
 **Cara cek:** laporan Lighthouse dari URL staging, lalu situs live di domain produksi.
 
