@@ -19,11 +19,12 @@ import { categories, packages } from '../content/packages'
 import { stats } from '../content/stats'
 import { reveal } from '../lib/reveal'
 import { pageMeta } from '../lib/seo'
+import { localBusinessLd } from '../lib/structured-data'
 import { waLink } from '../lib/whatsapp'
 import './home.css'
 
 export function meta() {
-  return pageMeta({ path: '/' })
+  return pageMeta({ path: '/', jsonLd: [localBusinessLd()] })
 }
 
 const featured = packages.filter((p) => p.featured).slice(0, 3) // PRD US-01 AC 3

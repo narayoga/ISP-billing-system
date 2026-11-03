@@ -169,7 +169,7 @@ di DevTools tidak menunjukkan request saat mencari.
 ke ringkasan galat di atas. Refresh: isian tetap ada. Pastikan Network kosong saat
 kirim; Application → Storage hanya berisi sessionStorage `jitu-daftar`.
 
-## Fase 7 — Cek Tagihan (`/cek-tagihan`) ✅ selesai, menunggu review
+## Fase 7 — Cek Tagihan (`/cek-tagihan`) ✅ selesai (`fdf0e40`)
 - [x] Form satu isian ID pelanggan / No. WA (jenis terdeteksi otomatis, validasi
       format), loading "Memeriksa…", lalu modal "Segera Hadir" + WA dukungan
       (`WEB-TAGIHAN`, tanpa data dari form); tanpa fetch/penyimpanan
@@ -185,15 +185,26 @@ kirim; Application → Storage hanya berisi sessionStorage `jitu-daftar`.
 label "Terdeteksi" berubah; Cek Tagihan → loading lalu modal. Ganti tab bank (klik /
 panah kiri-kanan), buka langkah per kanal. Tombol "Salin" → "Tersalin".
 
-## Fase 8 — SEO & Keamanan
-- [ ] `<title>`, meta description, canonical, Open Graph unik per halaman
-- [ ] JSON-LD `LocalBusiness`, `Service`/`Offer` (Layanan), `FAQPage` (FAQ)
-- [ ] `sitemap.xml` + `robots.txt` otomatis saat build
-- [ ] `public/_headers`: CSP, HSTS, nosniff, Referrer-Policy, Permissions-Policy
-- [ ] 404 berstatus HTTP 404 di Cloudflare (tanpa fallback SPA)
+## Fase 8 — SEO & Keamanan ✅ selesai, menunggu review
+- [x] `<title>`, meta description, canonical, Open Graph + Twitter Card unik per
+      halaman; `og:image` 1200×630 (`public/og-image.jpg`, dibuat `npm run og-image`)
+- [x] JSON-LD dari file konten (`lib/structured-data.ts`): `LocalBusiness` (Beranda,
+      Kontak), `Service` + `Offer` per paket (Layanan), `FAQPage` (FAQ)
+- [x] `scripts/postbuild.mjs` (jalan otomatis di `npm run build`): `sitemap.xml` +
+      `robots.txt` dari canonical halaman non-noindex, `404.html` dari `/404` yang
+      di-prerender, `__spa-fallback.html` dihapus
+- [x] `public/_headers`: CSP tanpa `'unsafe-inline'` untuk skrip (hash SHA-256 skrip
+      inline diisi saat build, dicek ≤ 2000 karakter), HSTS, nosniff, X-Frame-Options,
+      Referrer-Policy, Permissions-Policy (`geolocation=(self)`), cache aset immutable
+- [x] Diuji di `npm run preview:cf` (server lokal yang meniru Cloudflare Pages):
+      semua halaman tanpa pelanggaran CSP, ubin peta OSM tampil, hidrasi jalan,
+      URL tak dikenal → HTTP 404 + halaman 404 + `noindex`
 
-**Cara cek:** buka `build/client/` dan lihat HTML per halaman. Uji hasil build di
-validator Rich Results Google setelah staging live.
+**Cara cek:** `npm run build` lalu `npm run preview:cf` → buka http://localhost:4175,
+DevTools → Console bersih, Network → header CSP; buka `/sembarang` → status 404.
+Setelah staging live: uji di Rich Results Test Google & securityheaders.com.
+**Catatan:** isi `VITE_SITE_URL` (domain produksi) sebelum build deploy — tanpa itu
+canonical, OG, dan sitemap memakai `http://localhost:5174` (build memberi peringatan).
 
 ## Fase 9 — Performa, Konten Final & Go-Live
 - [ ] Optimasi gambar (logo 96 KB → WebP kecil, `srcset`, lazy-load) dan aset hero

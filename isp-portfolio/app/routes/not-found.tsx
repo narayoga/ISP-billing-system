@@ -10,7 +10,8 @@ export function meta() {
   return pageMeta({ title: 'Halaman tidak ditemukan', path: '/404', noindex: true })
 }
 
-// URL yang tidak dikenal. Status HTTP 404 di Cloudflare diatur di Fase 8.
+// URL yang tidak dikenal. Di-prerender sebagai /404 lalu dijadikan 404.html oleh
+// scripts/postbuild.mjs, sehingga Cloudflare Pages menyajikannya berstatus HTTP 404.
 export default function NotFound() {
   return (
     <section className="not-found">

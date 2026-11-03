@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev",
-    "build": "react-router build",
+    "build": "react-router build && node scripts/postbuild.mjs",
     "preview": "vite preview --outDir build/client --port 4174",
+    "preview:cf": "node scripts/serve-build.mjs",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint .",
-    "gallery": "node scripts/crop-gallery.mjs"
+    "gallery": "node scripts/crop-gallery.mjs",
+    "og-image": "node scripts/og-image.mjs"
   },
   "dependencies": {
     "@react-router/node": "~7.18.4",

@@ -1,0 +1,17 @@
+# Header HTTP Cloudflare Pages (PRD §10 Keamanan). File ini disalin ke build/client
+# lalu scripts/postbuild.mjs mengganti placeholder di script-src dengan hash SHA-256 setiap
+# <script> inline hasil prerender — tanpa 'unsafe-inline' untuk skrip.
+# style-src perlu 'unsafe-inline': atribut style dari React (jeda animasi) & Leaflet.
+# img-src tile.openstreetmap.org: ubin peta Area Layanan & Lokasi.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' __SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=(), serial=(), bluetooth=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# Aset ber-hash dari Vite tidak pernah berubah isinya.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

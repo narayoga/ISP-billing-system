@@ -6,6 +6,7 @@ import { Section } from '../components/Section'
 import { faq } from '../content/faq'
 import { reveal } from '../lib/reveal'
 import { pageMeta } from '../lib/seo'
+import { faqLd } from '../lib/structured-data'
 import { waLink } from '../lib/whatsapp'
 import './faq.css'
 
@@ -14,6 +15,7 @@ export function meta() {
     title: 'FAQ',
     description: 'Pertanyaan yang sering diajukan seputar layanan internet JITU: paket, pemasangan, dan tagihan.',
     path: '/faq',
+    jsonLd: [faqLd()],
   })
 }
 

@@ -4,8 +4,24 @@
     {
       "name": "isp-portfolio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "isp-portfolio", "run", "dev"],
+      "runtimeArgs": [
+        "--prefix",
+        "isp-portfolio",
+        "run",
+        "dev"
+      ],
       "port": 5174
+    },
+    {
+      "name": "isp-portfolio-build",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "isp-portfolio",
+        "run",
+        "preview:cf"
+      ],
+      "port": 4175
     }
   ]
 }

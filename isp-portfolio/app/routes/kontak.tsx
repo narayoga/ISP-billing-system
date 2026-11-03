@@ -10,6 +10,7 @@ import type { IconName } from '../content/types'
 import { formatPhone } from '../lib/format'
 import { reveal } from '../lib/reveal'
 import { pageMeta } from '../lib/seo'
+import { localBusinessLd } from '../lib/structured-data'
 import { telLink, waLink } from '../lib/whatsapp'
 import './kontak.css'
 
@@ -18,6 +19,7 @@ export function meta() {
     title: 'Kontak Kami',
     description: 'Hubungi JITU — Jagonya Internet Ubud lewat WhatsApp, telepon, atau email. Alamat kantor dan jam operasional.',
     path: '/kontak',
+    jsonLd: [localBusinessLd()],
   })
 }
 

@@ -16,6 +16,8 @@ export default {
     '/faq',
     '/syarat-ketentuan',
     '/kebijakan-privasi',
+    // Diubah menjadi 404.html oleh scripts/postbuild.mjs (status HTTP 404 di Cloudflare).
+    '/404',
   ],
   // Proyek baru: langsung pakai perilaku React Router v8 agar upgrade nanti mulus.
   future: {

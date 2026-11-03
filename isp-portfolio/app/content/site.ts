@@ -24,6 +24,7 @@ export const site: Site = {
   },
   branches: [{ name: 'JITU Ubud', address: 'Ubud, Kabupaten Gianyar, Bali' }], // TODO(konten)
   hours: 'Senin–Sabtu, 08.00–17.00 WITA · Dukungan teknis 24/7', // TODO(konten)
+  openingHours: ['Mo-Sa 08:00-17:00'], // samakan dengan `hours`
   social: [], // TODO(konten): tautan media sosial
   profile: {
     // Diadaptasi dari profil Jagonet (PT Sarana Media Cemerlang).

@@ -13,6 +13,7 @@ import { site } from '../content/site'
 import { formatRupiah } from '../lib/format'
 import { reveal } from '../lib/reveal'
 import { pageMeta } from '../lib/seo'
+import { serviceLd } from '../lib/structured-data'
 import './layanan.css'
 
 export function meta() {
@@ -20,6 +21,7 @@ export function meta() {
     title: 'Layanan & Paket',
     description: 'Paket internet fiber optic JITU untuk rumah dan bisnis di Ubud — unlimited tanpa FUP, mulai Rp175.500/bulan.',
     path: '/layanan',
+    jsonLd: [serviceLd()],
   })
 }
 

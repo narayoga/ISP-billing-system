@@ -28,6 +28,8 @@ export type Site = {
   address: { office: string; mapsUrl: string; geo: { lat: number; lng: number } }
   branches: Branch[]
   hours: string
+  /** Jam buka format schema.org untuk JSON-LD, mis. "Mo-Sa 08:00-17:00" */
+  openingHours: string[]
   social: { label: string; url: string }[]
   profile: { about: string; vision: string; mission: string[] }
   fees: { installation: number; taxNote: string }
