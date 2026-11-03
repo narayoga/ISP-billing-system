@@ -39,7 +39,7 @@
 
 .accordion__caret {
   flex-shrink: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   transition: transform 0.25s ease;
 }
 

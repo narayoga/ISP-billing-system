@@ -7,7 +7,7 @@
   border: 1px solid rgb(var(--color-primary-rgb) / 0.35);
   border-radius: var(--radius-pill);
   background: var(--color-bg);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;

@@ -12,7 +12,7 @@
 .section-title__eyebrow {
   display: inline-block;
   margin-bottom: 0.5rem;
-  background: var(--gradient-primary);
+  background: var(--gradient-primary-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

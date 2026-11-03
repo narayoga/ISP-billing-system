@@ -79,6 +79,6 @@
 }
 
 .checkbox__label a {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
 }

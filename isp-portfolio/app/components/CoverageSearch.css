@@ -80,7 +80,7 @@
 
 .coverage-search__option svg {
   flex-shrink: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .coverage-search__option.is-active {
@@ -170,7 +170,7 @@
 }
 
 .coverage-result__areas a {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-size: 0.875rem;
   font-weight: 600;
 }

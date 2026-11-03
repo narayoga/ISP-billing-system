@@ -58,7 +58,7 @@
 }
 
 .modal__close:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .modal__close:focus-visible {

@@ -211,12 +211,12 @@ canonical, OG, dan sitemap memakai `http://localhost:5174` (build memberi pering
       header dimuat bersamaan, `fetchpriority="high"`), hero `srcset` 560w/1100w
       (ponsel memuat 46 KB, bukan 113 KB); galeri & gambar bawah lipatan `loading="lazy"`
 - [x] Audit Lighthouse mobile di `npm run preview:cf` (gzip, HTTP/1.1 lokal):
-      Performance 91–100, Accessibility 96–100, Best Practices 100, SEO 100 —
+      Performance 91–100, Accessibility 100, Best Practices 100, SEO 100 —
       semua target PRD terpenuhi. JS awal ±66 KB gzip (anggaran 150 KB)
 - [x] Hijau badge "Tersedia" digelapkan (`#08703a`) agar kontras ≥ 4,5:1
-- [ ] **Keputusan:** teks kecil merah muda `#ed2775` di atas putih kontras 4,07:1
-      (WCAG minta 4,5:1) — tetap palet Jagonet, atau pakai varian teks `#d81b66`
-      (4,92:1) khusus teks kecil?
+- [x] Kontras teks kecil: token `--color-primary-text` `#d81b66` (4,92:1) untuk
+      tautan/label/sub-judul (tema Lite `#c52278`, Home `#1a6fa3`); tombol, ikon, latar,
+      dan teks besar tetap `#ed2775`/gradien Jagonet → Accessibility 100 di semua halaman
 - [x] README: panduan konten per file, langkah deploy Cloudflare Pages, cek go-live
 - [ ] Pasang konten final JITU, hapus semua placeholder (`TODO(konten)`: 21 titik)
       — menunggu data pertanyaan terbuka 1, 2, 3, 5, 8, 9 + rekening & bank VA

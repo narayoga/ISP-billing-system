@@ -10,6 +10,10 @@
   --color-primary-rgb: 237 39 117; /* untuk bayangan/tint: rgb(var(--color-primary-rgb) / α) */
   --color-primary-end: #ff7448;
   --gradient-primary: linear-gradient(44.44deg, #ed2775 7.79%, #ff7448 94.18%);
+  /* Varian teks kecil: #ed2775 hanya 4,07:1 di atas putih, WCAG AA minta 4,5:1.
+     Tautan, label, sub-judul memakai ini; tombol/ikon/latar tetap warna asli. */
+  --color-primary-text: #d81b66; /* 4,92:1 putih · 4,61:1 surface */
+  --gradient-primary-text: linear-gradient(44.44deg, #d81b66 7.79%, #c94418 94.18%);
 
   /* Warna logo */
   --color-brand-orange: #f37135;
@@ -119,12 +123,16 @@ a {
   --color-primary: #c52278;
   --color-primary-rgb: 197 34 120;
   --gradient-primary: linear-gradient(76.8deg, #c52278 0%, #d2386f 53.03%, #e95e60 100%);
+  --color-primary-text: #c52278;
+  --gradient-primary-text: linear-gradient(76.8deg, #c52278 0%, #b8335f 100%);
 }
 
 .theme-home {
   --color-primary: #1c7bb4;
   --color-primary-rgb: 28 123 180;
   --gradient-primary: linear-gradient(76.8deg, #1f5693 0%, #1c7bb4 53.03%, #199fd5 100%);
+  --color-primary-text: #1a6fa3; /* #1c7bb4 hanya 4,33:1 di atas surface */
+  --gradient-primary-text: linear-gradient(76.8deg, #1f5693 0%, #1a6fa3 100%);
 }
 
 /* Target anchor (mis. /tentang#cabang) tidak tertutup header fixed */

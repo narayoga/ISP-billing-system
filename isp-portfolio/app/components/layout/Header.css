@@ -88,7 +88,7 @@
 .site-nav__link:hover,
 .site-nav__link.active,
 .site-nav__item.is-open > .site-nav__link {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 /* Garis bawah halaman aktif */
@@ -239,7 +239,7 @@
   gap: 0.4rem;
   margin-top: auto;
   padding-top: 0.75rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
   text-decoration: none;
 }
@@ -298,7 +298,7 @@
   height: 2.5rem;
   border-radius: 0.75rem;
   background: rgb(var(--color-primary-rgb) / 0.1);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 /* Tata letak 'rows' (mega menu Layanan): dua baris besar, ikon bergradien tema */
@@ -413,7 +413,7 @@
 }
 
 .mobile-menu__link.active {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .mobile-menu__caret {

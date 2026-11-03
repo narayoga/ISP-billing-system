@@ -155,7 +155,7 @@
 }
 
 .terms-summary__label a {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
 }
 
@@ -198,5 +198,5 @@
 }
 
 .product-section .package-card__check {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }

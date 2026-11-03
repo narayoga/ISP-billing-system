@@ -47,7 +47,7 @@
 }
 
 .masonry__card:hover .masonry__title {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .masonry__category {

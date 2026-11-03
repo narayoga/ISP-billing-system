@@ -26,7 +26,7 @@
 .faq-page__topics a:hover,
 .faq-page__topics a:focus-visible {
   border-color: var(--color-primary);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .faq-page__group {

@@ -137,7 +137,7 @@
   margin-bottom: 0.5rem;
   border-radius: 1rem;
   background: rgb(237 39 117 / 0.1);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .about-branch h3 {
@@ -153,7 +153,7 @@
   align-items: center;
   gap: 0.4rem;
   margin-top: 0.5rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
   text-decoration: none;
 }

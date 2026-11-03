@@ -87,7 +87,7 @@
 .btn--secondary {
   background: transparent;
   border-color: var(--color-primary);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .btn--secondary:hover {
@@ -112,7 +112,7 @@
 }
 
 .btn--light:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 @media (prefers-reduced-motion: reduce) {

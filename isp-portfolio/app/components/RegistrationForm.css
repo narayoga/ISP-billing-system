@@ -19,7 +19,7 @@
 
 .reg-section__title small {
   display: block;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -60,7 +60,7 @@
 }
 
 .reg-note a {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
 }
 
