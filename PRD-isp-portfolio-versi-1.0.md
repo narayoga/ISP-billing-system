@@ -682,6 +682,7 @@ Di luar lingkup v1.0; menjadi bahan PRD berikutnya.
 | 12 | Teks final Syarat & Ketentuan dan Kebijakan Privasi | Pemilik bisnis / penasihat hukum | Fase 4 |
 | 13 | Form kosmetik ditampilkan saat go-live (`preview`) atau disembunyikan (`hidden`)? | Pemilik bisnis | Fase 4 |
 | 14 | Pemakaian analytics (Cloudflare Web Analytics)? | Pemilik bisnis | Fase 4 |
+| 15 | **Skip link "Lewati ke konten"** — dipertahankan atau dibuang? Ditambahkan di Fase 2 (`app/routes/site-layout.tsx`) sebagai fitur aksesibilitas: tersembunyi, muncul saat tombol Tab ditekan, dan melompatkan fokus melewati header/mega menu ke konten utama. Tidak ada di jagonet.co.id maupun CMS-portfolio; dasarnya WCAG 2.1 kriteria 2.4.1 *Bypass Blocks* untuk mendukung US-11 AC 2 dan target Accessibility ≥ 90 (Bagian 10). Tidak terlihat oleh pengguna mouse; bila dibuang, cukup hapus tautan & kelas `.skip-link` tanpa memengaruhi bagian lain. | Pemilik bisnis / developer | Fase 4 |
 
 ---
 

@@ -53,7 +53,7 @@ ${urls
 </urlset>
 `
 writeFileSync(join(client, 'sitemap.xml'), sitemap)
-writeFileSync(join(client, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /ui-kit\n\nSitemap: ${origin}/sitemap.xml\n`)
+writeFileSync(join(client, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /ui-kit\nDisallow: /admin\nDisallow: /tagihan/\n\nSitemap: ${origin}/sitemap.xml\n`)
 
 // ── 3. CSP: hash skrip inline ──
 // Blok data (application/ld+json) tidak dieksekusi sehingga tidak perlu di-hash.
