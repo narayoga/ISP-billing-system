@@ -35,8 +35,8 @@ export default function CekTagihan() {
       <section className="section">
         <Reveal className={`container bill-intro${forms.cekTagihan === 'preview' ? '' : ' bill-intro--single'}`}>
           {forms.cekTagihan === 'preview' && (
-            // Aksi utama halaman "muncul ke depan"; daftar keunggulan memudar bersamaan
-            <div {...reveal('scale-in')}>
+            // Form dan daftar keunggulan memudar bersamaan (tanpa zoom)
+            <div {...reveal('fade-in')}>
               <Card className="bill-card">
                 <h2 className="bill-card__title">Cek Tagihan Anda</h2>
                 <p className="bill-card__desc">Masukkan ID pelanggan atau nomor WhatsApp yang terdaftar.</p>
