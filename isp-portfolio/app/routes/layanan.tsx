@@ -47,8 +47,9 @@ export default function Layanan() {
         description={home.description}
       >
         <Reveal className="package-grid">
-          {homePackages.map((p, i) => (
-            <div key={p.slug} {...reveal('fade-up', i * 100)}>
+          {/* Empat paket muncul bersamaan */}
+          {homePackages.map((p) => (
+            <div key={p.slug} {...reveal('focus-in')}>
               <PackageCard pkg={p} />
             </div>
           ))}
@@ -58,15 +59,16 @@ export default function Layanan() {
       {/* Internet Bisnis — nuansa JaberNITE HOME (biru); anchor dari mega menu */}
       <Section id={business.slug} className="theme-home product-section">
         <Reveal className="business">
-          <div className="business__text">
-            <span {...reveal('fade-up', 0, 'section-title__eyebrow')}>{business.title} · JaberNITE HOME</span>
-            <h2 {...reveal('fade-up', 100, 'business__title')}>Dedicated Internet untuk Usaha Anda</h2>
-            <p {...reveal('fade-up', 200)}>
+          {/* Kolom kiri naik sebagai satu blok; kolom kanan (paket) masuk dari kanan */}
+          <div {...reveal('fade-up', 0, 'business__text')}>
+            <span className="section-title__eyebrow">{business.title} · JaberNITE HOME</span>
+            <h2 className="business__title">Dedicated Internet untuk Usaha Anda</h2>
+            <p>
               {business.description} Kecepatan dan harga disesuaikan kebutuhan — dari kantor kecil hingga hotel dan resort.
             </p>
             <ul className="business__features">
-              {features.map((f, i) => (
-                <li key={f.title} {...reveal('fade-up', 300 + i * 80)}>
+              {features.map((f) => (
+                <li key={f.title}>
                   {/* tone primary = biru tema HOME, agar satu nuansa dalam section */}
                   <IconBox icon={f.icon} tone="primary" />
                   <div>
@@ -90,7 +92,7 @@ export default function Layanan() {
       {/* Biaya instalasi & ringkasan S&K (US-05 AC 5) */}
       <Section eyebrow="Biaya & Ketentuan" title="Transparan Sejak Awal">
         <Reveal className="terms-summary">
-          <div {...reveal('fade-up')}>
+          <div {...reveal('fade-in')}>
             <Card className="terms-summary__card">
               <div className="terms-summary__fee">
                 <span className="terms-summary__fee-label">Biaya instalasi</span>
