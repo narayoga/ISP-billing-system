@@ -44,8 +44,8 @@ export default function Home() {
         description="Pilih layanan sesuai kebutuhan — dari streaming keluarga hingga operasional villa dan kantor."
       >
         <Reveal className="grid grid--2">
-          {categories.map((c, i) => (
-            <div key={c.slug} {...reveal('fade-up', i * 120)}>
+          {categories.map((c) => (
+            <div key={c.slug} {...reveal('focus-in')}>
               <Link to={`/layanan#${c.slug}`} className="category-card">
                 <Card hover className="category-card__inner">
                   <div className="category-card__media">
@@ -87,8 +87,8 @@ export default function Home() {
         description="Infrastruktur dan dukungan Jagonet, kini lebih dekat dengan Anda."
       >
         <Reveal className="grid grid--4">
-          {features.map((f, i) => (
-            <div key={f.title} {...reveal('fade-up', i * 120)}>
+          {features.map((f) => (
+            <div key={f.title} {...reveal('fade-in')}>
               <FeatureCard feature={f} />
             </div>
           ))}
@@ -99,8 +99,8 @@ export default function Home() {
       {stats.length > 0 && (
         <section className="stats">
           <Reveal className="container stats__grid">
-            {stats.map((s, i) => (
-              <div key={s.label} {...reveal('fade-up', i * 100, 'stats__item')}>
+            {stats.map((s) => (
+              <div key={s.label} {...reveal('fade-in', 0, 'stats__item')}>
                 <p className="stats__value">
                   {s.value.toLocaleString('id-ID')}
                   {s.suffix}
@@ -119,8 +119,8 @@ export default function Home() {
         description="Semua paket unlimited tanpa FUP dengan kecepatan upload sama dengan download."
       >
         <Reveal className="grid grid--3">
-          {featured.map((p, i) => (
-            <div key={p.slug} {...reveal('fade-up', i * 120)}>
+          {featured.map((p) => (
+            <div key={p.slug} {...reveal('rise')}>
               <PackageCard pkg={p} />
             </div>
           ))}
@@ -136,7 +136,7 @@ export default function Home() {
       <Section surface eyebrow="Cara Berlangganan" title="Empat Langkah Mudah">
         <Reveal as="ol" className="steps">
           {steps.map((s, i) => (
-            <li key={s.title} {...reveal('fade-up', i * 120, 'steps__item')}>
+            <li key={s.title} {...reveal('rise', i * 80, 'steps__item')}>
               <span className="steps__icon">
                 <Icon name={s.icon} size={26} />
                 <span className="steps__number">{i + 1}</span>
@@ -155,7 +155,7 @@ export default function Home() {
             <h2>Cek Ketersediaan Jaringan di Lokasi Anda</h2>
             <p>Ketik nama desa atau kecamatan untuk memastikan JITU sudah menjangkau rumah Anda.</p>
           </div>
-          <div {...reveal('slide-right', 120, 'coverage-cta__search')}>
+          <div {...reveal('slide-right', 0, 'coverage-cta__search')}>
             <CoverageSearch variant="compact" />
           </div>
         </Reveal>
@@ -175,11 +175,8 @@ export default function Home() {
       {/* 9. FAQ singkat */}
       <Section surface eyebrow="FAQ" title="Pertanyaan yang Sering Diajukan">
         <Reveal className="home-faq">
-          <div {...reveal('fade-up')}>
-            <Accordion
-              name="home-faq"
-              items={topFaq.map((q, i) => ({ id: `faq-${i}`, title: q.question, content: <p>{q.answer}</p> }))}
-            />
+          <div {...reveal('fade-in')}>
+            <Accordion items={topFaq.map((q, i) => ({ id: `faq-${i}`, title: q.question, content: <p>{q.answer}</p> }))} />
           </div>
         </Reveal>
         <div className="home-center">
@@ -191,16 +188,18 @@ export default function Home() {
 
       {/* 10. CTA penutup */}
       <section className="closing-cta">
-        <Reveal className="container closing-cta__inner">
-          <h2 {...reveal('fade-up')}>Siap Menikmati Internet Tanpa Batas?</h2>
-          <p {...reveal('fade-up', 100)}>Daftar sekarang atau tanyakan dulu ke tim kami — gratis konsultasi.</p>
-          <div {...reveal('fade-up', 200, 'closing-cta__actions')}>
-            <Button href="/daftar" variant="light">
-              Berlangganan Sekarang
-            </Button>
-            <Button href={waLink('WEB-HERO', 'Halo JITU, saya ingin berlangganan internet.')} variant="whatsapp" icon="whatsapp">
-              Chat WhatsApp
-            </Button>
+        <Reveal className="container">
+          <div {...reveal('scale-in', 0, 'closing-cta__inner')}>
+            <h2>Siap Menikmati Internet Tanpa Batas?</h2>
+            <p>Daftar sekarang atau tanyakan dulu ke tim kami — gratis konsultasi.</p>
+            <div className="closing-cta__actions">
+              <Button href="/daftar" variant="light">
+                Berlangganan Sekarang
+              </Button>
+              <Button href={waLink('WEB-HERO', 'Halo JITU, saya ingin berlangganan internet.')} variant="whatsapp" icon="whatsapp">
+                Chat WhatsApp
+              </Button>
+            </div>
           </div>
         </Reveal>
       </section>

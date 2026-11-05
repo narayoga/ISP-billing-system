@@ -190,11 +190,11 @@ export default function UiKit() {
         </div>
         <div className="grid grid--3" key={imgKey}>
           <figure className="ui-kit__figure">
-            <SmoothImg src={`${site.brand.logo.dark}?v=${imgKey}`} alt="Logo Jagonet (hitam)" width={222} height={192} />
+            <SmoothImg src={`${site.brand.logo.dark}?v=${imgKey}`} alt="Logo Balisolusindo (gelap)" width={400} height={192} />
             <figcaption>Standar (shimmer → fade-in)</figcaption>
           </figure>
           <figure className="ui-kit__figure ui-kit__figure--dark">
-            <SmoothImg src={`${site.brand.logo.light}?v=${imgKey}`} alt="Logo Jagonet (putih)" plain width={222} height={192} />
+            <SmoothImg src={`${site.brand.logo.light}?v=${imgKey}`} alt="Logo Balisolusindo (terang)" plain width={400} height={192} />
             <figcaption>Varian plain (logo transparan)</figcaption>
           </figure>
           <figure className="ui-kit__figure">

@@ -30,7 +30,7 @@ const overlay = Buffer.from(`
   </g>
 </svg>`)
 
-const logo = await sharp(`${root}public/brand/logo-putih.png`).resize({ height: 110 }).toBuffer()
+const logo = await sharp(`${root}public/brand/logo-light.webp`).resize({ height: 96 }).toBuffer()
 
 await sharp(`${root}public/images/hero-kota.webp`)
   .resize(W, H, { fit: 'cover', position: 'attention' })

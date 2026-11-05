@@ -41,7 +41,6 @@ export default function Faq() {
               <h2 {...reveal('fade-up', 0, 'faq-page__topic')}>{topic}</h2>
               <div {...reveal('fade-up', 100)}>
                 <Accordion
-                  name={`faq-${topic}`}
                   items={faq
                     .filter((q) => q.topic === topic)
                     .map((q, i) => ({ id: `${topic}-${i}`, title: q.question, content: <p>{q.answer}</p> }))}

@@ -28,10 +28,13 @@ export function Section({ id, surface, eyebrow, title, description, align = 'cen
     <section id={id} className={['section', surface && 'section--surface', className].filter(Boolean).join(' ')}>
       <div className="container">
         {hasHeader && (
+          // Eyebrow, judul, dan deskripsi masuk sebagai satu blok — bukan tiga baris bertumpuk.
           <Reveal className={`section-title section-title--${align}`}>
-            {eyebrow && <span {...reveal('fade-up', 0, 'section-title__eyebrow')}>{eyebrow}</span>}
-            {title && <h2 {...reveal('fade-up', 100, 'section-title__heading')}>{title}</h2>}
-            {description && <p {...reveal('fade-up', 200, 'section-title__description')}>{description}</p>}
+            <div {...reveal('rise')}>
+              {eyebrow && <span className="section-title__eyebrow">{eyebrow}</span>}
+              {title && <h2 className="section-title__heading">{title}</h2>}
+              {description && <p className="section-title__description">{description}</p>}
+            </div>
           </Reveal>
         )}
         {children}

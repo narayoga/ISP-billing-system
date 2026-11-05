@@ -52,7 +52,6 @@ export function VaGuide() {
       </div>
       <div key={bank.id} id="va-panel" role="tabpanel" aria-labelledby={`va-tab-${bank.id}`} className="va-guide__panel">
         <Accordion
-          name={`va-${bank.id}`}
           items={bank.channels.map((c) => ({
             id: c.name,
             title: c.name,

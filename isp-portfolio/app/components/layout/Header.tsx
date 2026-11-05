@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Link, NavLink, useLocation, useMatches } from 'react-router'
 import { mainNav } from '../../content/navigation'
 import { site } from '../../content/site'
@@ -75,6 +75,19 @@ export function Header() {
     }
   }, [openMega, mobileOpen])
 
+  // Tinggi panel mega menu yang terbuka → --mega-h, agar lembar putih header memanjang
+  // persis setinggi panel (diukur ulang bila panel berubah ukuran, mis. layar diubah).
+  useLayoutEffect(() => {
+    const header = headerRef.current
+    const panel = openMega ? document.getElementById(megaId(openMega)) : null
+    if (!header || !panel) return
+    const sync = () => header.style.setProperty('--mega-h', `${panel.offsetHeight}px`)
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(panel)
+    return () => ro.disconnect()
+  }, [openMega])
+
   // Kunci scroll halaman selama menu ponsel terbuka.
   useEffect(() => {
     if (!mobileOpen) return
@@ -107,13 +120,14 @@ export function Header() {
 
   return (
     <header ref={headerRef} className={cls} onMouseLeave={scheduleClose}>
+      <span className="site-header__sheet" aria-hidden="true" />
       <div className="container site-header__inner">
         <Link to="/" className="site-header__logo" aria-label={`${site.brand.name} — Beranda`} onClick={closeAll}>
           {/* Dua logo ditumpuk lalu di-crossfade, agar pergantian tidak berkedip.
               fetchPriority high: logo termasuk elemen pertama yang tampil (LCP) — tanpa itu
               ia mengantre di belakang skrip. */}
-          <img src={site.brand.logo.light} alt="" width={222} height={192} fetchPriority="high" className="site-header__logo-light" />
-          <img src={site.brand.logo.dark} alt="" width={222} height={192} fetchPriority="high" className="site-header__logo-dark" />
+          <img src={site.brand.logo.light} alt="" width={400} height={192} fetchPriority="high" className="site-header__logo-light" />
+          <img src={site.brand.logo.dark} alt="" width={400} height={192} fetchPriority="high" className="site-header__logo-dark" />
         </Link>
 
         <nav className="site-nav" aria-label="Menu utama">

@@ -2,8 +2,8 @@ import type { NavItem, NavLink } from './types'
 
 // Menu utama (PRD §3 Navigasi Global). Item dengan `mega` membuka mega menu
 // gaya CMS-portfolio di desktop dan menjadi akordeon di ponsel.
+// Tanpa item "Beranda": logo di header sudah menautkan ke halaman utama.
 export const mainNav: NavItem[] = [
-  { label: 'Beranda', to: '/' },
   {
     label: 'Tentang Kami',
     mega: {

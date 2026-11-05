@@ -52,27 +52,7 @@
   color: var(--color-muted);
 }
 
-/* Buka-tutup beranimasi di peramban yang mendukung ::details-content */
-@supports selector(::details-content) {
-  .accordion__item {
-    interpolate-size: allow-keywords;
-  }
-
-  .accordion__item::details-content {
-    height: 0;
-    overflow: clip;
-    transition:
-      height 0.3s ease,
-      content-visibility 0.3s allow-discrete;
-  }
-
-  .accordion__item[open]::details-content {
-    height: auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .accordion__item::details-content {
-    transition: none;
-  }
+/* Caret ikut berputar saat item ditutup/dibuka; tinggi & teks dianimasikan di Accordion.tsx */
+.accordion__body {
+  overflow: hidden;
 }

@@ -27,6 +27,10 @@
 @keyframes scaleIn      { from { opacity: 0; transform: scale(0.9); }        to { opacity: 1; transform: scale(1); } }
 @keyframes zoomIn       { from { opacity: 0; transform: scale(1.08); }       to { opacity: 1; transform: scale(1); } }
 @keyframes blurIn       { from { opacity: 0; filter: blur(12px); }           to { opacity: 1; filter: blur(0); } }
+/* Lebih halus dari fadeUp: untuk blok yang muncul bersamaan (judul section, deret kartu) */
+@keyframes rise         { from { opacity: 0; transform: translateY(20px); }  to { opacity: 1; transform: translateY(0); } }
+/* Kartu bergambar "mendekat ke fokus" */
+@keyframes focusIn      { from { opacity: 0; transform: scale(1.04); }       to { opacity: 1; transform: scale(1); } }
 
 /* ── Scroll reveal ─────────────────────────────────────────────── */
 .js .reveal {
@@ -49,6 +53,8 @@
 .js .reveal--scale-in.is-visible,    .js .is-visible .reveal--scale-in    { animation-name: scaleIn; }
 .js .reveal--zoom-in.is-visible,     .js .is-visible .reveal--zoom-in     { animation-name: zoomIn; }
 .js .reveal--blur-in.is-visible,     .js .is-visible .reveal--blur-in     { animation-name: blurIn; }
+.js .reveal--rise.is-visible,        .js .is-visible .reveal--rise        { animation-name: rise; }
+.js .reveal--focus-in.is-visible,    .js .is-visible .reveal--focus-in    { animation-name: focusIn; }
 
 /* Aksesibilitas: tanpa gerakan, langsung tampil */
 @media (prefers-reduced-motion: reduce) {

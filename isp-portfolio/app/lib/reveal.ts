@@ -9,6 +9,8 @@ export type RevealVariant =
   | 'scale-in'
   | 'zoom-in'
   | 'blur-in'
+  | 'rise'
+  | 'focus-in'
 
 /**
  * Kelas + jeda untuk anak di dalam <Reveal> (lihat styles/animations.css):
