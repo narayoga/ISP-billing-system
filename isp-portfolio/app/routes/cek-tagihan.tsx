@@ -35,7 +35,8 @@ export default function CekTagihan() {
       <section className="section">
         <Reveal className={`container bill-intro${forms.cekTagihan === 'preview' ? '' : ' bill-intro--single'}`}>
           {forms.cekTagihan === 'preview' && (
-            <div {...reveal('fade-up')}>
+            // Aksi utama halaman "muncul ke depan"; daftar keunggulan memudar bersamaan
+            <div {...reveal('scale-in')}>
               <Card className="bill-card">
                 <h2 className="bill-card__title">Cek Tagihan Anda</h2>
                 <p className="bill-card__desc">Masukkan ID pelanggan atau nomor WhatsApp yang terdaftar.</p>
@@ -43,7 +44,7 @@ export default function CekTagihan() {
               </Card>
             </div>
           )}
-          <div {...reveal('fade-up', 150, 'bill-notes')}>
+          <div {...reveal('fade-in', 0, 'bill-notes')}>
             <h2>Bayar tagihan tanpa repot</h2>
             <ul>
               {vaNotes.map((n) => (
@@ -60,8 +61,9 @@ export default function CekTagihan() {
       </section>
 
       <Section id="cara-bayar" surface eyebrow="Cara Pembayaran" title="Pilih Cara Bayar yang Paling Mudah">
+        {/* Dua cara bayar naik bersamaan sebagai satu deret */}
         <Reveal className="bill-methods">
-          <div {...reveal('fade-up', 0)}>
+          <div {...reveal('rise')}>
             <Card className="bill-method">
               <div className="bill-method__head">
                 <h3>Virtual Account</h3>
@@ -72,7 +74,7 @@ export default function CekTagihan() {
             </Card>
           </div>
 
-          <div {...reveal('fade-up', 150)}>
+          <div {...reveal('rise')}>
             <Card className="bill-method">
               <div className="bill-method__head">
                 <h3>Transfer Manual</h3>
