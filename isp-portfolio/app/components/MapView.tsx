@@ -27,10 +27,11 @@ type Props = {
  * Peta OpenStreetMap via Leaflet — gratis, tanpa API key.
  *
  * Leaflet (±40 KB) beserta CSS-nya baru diunduh saat peta mendekati layar,
- * jadi tidak membebani halaman lain maupun muatan awal. Roda mouse tidak
- * memperbesar peta (agar scroll halaman tidak "tersangkut"); di ponsel peta
- * tidak bisa digeser satu jari supaya halaman tetap mudah di-scroll — gunakan
- * tombol +/− atau cubit untuk zoom.
+ * jadi tidak membebani halaman lain maupun muatan awal. Roda mouse di atas peta
+ * memperbesar/memperkecil peta (keputusan pemilik: scroll = zoom), sehingga
+ * kanvas memakai `data-lenis-prevent` agar Lenis tidak ikut menggulir halaman.
+ * Di ponsel peta tidak bisa digeser satu jari supaya halaman tetap mudah
+ * di-scroll — dua jari untuk geser/cubit-zoom.
  */
 export function MapView({ markers, label, zoom = 15, legend, className }: Props) {
   const ref = useRef<HTMLDivElement>(null)
@@ -49,7 +50,14 @@ export function MapView({ markers, label, zoom = 15, legend, className }: Props)
         const [{ default: L }] = await Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css')])
         if (cancelled) return
 
-        map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile })
+        map = L.map(el, {
+          scrollWheelZoom: true,
+          // Zoom roda lebih halus: setengah level per langkah, kumpulkan gerakan touchpad
+          zoomSnap: 0.5,
+          wheelPxPerZoomLevel: 120,
+          wheelDebounceTime: 40,
+          dragging: !L.Browser.mobile,
+        })
         map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>')
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
