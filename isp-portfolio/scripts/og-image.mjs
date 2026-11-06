@@ -30,7 +30,10 @@ const overlay = Buffer.from(`
   </g>
 </svg>`)
 
-const logo = await sharp(`${root}public/brand/logo-light.webp`).resize({ height: 96 }).toBuffer()
+// density tinggi agar SVG dirender tajam sebelum diperkecil ke 96px.
+const logo = await sharp(`${root}public/brand/balisolusindo-horizontal-putih.svg`, { density: 300 })
+  .resize({ height: 96 })
+  .toBuffer()
 
 await sharp(`${root}public/images/hero-kota.webp`)
   .resize(W, H, { fit: 'cover', position: 'attention' })

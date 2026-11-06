@@ -9,7 +9,9 @@ export const site: Site = {
     tagline: 'Internet Fiber Optic untuk Ubud dan Sekitarnya',
     description:
       'JITU (Jagonya Internet Ubud) menghadirkan koneksi internet fiber optic yang berkualitas guna membantu memenuhi kebutuhan rumah dan bisnis Anda di Ubud.',
-    logo: { dark: '/brand/logo-dark.webp', light: '/brand/logo-light.webp' }, // Balisolusindo, `npm run images`
+    // Lockup horizontal 423×64 (ikon Hex Rise + wordmark path Montserrat). dark = teks
+    // abu untuk latar terang; light = teks putih untuk header transparan di atas hero.
+    logo: { dark: '/brand/balisolusindo-horizontal.svg', light: '/brand/balisolusindo-horizontal-putih.svg' },
   },
   contact: {
     whatsappSales: '620000000000', // TODO(konten): nomor WA sales JITU

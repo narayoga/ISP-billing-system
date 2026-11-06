@@ -61,7 +61,7 @@ export default function UiKit() {
     <div className="ui-kit">
       <header className="ui-kit__header">
         <div className="container">
-          <SmoothImg src={site.brand.logo.dark} alt={site.brand.name} plain width={96} height={83} />
+          <SmoothImg src={site.brand.logo.dark} alt={site.brand.name} plain width={264} height={40} />
           <div>
             <h1>UI Kit — {site.brand.name}</h1>
             <p>Review Fase 1: token, komponen dasar, dan fondasi UX. Halaman ini tidak ikut terbit.</p>
@@ -190,11 +190,11 @@ export default function UiKit() {
         </div>
         <div className="grid grid--3" key={imgKey}>
           <figure className="ui-kit__figure">
-            <SmoothImg src={`${site.brand.logo.dark}?v=${imgKey}`} alt="Logo Balisolusindo (gelap)" width={400} height={192} />
+            <SmoothImg src={`${site.brand.logo.dark}?v=${imgKey}`} alt="Logo Balisolusindo (gelap)" width={423} height={64} />
             <figcaption>Standar (shimmer → fade-in)</figcaption>
           </figure>
           <figure className="ui-kit__figure ui-kit__figure--dark">
-            <SmoothImg src={`${site.brand.logo.light}?v=${imgKey}`} alt="Logo Balisolusindo (terang)" plain width={400} height={192} />
+            <SmoothImg src={`${site.brand.logo.light}?v=${imgKey}`} alt="Logo Balisolusindo (terang)" plain width={423} height={64} />
             <figcaption>Varian plain (logo transparan)</figcaption>
           </figure>
           <figure className="ui-kit__figure">

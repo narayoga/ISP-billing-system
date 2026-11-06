@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container site-footer__grid">
         <div className="site-footer__brand">
-          <img src={site.brand.logo.dark} alt={site.brand.name} width={400} height={192} loading="lazy" />
+          <img src={site.brand.logo.dark} alt={site.brand.name} width={423} height={64} loading="lazy" />
           <p>{site.brand.description}</p>
           {site.social.length > 0 && (
             <ul className="site-footer__social">

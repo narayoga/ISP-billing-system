@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "gallery": "node scripts/crop-gallery.mjs",
     "og-image": "node scripts/og-image.mjs",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "footer-mesh": "node scripts/footer-mesh.mjs"
   },
   "dependencies": {
     "@react-router/node": "~7.18.4",

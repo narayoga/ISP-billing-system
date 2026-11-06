@@ -7,7 +7,8 @@ import './app.css'
 import './styles/animations.css'
 
 export const links: Route.LinksFunction = () => [
-  { rel: 'icon', type: 'image/png', href: '/brand/favicon.png' },
+  { rel: 'icon', type: 'image/svg+xml', href: '/brand/favicon.svg' },
+  { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/brand/favicon.png' }, // fallback (Safari lama, dsb.)
 ]
 
 // Dijalankan sebelum halaman tampil: menandai bahwa JavaScript aktif, sehingga

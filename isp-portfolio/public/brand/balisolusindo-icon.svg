@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Balisolusindo">
+  <defs>
+    <linearGradient id="bs-sun" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#ED2775"/>
+      <stop offset="1" stop-color="#FF7448"/>
+    </linearGradient>
+  </defs>
+  <polygon points="32,6 54.5,19 54.5,45 32,58 9.5,45 9.5,19" fill="none" stroke="#4B4B4D" stroke-width="5" stroke-linejoin="round"/>
+  <polyline points="18,44 30,32 43,20" fill="none" stroke="#4B4B4D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="18" cy="44" r="3.5" fill="#4B4B4D" opacity=".5"/>
+  <circle cx="30" cy="32" r="4.5" fill="#4B4B4D"/>
+  <circle cx="43" cy="20" r="9" fill="none" stroke="#F37135" stroke-width="1.8" opacity=".45"/>
+  <circle cx="43" cy="20" r="6" fill="url(#bs-sun)"/>
+</svg>

@@ -59,7 +59,7 @@
 .site-header__logo img {
   grid-area: 1 / 1;
   width: auto;
-  height: 52px;
+  height: 40px; /* lockup 423×64 → ±265px lebar */
   transition: opacity 0.35s ease;
 }
 

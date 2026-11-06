@@ -24,7 +24,8 @@ npm run dev        # http://localhost:5174
 | `npm run typecheck` | Bangkitkan type route lalu cek TypeScript |
 | `npm run lint` | ESLint |
 | `npm run gallery` | Crop foto galeri dari `assets-source/gallery-raw/` → `public/images/galeri/` |
-| `npm run images` | Logo WebP kecil + varian hero 560w dari gambar sumber |
+| `npm run images` | Favicon PNG dari `brand/favicon.svg` + varian hero 560w |
+| `npm run footer-mesh` | Hiasan jaring simpul footer: `assets-source/images/footer-mesh.jpg` → WebP transparan `public/images/footer-mesh*.webp` |
 | `npm run og-image` | Gambar pratinjau tautan `public/og-image.jpg` (1200×630) |
 
 ## Struktur
@@ -40,7 +41,7 @@ app/
   styles/       animations.css (pustaka scroll reveal)
   app.css       token warna/font (CSS variables) + reset
 public/         aset statis (robots.txt, …)
-  brand/        logo & favicon Jagonet (dari jagonet.co.id/assets/img/)
+  brand/        logo Balisolusindo (SVG: ikon, lockup horizontal gelap/putih) & favicon
 react-router.config.ts   ssr: false + daftar route yang di-prerender
 ```
 

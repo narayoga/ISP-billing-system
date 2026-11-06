@@ -1,10 +1,28 @@
 .site-footer {
+  position: relative;
+  overflow: hidden;
   background: var(--color-surface);
   color: var(--color-text);
   font-size: 0.9375rem;
 }
 
+/* Hiasan jaring simpul (turunan ikon Hex Rise) di sisi kanan, hanya desktop agar
+   tidak menumpuk teks di layar sempit. WebP transparan, sudah dipudarkan di kiri. */
+@media (min-width: 1024px) {
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto auto;
+    width: min(60%, 1100px);
+    aspect-ratio: 3168 / 1344;
+    background: url('/images/footer-mesh.webp') right top / 100% auto no-repeat;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+}
+
 .site-footer__grid {
+  position: relative;
   display: grid;
   gap: 2.5rem;
   padding-block: 4rem 3rem;
@@ -24,7 +42,7 @@
 
 .site-footer__brand img {
   width: auto;
-  height: 64px;
+  height: 48px;
   margin-bottom: 1rem;
 }
 

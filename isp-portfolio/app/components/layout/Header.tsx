@@ -126,8 +126,8 @@ export function Header() {
           {/* Dua logo ditumpuk lalu di-crossfade, agar pergantian tidak berkedip.
               fetchPriority high: logo termasuk elemen pertama yang tampil (LCP) — tanpa itu
               ia mengantre di belakang skrip. */}
-          <img src={site.brand.logo.light} alt="" width={400} height={192} fetchPriority="high" className="site-header__logo-light" />
-          <img src={site.brand.logo.dark} alt="" width={400} height={192} fetchPriority="high" className="site-header__logo-dark" />
+          <img src={site.brand.logo.light} alt="" width={423} height={64} fetchPriority="high" className="site-header__logo-light" />
+          <img src={site.brand.logo.dark} alt="" width={423} height={64} fetchPriority="high" className="site-header__logo-dark" />
         </Link>
 
         <nav className="site-nav" aria-label="Menu utama">
