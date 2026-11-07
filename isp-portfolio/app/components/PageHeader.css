@@ -19,76 +19,134 @@
   opacity: calc(1 - var(--curtain-progress, 0) * 1.4);
 }
 
-/* ── Garis "bintang jatuh" (pola .lines Jagonet): 5 garis 1px, kilatan putih jatuh ── */
+/* ── Pulsa cahaya serat optik ──────────────────────────────────────
+   Tata letak garis dari pola .lines Jagonet (5 garis 1px). Kilatan bercahaya
+   jatuh di tiap garis; saat kepalanya melewati garis rambut di bawah menu
+   (12% siklus), simpul di persilangan menyala. Pulsa & simpul memakai durasi
+   dan jeda yang sama (--delay) sehingga selalu sinkron. */
 .page-header__lines {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.page-header__lines span {
+/* Garis rambut di bawah menu */
+.page-header__lines::before {
+  content: '';
+  position: absolute;
+  top: var(--header-h);
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.page-header__line {
+  --delay: 0s;
   position: absolute;
   top: 0;
   left: 50%;
   width: 1px;
   height: 100%;
-  overflow: hidden;
   background: rgb(255 255 255 / 0.08);
 }
 
-.page-header__lines span::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 0;
-  width: 100%;
-  height: 15vh;
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, #fff 75%, #fff 100%);
-  animation: pageHeaderRun 7s cubic-bezier(0.4, 0.26, 0, 0.97) infinite;
-}
-
-.page-header__lines span:nth-child(1) {
+.page-header__line:nth-child(1) {
+  --delay: 2s;
   margin-left: -35%;
 }
 
-.page-header__lines span:nth-child(1)::after {
-  animation-delay: 2s;
-}
-
-.page-header__lines span:nth-child(2) {
+.page-header__line:nth-child(2) {
+  --delay: 2.5s;
   margin-left: -17.5%;
 }
 
-.page-header__lines span:nth-child(2)::after {
-  animation-delay: 2.5s;
-}
-
-.page-header__lines span:nth-child(4) {
+.page-header__line:nth-child(4) {
+  --delay: 3s;
   margin-left: 17.5%;
 }
 
-.page-header__lines span:nth-child(4)::after {
-  animation-delay: 3s;
-}
-
-.page-header__lines span:nth-child(5) {
+.page-header__line:nth-child(5) {
+  --delay: 3.5s;
   margin-left: 35%;
 }
 
-.page-header__lines span:nth-child(5)::after {
-  animation-delay: 3.5s;
+/* Ekor memudar ke atas; drop-shadow membuat cahayanya berpendar mengikuti ekor */
+.page-header__pulse {
+  position: absolute;
+  top: calc(-15vh - 10px);
+  left: 0;
+  width: 1px;
+  height: 15vh;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0.85) 85%, #fff 100%);
+  filter: drop-shadow(0 0 3px rgb(255 255 255 / 0.7));
+  animation: pageHeaderPulse 7s var(--delay) infinite;
 }
 
-@keyframes pageHeaderRun {
+/* Kepala pulsa: titik terang berhalo putih + merah muda brand */
+.page-header__pulse::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  margin-left: -1.5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 6px 2px rgb(255 255 255 / 0.8),
+    0 0 14px 4px rgb(237 39 117 / 0.45);
+}
+
+/* Simpul jaringan di persilangan garis & garis rambut */
+.page-header__node {
+  position: absolute;
+  top: var(--header-h);
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.3);
+  animation: pageHeaderNode 7s var(--delay) infinite;
+}
+
+/* Kepala pulsa tepat di garis rambut pada 12%, lalu melambat hingga keluar bawah */
+@keyframes pageHeaderPulse {
   0% {
-    top: -50%;
+    top: calc(-15vh - 10px);
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
   }
+  12% {
+    top: calc(var(--header-h) - 15vh);
+    animation-timing-function: cubic-bezier(0.1, 0.5, 0.3, 1);
+  }
+  60%,
   100% {
     top: 110%;
   }
 }
 
-/* ── Tirai: kubah berwarna latar section berikutnya, tinggi mengikuti scroll ── */
+@keyframes pageHeaderNode {
+  0%,
+  10%,
+  32%,
+  100% {
+    background: rgb(255 255 255 / 0.3);
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0);
+    transform: scale(1);
+  }
+  13% {
+    background: #fff;
+    box-shadow:
+      0 0 8px 2px rgb(255 255 255 / 0.8),
+      0 0 18px 6px rgb(237 39 117 / 0.5);
+    transform: scale(1.8);
+  }
+}
+
+/* ── Tirai bentuk U: berwarna latar section berikutnya, tinggi mengikuti scroll ── */
 .page-header__curtain {
   position: absolute;
   right: 0;
@@ -101,8 +159,8 @@
   pointer-events: none;
 }
 
-/* Garis aksen di tepi kubah: stroke 8px digambar di bawah isian (paint-order), jadi
-   yang terlihat hanya 4px di atas lengkungan — lurus saat diam, melengkung saat scroll. */
+/* Garis aksen di tepi tirai: stroke 8px digambar di bawah isian (paint-order), jadi
+   yang terlihat hanya 4px di atas lengkungan — lurus saat diam, melengkung U saat scroll. */
 .has-curtain-edge .page-header__curtain {
   height: max(var(--curtain-depth, 0px), 1px);
   overflow: visible;
@@ -199,8 +257,12 @@
     animation: none;
   }
 
-  /* Garis tetap ada sebagai tekstur, kilatannya tidak berjalan */
-  .page-header__lines span::after {
+  /* Garis & simpul tetap ada sebagai tekstur, pulsanya tidak berjalan */
+  .page-header__pulse {
     display: none;
+  }
+
+  .page-header__node {
+    animation: none;
   }
 }

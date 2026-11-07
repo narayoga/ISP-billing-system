@@ -9,7 +9,7 @@ type Props = {
   crumb?: string | null
 }
 
-/** Jumlah garis "bintang jatuh" (pola .lines Jagonet) */
+/** Jumlah garis serat optik (tata letak dari pola .lines Jagonet) */
 const LINES = 5
 
 /**
@@ -17,9 +17,11 @@ const LINES = 5
  * agar header transparan berlogo putih terbaca; teks masuk berurutan seperti
  * teks hero CMS-portfolio (animasi CSS, tidak menunggu JavaScript).
  *
- * Hiasan: garis tipis vertikal dengan kilatan putih yang jatuh (dari Jagonet),
- * dan efek tirai — tepi bawah lurus saat diam, lalu melengkung naik dari tengah
- * mengikuti scroll, sementara teks naik lebih lambat dan memudar.
+ * Hiasan: "pulsa cahaya serat optik" — garis tipis vertikal tempat kilatan
+ * bercahaya jatuh; tiap kali melewati garis rambut di bawah menu, simpul di
+ * persilangannya menyala (motif jaring simpul footer & logo Hex Rise). Efek tirai:
+ * tepi bawah lurus saat diam, lalu melengkung membentuk U mengikuti scroll (sisi
+ * naik lebih dulu), sementara teks naik lebih lambat dan memudar.
  */
 export function PageHeader({ title, description, crumb = title }: Props) {
   const ref = useRef<HTMLElement>(null)
@@ -29,7 +31,10 @@ export function PageHeader({ title, description, crumb = title }: Props) {
     <section ref={ref} className="page-header">
       <div className="page-header__lines" aria-hidden="true">
         {Array.from({ length: LINES }, (_, i) => (
-          <span key={i} />
+          <span key={i} className="page-header__line">
+            <span className="page-header__pulse" />
+            <span className="page-header__node" />
+          </span>
         ))}
       </div>
       <div className="container page-header__inner">
@@ -46,8 +51,8 @@ export function PageHeader({ title, description, crumb = title }: Props) {
         <h1 className="page-header__title">{title}</h1>
         {description && <p className="page-header__desc">{description}</p>}
       </div>
-      {/* Lengkungan tirai: kubah selebar header, puncak di tengah; tingginya = --curtain-depth.
-          Garis aksen opsional ikut melengkung di tepinya (lihat accentOf). */}
+      {/* Tirai bentuk U: isian mengisi kedua sudut bawah, lengkungan menyentuh dasar di
+          tengah; tingginya = --curtain-depth. Garis aksen opsional ikut melengkung (accentOf). */}
       <svg className="page-header__curtain" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="page-header-edge" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0">
@@ -55,7 +60,7 @@ export function PageHeader({ title, description, crumb = title }: Props) {
             <stop offset="1" className="page-header__edge-to" />
           </linearGradient>
         </defs>
-        <path d="M0 100 C20 -33.33 80 -33.33 100 100 Z" />
+        <path d="M0 0 C20 133.33 80 133.33 100 0 L100 100 L0 100 Z" />
       </svg>
     </section>
   )
