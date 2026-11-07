@@ -10,8 +10,121 @@
 }
 
 .page-header__inner {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 0.9rem;
+  /* Efek tirai: teks tertinggal sedikit dari scroll lalu memudar (nilai dari PageHeader.tsx) */
+  transform: translateY(var(--curtain-shift, 0px));
+  opacity: calc(1 - var(--curtain-progress, 0) * 1.4);
+}
+
+/* ── Garis "bintang jatuh" (pola .lines Jagonet): 5 garis 1px, kilatan putih jatuh ── */
+.page-header__lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.page-header__lines span {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.page-header__lines span::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, #fff 75%, #fff 100%);
+  animation: pageHeaderRun 7s cubic-bezier(0.4, 0.26, 0, 0.97) infinite;
+}
+
+.page-header__lines span:nth-child(1) {
+  margin-left: -35%;
+}
+
+.page-header__lines span:nth-child(1)::after {
+  animation-delay: 2s;
+}
+
+.page-header__lines span:nth-child(2) {
+  margin-left: -17.5%;
+}
+
+.page-header__lines span:nth-child(2)::after {
+  animation-delay: 2.5s;
+}
+
+.page-header__lines span:nth-child(4) {
+  margin-left: 17.5%;
+}
+
+.page-header__lines span:nth-child(4)::after {
+  animation-delay: 3s;
+}
+
+.page-header__lines span:nth-child(5) {
+  margin-left: 35%;
+}
+
+.page-header__lines span:nth-child(5)::after {
+  animation-delay: 3.5s;
+}
+
+@keyframes pageHeaderRun {
+  0% {
+    top: -50%;
+  }
+  100% {
+    top: 110%;
+  }
+}
+
+/* ── Tirai: kubah berwarna latar section berikutnya, tinggi mengikuti scroll ── */
+.page-header__curtain {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: var(--curtain-depth, 0px);
+  fill: var(--curtain-fill, var(--color-bg));
+  pointer-events: none;
+}
+
+/* Garis aksen di tepi kubah: stroke 8px digambar di bawah isian (paint-order), jadi
+   yang terlihat hanya 4px di atas lengkungan — lurus saat diam, melengkung saat scroll. */
+.has-curtain-edge .page-header__curtain {
+  height: max(var(--curtain-depth, 0px), 1px);
+  overflow: visible;
+}
+
+.has-curtain-edge .page-header__curtain path {
+  stroke: url(#page-header-edge);
+  stroke-width: 8px;
+  paint-order: stroke;
+  vector-effect: non-scaling-stroke;
+}
+
+.page-header__edge-from {
+  stop-color: var(--curtain-edge-from);
+}
+
+.page-header__edge-to {
+  stop-color: var(--curtain-edge-to);
+}
+
+.page-header.has-curtain-edge + *::before {
+  opacity: 0;
 }
 
 .page-header__crumbs ol {
@@ -84,5 +197,10 @@
   .page-header__title,
   .page-header__desc {
     animation: none;
+  }
+
+  /* Garis tetap ada sebagai tekstur, kilatannya tidak berjalan */
+  .page-header__lines span::after {
+    display: none;
   }
 }
