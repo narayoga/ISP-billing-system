@@ -17,7 +17,7 @@ export type WaSource =
  * Tautan wa.me berisi pesan awal + kode sumber. Jangan pernah menyisipkan data
  * pribadi dari form ke pesan (PRD §6 Prinsip Umum).
  */
-export function waLink(source: WaSource, message = 'Halo JITU, saya ingin bertanya tentang layanan internet.', number = site.contact.whatsappSales): string {
+export function waLink(source: WaSource, message = 'Halo Balisolusindo, saya ingin bertanya tentang layanan internet.', number = site.contact.whatsappSales): string {
   const text = `${message} [${source}]`
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`
 }

@@ -1,6 +1,6 @@
 # isp-portfolio
 
-Landing page **JITU — Jagonya Internet Ubud** (Jagonet cabang Bali). Situs statis
+Landing page **Balisolusindo — Internet Fiber Ubud** (Jagonet cabang Bali). Situs statis
 hasil prerender: React 19 + TypeScript + React Router 7 (framework mode,
 `ssr: false`) di atas Vite, dengan styling **CSS murni** (tanpa Tailwind).
 
@@ -93,5 +93,5 @@ menyajikannya berstatus 404 untuk URL tak dikenal), `sitemap.xml`, `robots.txt`.
 - [ ] Lighthouse mobile di URL staging: Performance & Accessibility ≥ 90, Best Practices & SEO ≥ 95
 - [ ] DevTools Console tanpa pelanggaran CSP; `/sembarang` berstatus 404
 - [ ] Rich Results Test Google (Beranda, Layanan, FAQ) & securityheaders.com
-- [ ] Tautan WhatsApp mengarah ke nomor JITU yang benar
+- [ ] Tautan WhatsApp mengarah ke nomor Balisolusindo yang benar
 - [ ] Google Search Console: verifikasi domain, kirim `sitemap.xml`

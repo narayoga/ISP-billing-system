@@ -17,7 +17,7 @@ import './kontak.css'
 export function meta() {
   return pageMeta({
     title: 'Kontak Kami',
-    description: 'Hubungi JITU — Jagonya Internet Ubud lewat WhatsApp, telepon, atau email. Alamat kantor dan jam operasional.',
+    description: 'Hubungi Balisolusindo — Internet Fiber Ubud lewat WhatsApp, telepon, atau email. Alamat kantor dan jam operasional.',
     path: '/kontak',
     jsonLd: [localBusinessLd()],
   })
@@ -43,7 +43,7 @@ export default function Kontak() {
             icon: 'support' as const,
             label: 'WhatsApp Dukungan Teknis',
             value: formatPhone(contact.whatsappSupport),
-            href: waLink('WEB-KONTAK', 'Halo JITU, saya butuh bantuan teknis.', contact.whatsappSupport),
+            href: waLink('WEB-KONTAK', 'Halo Balisolusindo, saya butuh bantuan teknis.', contact.whatsappSupport),
             external: true,
           },
         ]

@@ -93,7 +93,7 @@ export default function UiKit() {
           <h1>Heading 1 — Solusi Tepat Kebutuhan Internet</h1>
           <h2>Heading 2 — Paket dan Harga</h2>
           <h3>Heading 3 — Jagoan 15</h3>
-          <p>Paragraf teks body. JITU menghadirkan koneksi internet fiber optic untuk Ubud.</p>
+          <p>Paragraf teks body. Balisolusindo menghadirkan koneksi internet fiber optic untuk Ubud.</p>
           <p className="ui-kit__muted">Paragraf sekunder (--color-muted) untuk deskripsi.</p>
           <p>
             <a href="#tipografi">Contoh tautan</a>

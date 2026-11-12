@@ -19,7 +19,7 @@ const getReducedMotionServer = () => false
  * Hero slider layar penuh, diadaptasi dari CMS-portfolio (HeroSlider.jsx):
  * pergantian otomatis 6 detik, teks & tombol muncul berurutan, bar progres, swipe.
  *
- * Penyesuaian untuk JITU:
+ * Penyesuaian untuk Balisolusindo:
  * - Latar gelap diam. Isi slide lama memudar sambil bergeser sedikit, lalu
  *   elemen slide baru naik satu per satu — tanpa jeda kosong di antaranya.
  * - Slide pertama sudah tampil di HTML prerender (tanpa menunggu JavaScript).
@@ -57,7 +57,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
     <section
       className={`hero dir-${dir}`}
       aria-roledescription="carousel"
-      aria-label="Sorotan JITU"
+      aria-label="Sorotan Balisolusindo"
       onPointerDown={(e) => {
         drag.current = { x: e.clientX, moved: false }
       }}

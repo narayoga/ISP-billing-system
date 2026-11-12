@@ -6,7 +6,7 @@ import { pageMeta } from '../lib/seo'
 export function meta() {
   return pageMeta({
     title: privacy.title,
-    description: 'Kebijakan privasi situs JITU — formulir belum mengirim maupun menyimpan data, tanpa cookie.',
+    description: 'Kebijakan privasi situs Balisolusindo — formulir belum mengirim maupun menyimpan data, tanpa cookie.',
     path: '/kebijakan-privasi',
   })
 }

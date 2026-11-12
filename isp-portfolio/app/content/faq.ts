@@ -4,7 +4,7 @@ import type { FaqItem } from './types'
 export const faq: FaqItem[] = [
   {
     topic: 'Layanan',
-    question: 'Apakah paket JITU benar-benar unlimited?',
+    question: 'Apakah paket Balisolusindo benar-benar unlimited?',
     answer: 'Ya. Semua paket rumah unlimited tanpa FUP, sehingga kecepatan tidak diturunkan walau pemakaian tinggi.',
   },
   {

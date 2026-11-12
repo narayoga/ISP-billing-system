@@ -83,7 +83,7 @@ export function BillCheckForm() {
         text="Untuk sementara, tim kami siap membantu mengecek tagihan Anda lewat WhatsApp. Siapkan ID pelanggan Anda."
         source="WEB-TAGIHAN"
         // Tanpa ID pelanggan/nomor dari form (PRD §6).
-        message="Halo JITU, saya ingin mengecek tagihan internet saya."
+        message="Halo Balisolusindo, saya ingin mengecek tagihan internet saya."
         number={site.contact.whatsappSupport}
       />
     </>

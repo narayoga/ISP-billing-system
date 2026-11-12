@@ -19,7 +19,7 @@ import './layanan.css'
 export function meta() {
   return pageMeta({
     title: 'Layanan & Paket',
-    description: 'Paket internet fiber optic JITU untuk rumah dan bisnis di Ubud — unlimited tanpa FUP, mulai Rp175.500/bulan.',
+    description: 'Paket internet fiber optic Balisolusindo untuk rumah dan bisnis di Ubud — unlimited tanpa FUP, mulai Rp175.500/bulan.',
     path: '/layanan',
     jsonLd: [serviceLd()],
   })

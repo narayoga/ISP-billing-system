@@ -588,7 +588,7 @@ export function RegistrationForm({ initialPackage = '', initialArea = '', today 
         text="Data Anda belum dapat dikirim lewat situs. Lanjutkan pendaftaran bersama tim kami melalui WhatsApp — data formulir tidak ikut terkirim."
         source="WEB-DAFTAR"
         // Hanya nama paket — tanpa data pribadi dari formulir (PRD §6).
-        message={`Halo JITU, saya ingin berlangganan${pkg ? ` paket ${pkg.name}` : ''}.`}
+        message={`Halo Balisolusindo, saya ingin berlangganan${pkg ? ` paket ${pkg.name}` : ''}.`}
       />
     </>
   )

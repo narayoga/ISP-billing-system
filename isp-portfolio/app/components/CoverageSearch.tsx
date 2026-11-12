@@ -151,7 +151,7 @@ function CoverageResult({ result, query }: { result: Exclude<Result, undefined>;
         <Button
           variant="whatsapp"
           icon="whatsapp"
-          href={waLink('WEB-COVERAGE', `Halo JITU, saya ingin mengajukan area ${query} untuk jaringan JITU.`)}
+          href={waLink('WEB-COVERAGE', `Halo Balisolusindo, saya ingin mengajukan area ${query} untuk jaringan Balisolusindo.`)}
         >
           Ajukan Area via WhatsApp
         </Button>
@@ -191,7 +191,7 @@ function CoverageResult({ result, query }: { result: Exclude<Result, undefined>;
   return area.status === 'tersedia' ? (
     <div className="coverage-result coverage-result--ok">
       <Badge tone="success">Tersedia</Badge>
-      <h3>Kabar baik! Jaringan JITU sudah tersedia di {place}.</h3>
+      <h3>Kabar baik! Jaringan Balisolusindo sudah tersedia di {place}.</h3>
       <p>Lanjutkan pendaftaran — alamat Anda akan terisi otomatis di formulir.</p>
       <Button href={`/daftar?area=${area.id}`} iconRight="arrow-right">
         Daftar Sekarang
@@ -210,4 +210,4 @@ function CoverageResult({ result, query }: { result: Exclude<Result, undefined>;
 }
 
 const notifyMessage = (a: CoverageArea) =>
-  `Halo JITU, kabari saya saat jaringan tersedia di ${a.village}, Kec. ${a.district}.`
+  `Halo Balisolusindo, kabari saya saat jaringan tersedia di ${a.village}, Kec. ${a.district}.`

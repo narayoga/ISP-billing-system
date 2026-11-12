@@ -18,7 +18,7 @@ import './cek-tagihan.css'
 export function meta() {
   return pageMeta({
     title: 'Cek Tagihan',
-    description: 'Cek tagihan dan cara pembayaran layanan internet JITU lewat Virtual Account atau transfer bank.',
+    description: 'Cek tagihan dan cara pembayaran layanan internet Balisolusindo lewat Virtual Account atau transfer bank.',
     path: '/cek-tagihan',
   })
 }
@@ -106,7 +106,7 @@ export default function CekTagihan() {
               <Button
                 variant="whatsapp"
                 icon="whatsapp"
-                href={waLink('WEB-TAGIHAN', 'Halo JITU, saya ingin konfirmasi pembayaran tagihan.', contact.whatsappSupport)}
+                href={waLink('WEB-TAGIHAN', 'Halo Balisolusindo, saya ingin konfirmasi pembayaran tagihan.', contact.whatsappSupport)}
               >
                 Konfirmasi via WhatsApp
               </Button>

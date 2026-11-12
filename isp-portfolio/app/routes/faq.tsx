@@ -13,7 +13,7 @@ import './faq.css'
 export function meta() {
   return pageMeta({
     title: 'FAQ',
-    description: 'Pertanyaan yang sering diajukan seputar layanan internet JITU: paket, pemasangan, dan tagihan.',
+    description: 'Pertanyaan yang sering diajukan seputar layanan internet Balisolusindo: paket, pemasangan, dan tagihan.',
     path: '/faq',
     jsonLd: [faqLd()],
   })

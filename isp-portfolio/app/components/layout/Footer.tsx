@@ -85,7 +85,7 @@ export function Footer() {
       <div className="site-footer__bottom">
         <div className="container">
           <p>
-            © {year} {site.brand.name} — Jagonya Internet Ubud. Bagian dari Jagonet (PT Sarana Media Cemerlang).
+            © {year} {site.brand.name} — Internet Fiber Ubud. Bagian dari Jagonet (PT Sarana Media Cemerlang).
           </p>
         </div>
       </div>

@@ -20,7 +20,7 @@ import './tentang.css'
 export function meta() {
   return pageMeta({
     title: 'Tentang Kami',
-    description: 'Profil JITU — Jagonya Internet Ubud, layanan internet Jagonet di Ubud, Bali: visi, misi, dan lokasi cabang.',
+    description: 'Profil Balisolusindo — Internet Fiber Ubud, layanan internet Jagonet di Ubud, Bali: visi, misi, dan lokasi cabang.',
     path: '/tentang',
   })
 }
@@ -35,7 +35,7 @@ export default function Tentang() {
   const { profile, branches } = site
   return (
     <>
-      <PageHeader title="Tentang Kami" description="Mengenal JITU — Jagonya Internet Ubud, bagian dari keluarga Jagonet." />
+      <PageHeader title="Tentang Kami" description="Mengenal Balisolusindo — Internet Fiber Ubud, bagian dari keluarga Jagonet." />
 
       {/* Profil */}
       <section className="section">

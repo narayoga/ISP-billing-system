@@ -15,7 +15,7 @@ import './coverage.css'
 export function meta() {
   return pageMeta({
     title: 'Cek Coverage',
-    description: 'Cek ketersediaan jaringan internet fiber JITU di desa dan kecamatan Anda di Ubud, Gianyar, Bali.',
+    description: 'Cek ketersediaan jaringan internet fiber Balisolusindo di desa dan kecamatan Anda di Ubud, Gianyar, Bali.',
     path: '/coverage',
   })
 }
@@ -44,7 +44,7 @@ export default function Coverage() {
     <>
       <PageHeader
         title="Cek Coverage"
-        description={`Jaringan JITU sudah menjangkau ${readyCount} desa di Ubud. Pastikan rumah Anda termasuk.`}
+        description={`Jaringan Balisolusindo sudah menjangkau ${readyCount} desa di Ubud. Pastikan rumah Anda termasuk.`}
       />
 
       <section className="section coverage-page">
@@ -89,7 +89,7 @@ export default function Coverage() {
           <MapView
             className="coverage-areas__map"
             markers={odpMarkers}
-            label="Peta titik ODP area layanan JITU"
+            label="Peta titik ODP area layanan Balisolusindo"
             legend={
               <>
                 <span className="map-legend__item">
@@ -108,7 +108,7 @@ export default function Coverage() {
           <Button
             variant="whatsapp"
             icon="whatsapp"
-            href={waLink('WEB-COVERAGE', 'Halo JITU, saya ingin mengajukan area baru untuk jaringan JITU.')}
+            href={waLink('WEB-COVERAGE', 'Halo Balisolusindo, saya ingin mengajukan area baru untuk jaringan Balisolusindo.')}
           >
             Ajukan Area
           </Button>

@@ -20,7 +20,7 @@ export function localBusinessLd() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': BUSINESS_ID,
-    name: `${brand.name} — Jagonya Internet Ubud`,
+    name: `${brand.name} — Internet Fiber Ubud`,
     legalName: brand.legalName,
     description: brand.description,
     url: `${SITE_URL}/`,

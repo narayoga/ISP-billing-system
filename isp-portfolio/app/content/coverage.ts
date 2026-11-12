@@ -1,6 +1,6 @@
 import type { CoverageArea } from './types'
 
-// Status & titik ODP sementara — ganti dengan data tim teknis JITU.
+// Status & titik ODP sementara — ganti dengan data tim teknis Balisolusindo.
 // Koordinat ODP hanya perkiraan posisi desa (kosmetik) untuk peta Area Layanan.
 const ubud = (
   id: string,

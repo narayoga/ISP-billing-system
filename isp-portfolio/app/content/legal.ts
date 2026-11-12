@@ -9,7 +9,7 @@ export const terms: LegalDoc = {
     {
       heading: 'Layanan',
       paragraphs: [
-        'JITU (Jagonya Internet Ubud) menyediakan layanan akses internet berbasis fiber optic untuk pelanggan rumah dan bisnis di wilayah jangkauan kami.',
+        'Balisolusindo menyediakan layanan akses internet berbasis fiber optic untuk pelanggan rumah dan bisnis di wilayah jangkauan kami.',
         'Kecepatan yang tercantum adalah kecepatan maksimum paket. Kecepatan aktual dapat dipengaruhi perangkat pelanggan, jaringan Wi-Fi di lokasi, dan kondisi server tujuan.',
       ],
     },
@@ -46,7 +46,7 @@ export const privacy: LegalDoc = {
       heading: 'Data yang kami kumpulkan',
       paragraphs: [
         // PRD US-04 AC 3: nyatakan jujur bahwa form belum mengirim/menyimpan data.
-        'Pada versi ini, seluruh formulir di situs JITU (pendaftaran, cek tagihan, dan kirim pesan) belum mengirim maupun menyimpan data apa pun. Data yang Anda isi hanya berada di peramban Anda dan hilang saat halaman ditutup atau dimuat ulang.',
+        'Pada versi ini, seluruh formulir di situs Balisolusindo (pendaftaran, cek tagihan, dan kirim pesan) belum mengirim maupun menyimpan data apa pun. Data yang Anda isi hanya berada di peramban Anda dan hilang saat halaman ditutup atau dimuat ulang.',
         'Foto KTP dan tanda tangan pada formulir pendaftaran hanya ditampilkan sebagai pratinjau di perangkat Anda dan tidak diunggah.',
       ],
     },

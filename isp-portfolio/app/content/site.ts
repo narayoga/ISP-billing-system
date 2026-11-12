@@ -1,37 +1,37 @@
 import type { Site } from './types'
 
 // Identitas & konfigurasi situs. Nilai bertanda TODO(konten) masih sementara
-// dan wajib diganti data JITU sebelum go-live (RENCANA.md, pertanyaan terbuka).
+// dan wajib diganti data Balisolusindo sebelum go-live (RENCANA.md, pertanyaan terbuka).
 export const site: Site = {
   brand: {
-    name: 'JITU',
-    legalName: 'Jagonya Internet Ubud — Jagonet',
+    name: 'Balisolusindo',
+    legalName: 'Balisolusindo — Jagonet',
     tagline: 'Internet Fiber Optic untuk Ubud dan Sekitarnya',
     description:
-      'JITU (Jagonya Internet Ubud) menghadirkan koneksi internet fiber optic yang berkualitas guna membantu memenuhi kebutuhan rumah dan bisnis Anda di Ubud.',
+      'Balisolusindo menghadirkan koneksi internet fiber optic yang berkualitas guna membantu memenuhi kebutuhan rumah dan bisnis Anda di Ubud.',
     // Lockup horizontal 423×64 (ikon Hex Rise + wordmark path Montserrat). dark = teks
     // abu untuk latar terang; light = teks putih untuk header transparan di atas hero.
     logo: { dark: '/brand/balisolusindo-horizontal.svg', light: '/brand/balisolusindo-horizontal-putih.svg' },
   },
   contact: {
-    whatsappSales: '620000000000', // TODO(konten): nomor WA sales JITU
-    whatsappSupport: '620000000000', // TODO(konten): nomor WA support JITU
+    whatsappSales: '620000000000', // TODO(konten): nomor WA sales Balisolusindo
+    whatsappSupport: '620000000000', // TODO(konten): nomor WA support Balisolusindo
     phone: '620000000000', // TODO(konten)
     email: 'halo@jitu.example', // TODO(konten)
   },
   address: {
     office: 'Ubud, Kabupaten Gianyar, Bali', // TODO(konten): alamat lengkap kantor
     mapsUrl: 'https://maps.google.com/?q=Ubud,+Gianyar,+Bali', // TODO(konten)
-    geo: { lat: -8.5069, lng: 115.2625 }, // sementara: pusat Ubud — ganti titik kantor JITU
+    geo: { lat: -8.5069, lng: 115.2625 }, // sementara: pusat Ubud — ganti titik kantor Balisolusindo
   },
-  branches: [{ name: 'JITU Ubud', address: 'Ubud, Kabupaten Gianyar, Bali' }], // TODO(konten)
+  branches: [{ name: 'Balisolusindo Ubud', address: 'Ubud, Kabupaten Gianyar, Bali' }], // TODO(konten)
   hours: 'Senin–Sabtu, 08.00–17.00 WITA · Dukungan teknis 24/7', // TODO(konten)
   openingHours: ['Mo-Sa 08:00-17:00'], // samakan dengan `hours`
   social: [], // TODO(konten): tautan media sosial
   profile: {
     // Diadaptasi dari profil Jagonet (PT Sarana Media Cemerlang).
     about:
-      'JITU adalah layanan internet Jagonet untuk wilayah Ubud, Bali. Bersama PT Sarana Media Cemerlang, kami mengembangkan layanan sambungan internet yang dapat disesuaikan dengan kebutuhan, situasi, dan kondisi pengguna — dari rumah tinggal hingga usaha pariwisata.',
+      'Balisolusindo adalah layanan internet Jagonet untuk wilayah Ubud, Bali. Bersama PT Sarana Media Cemerlang, kami mengembangkan layanan sambungan internet yang dapat disesuaikan dengan kebutuhan, situasi, dan kondisi pengguna — dari rumah tinggal hingga usaha pariwisata.',
     vision: 'Menjadi penyedia internet pilihan utama masyarakat dan pelaku usaha di Ubud.', // TODO(konten)
     mission: [
       'Menyediakan koneksi fiber optic yang stabil dengan harga transparan.',
@@ -59,9 +59,9 @@ export const site: Site = {
   },
   forms: { daftar: 'preview', cekTagihan: 'preview', kontak: 'preview' },
   seo: {
-    defaultTitle: 'JITU — Jagonya Internet Ubud',
+    defaultTitle: 'Balisolusindo — Internet Fiber Ubud',
     description:
-      'Internet fiber optic unlimited tanpa FUP untuk rumah dan bisnis di Ubud, Bali. Cek coverage dan pilih paket JITU.',
+      'Internet fiber optic unlimited tanpa FUP untuk rumah dan bisnis di Ubud, Bali. Cek coverage dan pilih paket Balisolusindo.',
     keywords: ['internet ubud', 'wifi ubud', 'internet gianyar', 'fiber optic bali', 'jagonet bali'],
   },
 }

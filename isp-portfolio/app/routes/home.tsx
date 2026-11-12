@@ -153,7 +153,7 @@ export default function Home() {
         <Reveal className="container coverage-cta__inner">
           <div {...reveal('slide-left', 0, 'coverage-cta__text')}>
             <h2>Cek Ketersediaan Jaringan di Lokasi Anda</h2>
-            <p>Ketik nama desa atau kecamatan untuk memastikan JITU sudah menjangkau rumah Anda.</p>
+            <p>Ketik nama desa atau kecamatan untuk memastikan Balisolusindo sudah menjangkau rumah Anda.</p>
           </div>
           <div {...reveal('slide-right', 0, 'coverage-cta__search')}>
             <CoverageSearch variant="compact" />
@@ -196,7 +196,7 @@ export default function Home() {
               <Button href="/daftar" variant="light">
                 Berlangganan Sekarang
               </Button>
-              <Button href={waLink('WEB-HERO', 'Halo JITU, saya ingin berlangganan internet.')} variant="whatsapp" icon="whatsapp">
+              <Button href={waLink('WEB-HERO', 'Halo Balisolusindo, saya ingin berlangganan internet.')} variant="whatsapp" icon="whatsapp">
                 Chat WhatsApp
               </Button>
             </div>

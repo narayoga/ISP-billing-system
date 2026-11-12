@@ -6,7 +6,7 @@ import { pageMeta } from '../lib/seo'
 export function meta() {
   return pageMeta({
     title: terms.title,
-    description: 'Syarat dan ketentuan layanan internet JITU — Jagonya Internet Ubud.',
+    description: 'Syarat dan ketentuan layanan internet Balisolusindo — Internet Fiber Ubud.',
     path: '/syarat-ketentuan',
   })
 }
@@ -14,7 +14,7 @@ export function meta() {
 export default function SyaratKetentuan() {
   return (
     <>
-      <PageHeader title={terms.title} description="Ketentuan yang berlaku untuk layanan JITU." />
+      <PageHeader title={terms.title} description="Ketentuan yang berlaku untuk layanan Balisolusindo." />
       <LegalDocument doc={terms} />
     </>
   )

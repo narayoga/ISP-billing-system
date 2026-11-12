@@ -42,7 +42,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         <Button
           variant="whatsapp"
           icon="whatsapp"
-          href={waLink('WEB-PAKET', `Halo JITU, saya tertarik dengan paket ${pkg.name}.`)}
+          href={waLink('WEB-PAKET', `Halo Balisolusindo, saya tertarik dengan paket ${pkg.name}.`)}
           className="package-card__cta"
         >
           Hubungi Kami

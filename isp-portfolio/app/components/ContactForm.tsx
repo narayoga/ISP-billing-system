@@ -123,7 +123,7 @@ export function ContactForm() {
         text="Pesan Anda belum dapat dikirim lewat situs. Silakan lanjutkan percakapan dengan tim kami melalui WhatsApp."
         source="WEB-KONTAK"
         // Hanya subjek yang ikut — tanpa nama, kontak, atau isi pesan (PRD §6).
-        message={`Halo JITU, saya ingin bertanya tentang ${values.subject.toLowerCase() || 'layanan internet'}.`}
+        message={`Halo Balisolusindo, saya ingin bertanya tentang ${values.subject.toLowerCase() || 'layanan internet'}.`}
       />
     </>
   )

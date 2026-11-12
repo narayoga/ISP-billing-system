@@ -11,7 +11,7 @@ import './daftar.css'
 export function meta() {
   return pageMeta({
     title: 'Daftar Berlangganan',
-    description: 'Formulir pendaftaran berlangganan internet fiber JITU — Jagonya Internet Ubud.',
+    description: 'Formulir pendaftaran berlangganan internet fiber Balisolusindo di Ubud, Bali.',
     path: '/daftar',
   })
 }
@@ -29,7 +29,7 @@ export default function Daftar() {
 
   return (
     <>
-      <PageHeader title="Daftar Berlangganan" description="Isi data Anda untuk mulai berlangganan internet fiber JITU." />
+      <PageHeader title="Daftar Berlangganan" description="Isi data Anda untuk mulai berlangganan internet fiber Balisolusindo." />
       <section className="section daftar-page">
         <div className="container daftar-page__inner">
           {site.forms.daftar === 'preview' ? (
@@ -39,7 +39,7 @@ export default function Daftar() {
             <div className="daftar-page__wa">
               <h2>Daftar lewat WhatsApp</h2>
               <p>Tim kami akan membantu proses pendaftaran Anda.</p>
-              <Button variant="whatsapp" icon="whatsapp" href={waLink('WEB-DAFTAR', 'Halo JITU, saya ingin berlangganan internet.')}>
+              <Button variant="whatsapp" icon="whatsapp" href={waLink('WEB-DAFTAR', 'Halo Balisolusindo, saya ingin berlangganan internet.')}>
                 Chat WhatsApp
               </Button>
             </div>

@@ -1,7 +1,7 @@
 import type { Package, PackageCategory } from './types'
 
 // Sementara memakai paket JaberNITE Jagonet (jagonet.co.id/layanan-internet.html,
-// diamati 1 Nov 2026). TODO(konten): sesuaikan dengan paket & harga JITU di Bali.
+// diamati 1 Nov 2026). TODO(konten): sesuaikan dengan paket & harga Balisolusindo di Bali.
 
 export const categories: PackageCategory[] = [
   {

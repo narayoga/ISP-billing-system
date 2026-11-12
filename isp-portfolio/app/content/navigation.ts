@@ -7,8 +7,8 @@ export const mainNav: NavItem[] = [
   {
     label: 'Tentang Kami',
     mega: {
-      title: 'Tentang JITU',
-      subtitle: 'Jagonya Internet Ubud — layanan internet Jagonet yang dekat dengan Anda.',
+      title: 'Tentang Balisolusindo',
+      subtitle: 'Internet Fiber Ubud — layanan internet Jagonet yang dekat dengan Anda.',
       icon: 'wifi',
       tone: 'primary',
       cta: { label: 'Kenali kami', to: '/tentang' },

@@ -7,7 +7,7 @@ import type { HeroSlide, Partner, Step } from './types'
 export const heroSlides: HeroSlide[] = [
   {
     id: 'solusi',
-    eyebrow: 'Jagonya Internet Ubud',
+    eyebrow: 'Internet Fiber Ubud',
     title: 'Solusi Tepat Kebutuhan Internet Anda di Ubud',
     text: 'Koneksi fiber optic Jagonet yang stabil untuk rumah, villa, dan usaha Anda — dipasang dan dirawat oleh tim lokal.',
     image: {
@@ -33,7 +33,7 @@ export const heroSlides: HeroSlide[] = [
     id: 'dukungan',
     eyebrow: 'Fast Support 24/7',
     title: 'Ada Kendala? Tim Kami Siap Membantu',
-    text: 'NOC dan teknisi JITU siaga 7 × 24 jam. Hubungi kami lewat WhatsApp kapan saja.',
+    text: 'NOC dan teknisi Balisolusindo siaga 7 × 24 jam. Hubungi kami lewat WhatsApp kapan saja.',
     image: {
       src: '/images/cs-agent.webp',
       srcSet: '/images/cs-agent-560.webp 560w, /images/cs-agent.webp 900w',
@@ -55,7 +55,7 @@ export const categoryImages: Record<string, { src: string; width: number; height
 }
 
 export const steps: Step[] = [
-  { icon: 'search', title: 'Cek Coverage', description: 'Pastikan jaringan JITU sudah tersedia di desa Anda.' },
+  { icon: 'search', title: 'Cek Coverage', description: 'Pastikan jaringan Balisolusindo sudah tersedia di desa Anda.' },
   { icon: 'whatsapp', title: 'Isi Formulir / Hubungi Kami', description: 'Daftar online atau chat tim kami lewat WhatsApp.' },
   { icon: 'map-pin', title: 'Survei & Instalasi', description: 'Teknisi datang untuk survei lokasi dan pemasangan.' },
   { icon: 'wifi', title: 'Internet Aktif', description: 'Nikmati internet fiber optic unlimited tanpa FUP.' },
