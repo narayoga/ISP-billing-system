@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router'
 import { FloatingContact } from '../components/layout/FloatingContact'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { ViewportDebug } from '../components/ViewportDebug'
 import './site-layout.css'
 
 /**
@@ -34,6 +35,8 @@ export default function SiteLayout() {
       </main>
       <Footer />
       <FloatingContact />
+      {/* SEMENTARA: diagnosis header ponsel, aktif hanya dengan ?debug=viewport */}
+      <ViewportDebug />
     </>
   )
 }
