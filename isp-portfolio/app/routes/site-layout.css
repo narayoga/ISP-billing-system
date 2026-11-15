@@ -21,6 +21,15 @@
   }
 }
 
+/* Animasi masuk dari samping (reveal slide-right mulai 48px ke kanan) sempat membuat
+   halaman lebih lebar dari layar. Browser ponsel lalu melebarkan "layout viewport"
+   dan tidak menyusutkannya lagi → halaman bisa digeser kiri-kanan dan header fixed
+   tertinggal saat address bar menyembunyikan diri. `clip` memotong luapan horizontal
+   tanpa membuat area scroll baru (tidak seperti `hidden`). */
+main {
+  overflow-x: clip;
+}
+
 main:focus {
   outline: none;
 }
