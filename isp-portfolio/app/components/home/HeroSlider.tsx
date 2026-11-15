@@ -112,8 +112,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                   <img
                     src={s.image.src}
                     srcSet={s.image.srcSet}
-                    // Lebar tampil: 520px desktop, min(260px, 62vw) di bawah 900px (HeroSlider.css).
-                    sizes={s.image.srcSet ? '(max-width: 899px) min(260px, 62vw), 520px' : undefined}
+                    // Lebar tampil: 520px desktop, hingga 95vw (latar transparan) di bawah 900px (HeroSlider.css).
+                    sizes={s.image.srcSet ? '(max-width: 899px) 95vw, 520px' : undefined}
                     alt={s.image.alt}
                     width={s.image.width}
                     height={s.image.height}

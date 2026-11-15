@@ -177,9 +177,14 @@
   color: #fff;
 }
 
-@media (max-width: 479px) {
+/* Ponsel: hanya logo (lebih kecil) + hamburger; "Daftar" ada di dalam menu ponsel */
+@media (max-width: 767px) {
   .site-header__cta {
     display: none;
+  }
+
+  .site-header__logo img {
+    height: 30px; /* ±200px lebar */
   }
 }
 

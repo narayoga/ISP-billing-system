@@ -41,7 +41,7 @@ export const heroSlides: HeroSlide[] = [
       height: 774,
       alt: 'Ilustrasi petugas layanan pelanggan berbaju batik dengan headset',
     },
-    primary: { label: 'Chat WhatsApp', href: waLink('WEB-HERO'), icon: 'whatsapp' },
+    primary: { label: 'WhatsApp', href: waLink('WEB-HERO'), icon: 'whatsapp' },
     secondary: { label: 'Kontak Kami', href: '/kontak' },
   },
 ]

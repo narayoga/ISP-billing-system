@@ -106,17 +106,47 @@
   pointer-events: none;
 }
 
-/* Ponsel/tablet: teks di atas, ilustrasi lebih kecil, agar slide + kontrol muat satu layar */
+/* Ponsel/tablet: teks saja di alur; ilustrasi jadi latar besar transparan di kanan
+   bawah (setinggi setengah layar, sedikit keluar dari tepi kanan). */
 @media (max-width: 899px) {
   .hero-slide__inner {
+    position: relative;
     align-content: center;
     gap: 1.5rem;
     padding-block: calc(var(--header-h) + 1.25rem) 5rem;
   }
 
+  .hero-slide__text {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Transparansi di wadah: animasi masuk gambar mengatur opacity gambar ke 1 */
+  .hero-slide__media {
+    position: absolute;
+    right: -6vw;
+    bottom: 0;
+    z-index: 0;
+    display: block;
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
   .hero-slide__media img {
-    max-width: min(260px, 62vw);
-    max-height: 26svh;
+    width: auto;
+    max-width: 95vw;
+    height: 50vh;
+    max-height: none;
+    object-fit: contain;
+    object-position: right bottom;
+    filter: none;
+  }
+}
+
+/* Ponsel: kapsul di atas judul disembunyikan agar banner lebih ringkas */
+@media (max-width: 767px) {
+  .hero-slide__eyebrow {
+    display: none;
   }
 }
 
